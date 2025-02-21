@@ -450,9 +450,6 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
 }
 
 
-.work__link {
-    position: relative;
-}
 .work__link__image  {
     width: 100%;
     border: 0;
@@ -724,6 +721,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
     margin: 0;
   }
   .work__link__wrapper{
+    position: relative;
     width: 100%;
     
   }
