@@ -241,7 +241,7 @@
     }
     .page__title {
         font-size: 3.4rem;
-        padding: .30rem 2rem .30rem;
+        padding: .02rem 2rem .30rem 2rem;
     }
 
     .page {

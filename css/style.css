@@ -507,12 +507,14 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
 .contact__discord:hover {
     opacity: .4;
 } 
-
+.contact__wrapper__email,
 .contact__wrapper__discord{
     display: flex;
     align-content: center;
     align-items: center;
 }
+
+.copy__email,
 .copy__discord {
     width: 40px;
     height: 40px;
@@ -523,6 +525,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
     margin-top: 28px;
   }
 
+  .copy__email:hover,
   .copy__discord:hover {
     opacity: .6;
   }
@@ -601,7 +604,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
 }
 .page__title {
     display: inline-block;
-    padding: 0.1rem 2.2rem 1.1rem 2.2rem;
+    padding: 0.1rem 2.2rem 1.1rem 2.6rem;
     font-size: 9.0rem;
     line-height: 1.25;
     margin-top: 10px;
