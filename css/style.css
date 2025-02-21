@@ -601,7 +601,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
 }
 .page__title {
     display: inline-block;
-    padding: 0.1rem 4rem 1.1rem 2.2rem;
+    padding: 0.1rem 2.2rem 1.1rem 2.2rem;
     font-size: 9.0rem;
     line-height: 1.25;
     margin-top: 10px;
