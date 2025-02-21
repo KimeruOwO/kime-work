@@ -608,6 +608,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
     color: var(--white-color);
     background-color: var(--primary-color);
     letter-spacing: .03em;
+    font-family: "Noto Sans JP";
 }
 .page__heading {
     margin-top: 15px;
@@ -620,6 +621,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
     line-height: 1;
     color: var(--white-color);
     background-color: var(--primary-color);
+    font-family: "Noto Sans JP";
 }
 
 .page__wrapper {
