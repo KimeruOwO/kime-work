@@ -643,7 +643,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
 
 .page__artist {
     display: inline-block;
-    padding: .8rem 3.2rem 1.4rem 3.2rem;
+    padding: .9rem 3.2rem 1.4rem 3.2rem;
     font-size: 3rem;
     line-height: 1;
     letter-spacing: .01em;
