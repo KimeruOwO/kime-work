@@ -1,43 +1,48 @@
+export async function fetchVideos() {
+  const endpoint = 'https://us-west-2.cdn.hygraph.com/content/cm7dhcrgp00lp07w2l55jii50/master';
 
-export async function fetchVideos() {  
-    const endpoint = 'https://us-west-2.cdn.hygraph.com/content/cm7dhcrgp00lp07w2l55jii50/master';
-  
-    const query = `
-      query AllVideos {
-        videos {
-          id
-          title
-          slug
-          nameArtist
-          linkEmbed
-          imageEmbed {
-            url
-          }
-          descCredit
-          descAbout
-          thumbnail {
-            url (
+  let allVideos = [];
+  let skip = 0;
+  const limit = 1000;
+  let hasMore = true;
+
+  try {
+    while (hasMore) {
+      const query = `
+        query AllVideos {
+          videos(first: ${limit}, skip: ${skip}, stage: PUBLISHED) {
+            id
+            title
+            slug
+            nameArtist
+            linkEmbed
+            imageEmbed {
+              url
+            }
+            descCredit
+            descAbout
+            thumbnail {
+              url(
                 transformation: {
-                    image: { resize: {width: 640, height: 360, fit: crop} }
+                  image: { resize: { width: 640, height: 360, fit: crop } }
                 }
-            )
-          }
-          imagePreview {
-            url (
+              )
+            }
+            imagePreview {
+              url(
                 transformation: {
-                    image: { resize: {width: 960, height: 540, fit: clip} }
+                  image: { resize: { width: 960, height: 540, fit: clip } }
                 }
-            )
-          }
-          category {
-            name
-            visibility
+              )
+            }
+            category {
+              name
+              visibility
+            }
           }
         }
-      }
-    `;
-  
-    try {
+      `;
+
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -45,16 +50,25 @@ export async function fetchVideos() {
         },
         body: JSON.stringify({ query }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
-  
+
       const json = await response.json();
-      return json.data.videos;
-    } catch (error) {
-      console.error('Error when fetch videos:', error);
-      return [];
+      const videos = json.data.videos;
+
+      allVideos = allVideos.concat(videos);
+
+      if (videos.length < limit) {
+        hasMore = false;
+      } else {
+        skip += limit;
+      }
     }
+    return allVideos;
+  } catch (error) {
+    console.error('Error when fetching videos:', error);
+    return [];
   }
-  
+}

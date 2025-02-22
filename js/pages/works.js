@@ -3,7 +3,6 @@ import { fetchVideos } from "../hygraph.js";
 export default async function () {
   const videos = await fetchVideos();
 
-  // Hàm tạo HTML hiển thị danh sách video từ mảng video truyền vào
   const renderVideos = (videoArray) =>
     videoArray.length === 0
       ? `<p class="no-videos" style="font-size:2.4rem">There is nothing here!</p>`
@@ -28,7 +27,6 @@ export default async function () {
           )
           .join("");
 
-  // HTML ban đầu hiển thị tất cả video
   const html = `
     <section class="works">
       <h1 class="title">WORKS</h1>

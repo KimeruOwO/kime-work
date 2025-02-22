@@ -1,4 +1,3 @@
-// File: ../js/pages/home.js
 import renderWorksPreview from './worksPreview.js';
 
 export default async function home () {
