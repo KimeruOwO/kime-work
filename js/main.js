@@ -8,6 +8,7 @@ class Router {
             works: '../js/pages/works.js',
             video: '../js/pages/video.js'
         };
+        this.scrollPositions = new Map();
         this.init();
     }
 
@@ -17,26 +18,58 @@ class Router {
             if (!link) return;
 
             e.preventDefault();
+            
+            
+            this.saveScrollPosition();
         
             const href = link.getAttribute('href');
             if (href) {
-        
                 window.location.hash = href.slice(1);
             }
         });
 
-        // (hashchange)
-        window.addEventListener('hashchange', () => this.handleRouteChange());
+        
+        window.addEventListener('beforeunload', () => {
+            this.saveScrollPosition();
+        });
 
+        window.addEventListener('hashchange', () => this.handleRouteChange());
+        
+        
+        window.addEventListener('popstate', () => {
+            this.handleRouteChange(true);
+        });
         
         this.handleRouteChange();
     }
 
+    saveScrollPosition() {
+        const currentRoute = window.location.hash.slice(1) || 'home';
+        this.scrollPositions.set(currentRoute, {
+            x: window.scrollX,
+            y: window.scrollY
+        });
+    }
+
+    restoreScrollPosition(route) {
+        const position = this.scrollPositions.get(route);
+        if (position) {
+            setTimeout(() => {
+                window.scrollTo({
+                    top: position.y,
+                    left: position.x,
+                    behavior: 'auto'
+                });
+            }, 50);
+        }
+    }
+
     navigateTo(route) {
+        this.saveScrollPosition();
         window.location.hash = route;
     }
 
-    async handleRouteChange() {
+    async handleRouteChange(isPopState = false) {
         const hash = window.location.hash.slice(1) || 'home';
         let [routeName, slug] = hash.includes('/') ? hash.split('/') : [hash, null];
 
@@ -45,10 +78,10 @@ class Router {
             return;
         }
 
-        await this.loadPage(routeName, slug);
+        await this.loadPage(routeName, slug, isPopState);
     }
 
-    async loadPage(routeName, slug) {
+    async loadPage(routeName, slug, isPopState) {
         if (this.isInitialLoad) {
             this.app.classList.remove('loaded');
         }
@@ -60,9 +93,16 @@ class Router {
             const module = await import(`./${this.routes[routeName]}`);
             this.contentDiv.innerHTML = slug ? await module.default(slug) : await module.default();
 
-            setTimeout(() => {
-                window.scrollTo({top: 0,behavior: "smooth"});
-            }, 10);
+            
+            if (isPopState) {
+                this.restoreScrollPosition(routeName);
+            } else {
+                
+                window.scrollTo({
+                    top: 0,
+                    behavior: "auto"
+                });
+            }
 
             if (this.isInitialLoad) {
                 setTimeout(() => {
