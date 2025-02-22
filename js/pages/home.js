@@ -25,7 +25,7 @@ export default async function home () {
                 </div>
                 <div class="about__icon">
                     <div class="wrap__icon">
-                        <img src="assets/imgs/pfp.png" alt="">
+                        <img src="assets/imgs/pfp.webp" alt="">
                     </div>
                     <div class="bubble"></div>
                     <div class="bubble"></div>
