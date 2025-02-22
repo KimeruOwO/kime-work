@@ -3,7 +3,7 @@ export async function fetchVideos() {
 
   let allVideos = [];
   let skip = 0;
-  const limit = 1000;
+  const limit = 100;
   let hasMore = true;
 
   try {
