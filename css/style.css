@@ -699,6 +699,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
     letter-spacing: .02em;
     font-weight: 600;
     font-size: 1.7rem;
+    line-height: 2;
 }
 
 
