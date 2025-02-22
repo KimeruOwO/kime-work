@@ -62,10 +62,37 @@ body {
 }
 
 .app {
+    opacity: 1;
+    transition: opacity 0.3s ease;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
+
+.app.loaded {
+    opacity: 1;
+  }
+  .fade-out {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .slide-down {
+    animation: slideDownAnimation 0.4s ease-out;
+  }
+
+
+  @keyframes slideDownAnimation {
+    from {
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
 @-moz-document url-prefix() {
     * {
       scrollbar-width: thin;
