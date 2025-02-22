@@ -10,7 +10,7 @@ export async function fetchVideos() {
     while (hasMore) {
       const query = `
         query AllVideos {
-          videos(first: ${limit}, skip: ${skip}, stage: PUBLISHED) {
+          videos(first: ${limit}, skip: ${skip}, stage: PUBLISHED, orderBy: createdAt_DESC) {
             id
             title
             slug
