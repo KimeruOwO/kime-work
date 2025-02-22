@@ -25,11 +25,6 @@ class Router {
 
         const href = link.getAttribute('href');
         if (href) {
-          window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: 'instant'
-          });
           window.location.hash = href.slice(1);
         }
       });
@@ -51,35 +46,30 @@ class Router {
     }
 
     saveScrollPosition() {
-        const currentRoute = window.location.hash.slice(1) || 'home';
-        this.scrollPositions.set(currentRoute, {
-          x: window.scrollX,
-          y: window.scrollY
-        });
-      }
+      const currentRoute = window.location.hash.slice(1) || 'home';
+      this.scrollPositions.set(currentRoute, {
+        x: window.scrollX,
+        y: window.scrollY
+      });
+    }
 
     restoreScrollPosition(route) {
-        const position = this.scrollPositions.get(route);
-        if (position) {
-          setTimeout(() => {
-            window.scrollTo({
-              top: position.y,
-              left: position.x,
-              behavior: 'instant'
-            });
-          }, 50);
-        }
+      const position = this.scrollPositions.get(route);
+      if (position) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: position.y,
+            left: position.x,
+            behavior: 'auto'
+          });
+        }, 50);
       }
+    }
 
     navigateTo(route) {
-        this.saveScrollPosition();
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'instant'
-        });
-        window.location.hash = route;
-      }
+      this.saveScrollPosition();
+      window.location.hash = route;
+    }
 
     async handleRouteChange(isPopState = false) {
       const hash = window.location.hash.slice(1) || 'home';
