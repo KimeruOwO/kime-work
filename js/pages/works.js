@@ -16,7 +16,7 @@ export default async function () {
         </div>
         <a href="#video/${video.slug}" data-route="video" data-slug="${video.slug}" class="work__link">
           <div class="work__link__wrapper">
-            <img src="${video.thumbnail.url}" alt="${video.title}" class="work__link__image">
+            <img loading="lazy" src="${video.thumbnail.url}" alt="${video.title}" class="work__link__image">
             <div class="work__link__title">
                 <h1>${video.title}</h1>
             </div>
