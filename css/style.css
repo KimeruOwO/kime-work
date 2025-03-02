@@ -1,34 +1,38 @@
 @font-face {
     font-family: Nats;
-    src:url('..//assets//fonts//NATS-Regular.woff2') format('woff2'),
-        url('..//assets//fonts//NATS-Regular.woff') format('woff'),
-        url('..//assets//fonts//NATS-Regular.ttf') format('truetype');
+    src:
+        url('..//assets//fonts//NATS-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
     font-family: Russo One;
-    src:url('..//assets//fonts//NATS-Regular.woff') format('woff'),
-        url('..//assets//fonts//RussoOne-Regular.ttf') format('truetype');
+    src:
+        url('..//assets//fonts//RussoOne-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
-    font-family: Noto Sans JP;
-    src:url('..//assets//fonts//NotoSansJP-ExtraBold.ttf') format('truetype');
+    font-family: Noto Sans JP Extra Bold;
+    src:
+        url('..//assets//fonts//NotoSansJP-ExtraBold.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
-    font-family: Noto Sans JP Regular;
-    src:url('..//assets//fonts//NotoSansJP-SemiBold.ttf') format('truetype');
+    font-family: Noto Sans JP Semi Bold;
+    src:
+        url('..//assets//fonts//NotoSansJP-SemiBold.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
 
+
+/* CSS * */
 * {
     margin: 0;
     padding: 0;
@@ -39,7 +43,7 @@
 }
 html {
     font-size: 62.5%;
-    font-family: "Russo One", sans-serif;
+    font-family: "Nats", sans-serif;
     line-height: 1.5;
     scroll-behavior: smooth;
     
@@ -635,7 +639,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
     color: var(--white-color);
     background-color: var(--primary-color);
     letter-spacing: 0;
-    font-family: "Noto Sans JP";
+    font-family: "Noto Sans JP Extra Bold";
 }
 .page__heading {
     margin-top: 15px;
@@ -649,7 +653,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
     letter-spacing: .01em;
     color: var(--white-color);
     background-color: var(--primary-color);
-    font-family: "Noto Sans JP";
+    font-family: "Noto Sans JP Extra Bold";
 }
 
 .page__wrapper {
@@ -721,7 +725,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
 
 .page__credit__html p,
 .page__desc__html p {
-    font-family: "Noto Sans JP Regular";
+    font-family: "Noto Sans JP Semi Bold";
     white-space: pre-line;
     letter-spacing: .02em;
     font-weight: 600;
@@ -754,7 +758,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
     
   }
   .work__link__title {
-    font-family: "Noto Sans JP";
+    font-family: "Noto Sans JP Extra Bold";
     position: absolute;
     padding: 30px;
     bottom: 0;
