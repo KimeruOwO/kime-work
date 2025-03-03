@@ -261,7 +261,7 @@ a, body, button, h1, h2, h3, h4, h5, h6, p, span {
     font-size: 2.8em;
     font-weight: 500;
     letter-spacing: 0;
-    line-height: 1.1;
+    line-height: 1.4;
 }
 
 .content .about .desc::before,
