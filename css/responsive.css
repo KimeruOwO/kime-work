@@ -223,7 +223,7 @@
     }
     .content .about .desc::before, .content .works .desc::before, .content .contact .desc::before {
         font-size: 4rem;
-        margin-top: -8px;
+        margin-top: -10.2px;
         margin-left: 0px;
     }
     .contact__wrapper {
