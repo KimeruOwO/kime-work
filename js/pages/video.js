@@ -32,7 +32,7 @@ export default async function renderVideo(slug) {
             
             mediaContent = video.imageEmbed.map(img => `
                 <div class="page__imageEmbed">
-                    <img loading="lazy" src="${img.url}" alt="${video.title}" width="100%" height="100%" />
+                    <img src="${img.url}" alt="${video.title}" width="100%" height="100%" />
                 </div>
             `).join('');
         } else if (video.imageEmbed.url) {
@@ -92,7 +92,7 @@ export default async function renderVideo(slug) {
                 ${(video.imagePreview && video.imagePreview.length > 0) ? 
                     video.imagePreview.map(img => `
                         <div class="page__review__img">
-                            <img loading="lazy" src="${img.url}" alt="${video.title}" />
+                            <img src="${img.url}" alt="${video.title}" />
                         </div>
                     `).join('')
                   : `<div class="page__review__img"></div>`}
