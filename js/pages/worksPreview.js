@@ -18,7 +18,7 @@ export default async function renderWorksPreview() {
                     <p class="work__class">${video.category.visibility || '?'}</p>
                     <p class="work__genre">${video.category.name || '?'}</p>
                 </div>
-                <a href="#video/${video.slug}" data-route="video" data-slug="${video.slug}" class="work__link">
+                <a href="/video/${video.slug}" data-route="video" data-slug="${video.slug}" class="work__link">
                     <div class="work__link__wrapper">
                         <img src="${video.thumbnail.url}" alt="${video.title}" class="work__link__image">
                         <div class="work__link__title">

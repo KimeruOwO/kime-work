@@ -1,0 +1,24 @@
+{
+  "name": "kime-work",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KimeruOwO/kime-work.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KimeruOwO/kime-work/issues"
+  },
+  "homepage": "https://github.com/KimeruOwO/kime-work#readme",
+  "description": ""
+}

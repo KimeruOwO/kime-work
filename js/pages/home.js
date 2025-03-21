@@ -40,7 +40,7 @@ export default async function home () {
             <h2 class="desc">Click on the thumbnail for more details</h2>
             ${worksPreview}
             <div class="works__viewmore">
-                <a data-route="works" href="#works" class="works__viewmore__link">View more</a>
+                <a data-route="works" href="/works" class="works__viewmore__link">View more</a>
             </div>
         </section>
 
