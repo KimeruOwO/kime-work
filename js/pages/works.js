@@ -23,9 +23,7 @@ export default async function () {
           </div>
         </a>
       </article>
-    `
-          )
-          .join("");
+    `).join("");
 
   const html = `
     <section class="works">

@@ -5,7 +5,10 @@ export default async function renderVideo(slug) {
     const video = videos.find(v => v.slug === slug);
 
     if (!video) {
-        return `<h2>Video not found: ${slug}</h2>`;
+        return `
+        <div class="video-not-found">
+            <h2>Video not found...</h2>
+        </div>`;
     }
 
     
@@ -36,7 +39,6 @@ export default async function renderVideo(slug) {
                 </div>
             `).join('');
         } else if (video.imageEmbed.url) {
-
             mediaContent = `<img src="${video.imageEmbed.url}" alt="${video.title}" width="100%" height="100%" />`;
         } else {
             mediaContent = `<p style="font-size: 2rem; color: red;">Error: No media available</p>`;

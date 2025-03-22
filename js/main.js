@@ -29,7 +29,7 @@ class Router {
       window.addEventListener('popstate', () => this.handleRouteChange());
       window.addEventListener('beforeunload', () => this.saveScrollPosition());
       this.handleRouteChange();
-  }
+    }
 
   saveScrollPosition() {
       const currentRoute = window.location.pathname.slice(1) || 'home';
@@ -37,7 +37,7 @@ class Router {
           x: window.scrollX,
           y: window.scrollY
       });
-  }
+    }
 
   restoreScrollPosition(route) {
       const position = this.scrollPositions.get(route);
@@ -47,13 +47,21 @@ class Router {
               left: position.x,
               behavior: 'instant'
           });
-      }
-  }
+        }
+    }
 
   navigateTo(route) {
       window.history.pushState({}, '', route);
       this.handleRouteChange();
-  }
+    }
+
+  showNotFound() {
+    this.contentDiv.innerHTML = '<div class="error-message"><h2>404 - Page Not Found</h2></div>';
+    if (this.isInitialLoad) {
+            this.app.classList.add('loaded');
+            this.isInitialLoad = false;
+        }
+    }
 
   async handleRouteChange() {
       const path = window.location.pathname.slice(1) || 'home';
@@ -62,10 +70,10 @@ class Router {
       if (!this.routes[routeName]) {
           this.showNotFound();
           return;
-      }
+        }
 
       await this.loadPage(routeName, slug);
-  }
+    }
 
   async loadPage(routeName, slug) {
       if (this.isInitialLoad) {
@@ -102,15 +110,7 @@ class Router {
       }
 
       this.contentDiv.classList.remove('fade-out');
-  }
-
-  showNotFound() {
-      this.contentDiv.innerHTML = '<div class="error-message"><h2>404 - Page Not Found</h2></div>';
-      if (this.isInitialLoad) {
-          this.app.classList.add('loaded');
-          this.isInitialLoad = false;
-      }
-  }
+    }
 }
 
 new Router();
