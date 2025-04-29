@@ -43,6 +43,9 @@ export default async function () {
         <div class="works__genre__button">
           <button translate="no">Graphics Design</button>
         </div>
+        <div class="works__genre__button">
+          <button translate="no">Debut//Trailer</button>
+        </div>
       </div>
 
       <div class="works__wrapper" style="margin-top: 20px;">
