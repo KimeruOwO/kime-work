@@ -1,3 +1,7 @@
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 @media (min-width: 88.75rem) {
     .about__wrapper{
         max-width: 1440px;
