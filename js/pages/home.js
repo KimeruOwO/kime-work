@@ -21,6 +21,7 @@ export default async function home () {
                         <a href="https://www.facebook.com/kimerukirisu/">Facebook</a>
                         <a href="https://www.youtube.com/@kimeru_kirisu8572">Youtube</a>
                         <a href="https://x.com/Kimeru2001">X</a>
+                        <a href= "https://www.pixiv.net/en/users/44620302">Pixiv</a>
                     </div>
                 </div>
                 <div class="about__icon">
