@@ -1,0 +1,202 @@
+/* =========================================
+   GLOBAL VARIABLES (FLATTENED & PURGED)
+   ========================================= */
+:root {
+  /* Primitive Colors (Chỉ giữ lại những mã Hex cần thiết) */
+  --base-gray-50: #F4F5F8;
+  --base-gray-100: #F2F2F9;
+  --base-white: #FFFFFF;
+  --base-black-800: #01010D;
+
+  /* Semantic UI Colors (Gán Hex trực tiếp hoặc tối đa 1 cấp tham chiếu) */
+  --bg-primary: var(--base-gray-50);
+  --bg-secondary: var(--base-white);
+  --color-tertiary: var(--base-gray-100);
+
+  --text-primary: #046277;
+  /* base-cyan-700 */
+  --text-inverse: var(--base-white);
+
+  --color-primary: #FA729D;
+  /* base-pink-500 */
+  --color-primary-light: #FF8AB1;
+  /* base-pink-400 */
+
+  /* Hủy bỏ chuỗi tham chiếu rác, trỏ trực tiếp vào primitive */
+  --accent-primary: #FA729D;
+  --checkerboard-primary: #FA729D;
+  --checkerboard-secondary: #7AE6FA;
+
+  --color-black-active: var(--base-black-800);
+
+  --color-secondary: #5CE1E6;
+  /* cyan-500 */
+  --color-secondary-bright: #29d0f6;
+  /* cyan-400 */
+  --color-secondary-dark: #046277;
+  /* cyan-700 */
+  --color-secondary-darker: #005b6e;
+  /* cyan-800 */
+  --color-secondary-light: #7AE6FA;
+  /* cyan-300 */
+  --color-secondary-soft: #d4f4ff;
+  /* cyan-100 */
+  --color-secondary-medium: #8ce6ff;
+  /* cyan-200 */
+
+  --color-accent-badge: #ff6b9e;
+  /* pink-600 */
+
+  /* Typography */
+  --font-sans: 'Murecho', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+  --text-7xl: 4.5rem;
+  --text-8xl: 6rem;
+  --text-super: 14rem;
+
+  /* Spacing */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
+  --spacing-8: 2rem;
+  --spacing-9: 2.25rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-36: 9rem;
+
+  /* Layout Structure */
+  --content-max-width: 80rem;
+  --header-height-mobile: 4.5rem;
+  --header-height-pc: 5rem;
+  --banner-height-mobile: 4.5rem;
+  --banner-height-pc: 7.25rem;
+
+  /* Borders & Radius (ĐÃ PURGE: Chỉ giữ lại những thứ thực sự dùng) */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.5rem;
+  --radius-6xl: 3rem;
+  --radius-pill: 50px;
+
+  --border-width-xs: 2px;
+  --border-width-sm: 4px;
+  --border-width-md: 6px;
+  --border-width-lg: 8px;
+}
+
+/* =========================================
+   MODERN CSS MICRO-RESET (CLEANED)
+   ========================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  /* Prevent sticky header from overlapping anchor targets when scrolling */
+  scroll-padding-top: calc(var(--header-height-mobile) + var(--spacing-4));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (min-width: 768px) {
+  html {
+    scroll-padding-top: calc(var(--header-height-pc) + var(--spacing-4));
+  }
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Bắt buộc thêm: Tối ưu hóa việc render font chữ trên Main Thread */
+  text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* Gộp chung Reset List để tránh ghi đè thừa thãi */
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+a {
+  color: var(--accent-primary);
+  text-decoration: none;
+}

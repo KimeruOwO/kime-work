@@ -1,0 +1,86 @@
+kime-work
+├── astro.config.mjs
+├── cautruc.txt
+├── dist
+│   ├── about
+│   │   └── index.html
+│   ├── fonts
+│   │   ├── Murecho-Black.woff2
+│   │   ├── Murecho-Bold.woff2
+│   │   ├── Murecho-ExtraBold.woff2
+│   │   ├── Murecho-ExtraLight.woff2
+│   │   ├── Murecho-Light.woff2
+│   │   ├── Murecho-Medium.woff2
+│   │   ├── Murecho-Regular.woff2
+│   │   ├── Murecho-SemiBold.woff2
+│   │   └── Murecho-Thin.woff2
+│   ├── images
+│   ├── index.html
+│   ├── videos
+│   ├── work
+│   │   └── index.html
+│   └── _astro
+│       ├── about@_@astro.Ch5todPX.css
+│       ├── kimeyu.Pbd0xNpC_1Kxw6e.webp
+│       ├── kimeyu.Pbd0xNpC_2gdnGr.webp
+│       ├── kimeyu.Pbd0xNpC_d7lD0.jpg
+│       ├── kimeyu.Pbd0xNpC_g8RTO.avif
+│       ├── kimeyu.Pbd0xNpC_hRTLe.avif
+│       ├── kimeyu.Pbd0xNpC_ufmpV.jpg
+│       ├── kimeyu.Pbd0xNpC_vYohl.jpg
+│       ├── kimeyu.Pbd0xNpC_Z2v6Ht9.webp
+│       ├── kimeyu.Pbd0xNpC_Z2wPJky.webp
+│       ├── kimeyu.Pbd0xNpC_ZhxuWd.jpg
+│       ├── kimeyu.Pbd0xNpC_ZJxclA.jpg
+│       ├── kimeyu.Pbd0xNpC_ZvDYsk.avif
+│       ├── kimeyu.Pbd0xNpC_ZY7R7.avif
+│       └── Layout.CukXYXGD.css
+├── package-lock.json
+├── package.json
+├── public
+│   ├── fonts
+│   │   ├── Murecho-Black.woff2
+│   │   ├── Murecho-Bold.woff2
+│   │   ├── Murecho-ExtraBold.woff2
+│   │   ├── Murecho-ExtraLight.woff2
+│   │   ├── Murecho-Light.woff2
+│   │   ├── Murecho-Medium.woff2
+│   │   ├── Murecho-Regular.woff2
+│   │   ├── Murecho-SemiBold.woff2
+│   │   └── Murecho-Thin.woff2
+│   ├── images
+│   └── videos
+├── README.md
+├── src
+│   ├── assets
+│   │   ├── fonts
+│   │   │   ├── Murecho-Bold.woff2
+│   │   │   └── Murecho-Regular.woff2
+│   │   └── images
+│   │       └── kimeyu.jpg
+│   ├── components
+│   │   ├── Header.astro
+│   │   ├── icons
+│   │   │   ├── FacebookIcon.astro
+│   │   │   ├── KimeLogo.astro
+│   │   │   ├── KimeyuIcon.astro
+│   │   │   ├── PixivIcon.astro
+│   │   │   ├── PlayIcon.astro
+│   │   │   ├── XIcon.astro
+│   │   │   └── YouTubeIcon.astro
+│   │   ├── InfoWindow.astro
+│   │   ├── PageDecorBanner.astro
+│   │   ├── SectionHeader.astro
+│   │   └── ui
+│   │       └── Button.astro
+│   ├── layouts
+│   │   └── Layout.astro
+│   ├── pages
+│   │   ├── about.astro
+│   │   ├── index.astro
+│   │   └── work.astro
+│   └── styles
+│       ├── global.css
+│       └── utilities.css
+├── tree.js
+└── tsconfig.json

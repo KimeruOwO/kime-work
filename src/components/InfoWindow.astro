@@ -1,0 +1,468 @@
+---
+import FacebookIcon from "./icons/FacebookIcon.astro";
+import XIcon from "./icons/XIcon.astro";
+import YouTubeIcon from "./icons/YouTubeIcon.astro";
+import PixivIcon from "./icons/PixivIcon.astro";
+---
+
+<retro-window class="retro-window">
+    <header class="retro-window__header">
+        <div class="retro-window__controls">
+            <!-- decor-dot dùng ::before của title (Tối ưu DOM thành công) -->
+            <h2 class="retro-window__title">INFORMATION</h2>
+        </div>
+
+        <div class="retro-window__socials-wrapper">
+            <button
+                class="retro-window__socials-toggle"
+                aria-label="Toggle Social Links"
+                aria-expanded="false"
+                aria-controls="socials-menu"
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                >
+                    <circle cx="5" cy="12" r="2.5"></circle>
+                    <circle cx="12" cy="12" r="2.5"></circle>
+                    <circle cx="19" cy="12" r="2.5"></circle>
+                </svg>
+            </button>
+            <nav
+                id="socials-menu"
+                class="retro-window__socials"
+                aria-label="Social Links"
+            >
+                <a href="#" class="social-link" aria-label="Facebook">
+                    <FacebookIcon />
+                </a>
+                <a href="#" class="social-link" aria-label="X (Twitter)">
+                    <XIcon />
+                </a>
+                <a href="#" class="social-link" aria-label="YouTube">
+                    <YouTubeIcon />
+                </a>
+                <a href="#" class="social-link" aria-label="Pixiv">
+                    <PixivIcon />
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="retro-window__body">
+        <section class="info-section">
+            <div class="info-section__title-row">
+                <!-- Thẻ này được giữ lại vì nó quản lý Layout Grid logic -->
+                <div class="info-section__decor" aria-hidden="true"></div>
+                <h3 class="info-section__heading">// ABOUT ME //</h3>
+            </div>
+            <div class="info-section__content">
+                <ul class="custom-list">
+                    <li>
+                        I'm a motion designer working across motion graphics,
+                        music videos, debut videos, and graphic design.<br />
+                        My work focuses on rhythm, movement, and emotional flow that
+                        shaping visuals that respond to sound, timing, and atmosphere.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="info-section info-section--no-decor">
+            <div class="info-section__title-row">
+                <!-- Thẻ này được giữ lại vì nó quản lý Layout Grid logic -->
+                <div class="info-section__decor" aria-hidden="true"></div>
+                <h3 class="info-section__heading">
+                    // ABOUT THE NAME "KIMEYU" //
+                </h3>
+            </div>
+            <div class="info-section__content">
+                <p>
+                    Kimeyu originates from my former name Kimeru, a Japanese
+                    word meaning decisive or determined. Over time, I adapted it
+                    into Kimeyu which softer, more approachable, and reflective
+                    of how my creative direction has evolved.
+                </p>
+                <p>
+                    The name represents a shift from rigidity to flexibility,
+                    while still holding onto intention and focus.
+                </p>
+            </div>
+        </section>
+    </div>
+</retro-window>
+
+<script>
+    class RetroWindow extends HTMLElement {
+        connectedCallback() {
+            const wrapper = this.querySelector<HTMLElement>(
+                ".retro-window__socials-wrapper",
+            );
+            const toggle = wrapper?.querySelector<HTMLButtonElement>(
+                ".retro-window__socials-toggle",
+            );
+            const menu = wrapper?.querySelector<HTMLElement>(
+                ".retro-window__socials",
+            );
+
+            if (!wrapper || !toggle || !menu) return;
+
+            const toggleMenu = (forceState?: boolean) => {
+                const isOpening =
+                    forceState !== undefined
+                        ? forceState
+                        : !menu.classList.contains("is-open");
+                menu.classList.toggle("is-open", isOpening);
+                toggle.setAttribute("aria-expanded", String(isOpening));
+            };
+
+            toggle.addEventListener("click", (e) => {
+                e.stopPropagation();
+                toggleMenu();
+            });
+
+            this.addEventListener("keydown", (e) => {
+                if (e.key === "Escape" && menu.classList.contains("is-open")) {
+                    toggleMenu(false);
+                    toggle.focus();
+                }
+            });
+
+            const handleOutsideClick = (e: Event) => {
+                if (
+                    !wrapper.contains(e.target as Node) &&
+                    menu.classList.contains("is-open")
+                ) {
+                    toggleMenu(false);
+                }
+            };
+
+            document.addEventListener("click", handleOutsideClick);
+
+            // Gắn cờ dọn dẹp để tránh Memory Leak khi Component bị gỡ khỏi DOM
+            (this as any)._cleanup = () =>
+                document.removeEventListener("click", handleOutsideClick);
+        }
+
+        disconnectedCallback() {
+            if ((this as any)._cleanup) (this as any)._cleanup();
+        }
+    }
+
+    if (!customElements.get("retro-window")) {
+        customElements.define("retro-window", RetroWindow);
+    }
+</script>
+
+<style>
+    .retro-window {
+        display: block;
+        --win-border: var(--color-secondary-darker, #004b5c);
+        --win-bg-header: var(--color-secondary-light, #6ce4eb);
+        --win-bg-body: var(--bg-secondary, #f3f4f8);
+        --win-text-dark: var(--color-secondary-darker, #004b5c);
+        --win-accent-pink: var(--color-accent-badge, #ff6b9e);
+        --win-radius: var(--spacing-3);
+
+        border: var(--border-width-sm) solid var(--win-border);
+        border-radius: var(--win-radius);
+        background-color: var(--win-bg-body);
+        max-width: 50rem;
+        margin: 0 auto;
+        font-family: var(--font-sans);
+    }
+
+    .retro-window__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--win-bg-header);
+        border-bottom: var(--border-width-sm) solid var(--win-border);
+        padding: var(--spacing-3) var(--spacing-6);
+        border-top-left-radius: calc(
+            var(--win-radius) - var(--border-width-sm)
+        );
+        border-top-right-radius: calc(
+            var(--win-radius) - var(--border-width-sm)
+        );
+        position: relative;
+    }
+
+    .retro-window__controls {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-4);
+    }
+
+    .retro-window__title {
+        margin: 0;
+        font-size: var(--text-base);
+        font-weight: 900;
+        color: var(--win-text-dark);
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+    }
+
+    .retro-window__title::before {
+        content: "";
+        display: inline-block;
+        width: var(--spacing-6);
+        height: var(--spacing-6);
+        background-color: var(--win-accent-pink);
+        border: var(--border-width-sm) solid var(--win-border);
+        border-radius: 50%;
+        margin-right: var(--spacing-4);
+        vertical-align: middle;
+        flex-shrink: 0;
+    }
+
+    .retro-window__socials-wrapper {
+        position: static;
+    }
+
+    .retro-window__socials-toggle {
+        display: none;
+        background: transparent;
+        border: none;
+        color: var(--win-text-dark);
+        cursor: pointer;
+        padding: var(--spacing-1);
+    }
+
+    .retro-window__socials {
+        display: flex;
+        gap: var(--spacing-4);
+        align-items: center;
+    }
+
+    .social-link {
+        color: var(--win-text-dark);
+        text-decoration: none;
+        font-weight: 900;
+        transition: opacity 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .social-link:hover {
+        opacity: 0.7;
+    }
+
+    .social-link :global(svg) {
+        width: var(--spacing-6);
+        height: var(--spacing-6);
+        fill: currentColor;
+        display: block;
+    }
+
+    .retro-window__body {
+        padding: var(--spacing-10) var(--spacing-10);
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-10);
+        border-bottom-left-radius: calc(
+            var(--win-radius) - var(--border-width-sm)
+        );
+        border-bottom-right-radius: calc(
+            var(--win-radius) - var(--border-width-sm)
+        );
+    }
+
+    .info-section {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-4);
+    }
+
+    .info-section__title-row {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-4);
+    }
+
+    /* TRẢ LẠI CSS GỐC CHO CHUẨN XÁC TOÁN HỌC */
+    .info-section__decor {
+        --decor-h: var(--spacing-6);
+        --decor-width: 8.75rem;
+        --checker-cell: calc(var(--decor-h) / 1.5);
+
+        display: flex;
+        align-items: center;
+        height: var(--decor-h);
+        width: var(--decor-width);
+        gap: var(--spacing-1);
+    }
+
+    .info-section__decor::before {
+        content: "";
+        height: 100%;
+        aspect-ratio: 1 / 1;
+        flex-shrink: 0;
+        background-color: var(--win-bg-body);
+        background-image: repeating-conic-gradient(
+            var(--win-bg-header) 0 90deg,
+            transparent 0 180deg
+        );
+        background-size: var(--checker-cell) var(--checker-cell);
+        background-position: calc(var(--checker-cell) / 2) 0;
+    }
+
+    .info-section__decor::after {
+        content: "";
+        flex: 1;
+        height: 100%;
+        background-color: var(--win-bg-header);
+    }
+
+    .info-section--no-decor .info-section__decor {
+        display: none;
+    }
+
+    .info-section__heading {
+        margin: 0;
+        color: var(--win-accent-pink);
+        font-size: var(--text-base);
+        font-weight: 900;
+        letter-spacing: 0.02em;
+        text-align: center;
+        text-align-last: auto;
+        hyphens: none;
+        -webkit-hyphens: none;
+    }
+
+    .info-section__content {
+        color: var(--win-text-dark);
+        font-size: var(--text-base);
+        line-height: 1.6;
+        font-weight: 500;
+    }
+
+    .info-section__content p,
+    .info-section__content li {
+        text-align: justify;
+        text-align-last: left;
+    }
+
+    .info-section__content p:last-child {
+        margin: 0;
+    }
+
+    .custom-list {
+        margin: 0;
+        padding-left: 0;
+    }
+    .custom-list li {
+        padding-left: 0;
+    }
+    .custom-list li::marker {
+        color: var(--win-text-dark);
+    }
+
+    @media (min-width: 1024px) {
+        .retro-window {
+            /* Mở position relative để làm hệ tọa độ gốc cho layer trang trí */
+            position: relative;
+            /* Thu nhỏ kích cỡ hạt Caro cơ sở xuống cho thanh lịch */
+            --decor-cell: clamp(6px, 0.8vw, 6px);
+        }
+
+        /* 1) Layer trên cùng: Khối hộp hồng đặc (Solid Banner) */
+        .retro-window::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: calc(
+                100% + var(--spacing-4)
+            ); /* Dịch dời ra khỏi màn hình bên trái 16px */
+
+            --blocks-x: 3; /* Cố định 3 ô ngang */
+            --blocks-y: 3.5; /* Cố định chiều dọc nhỉnh hơn lưới caro 1 chút */
+
+            width: calc(var(--decor-cell) * var(--blocks-x));
+            height: calc(var(--decor-cell) * var(--blocks-y));
+            background-color: var(--win-accent-pink);
+        }
+
+        /* 2) Layer bên dưới: Lưới Caro (Checkerboard grid) */
+        .retro-window::after {
+            content: "";
+            position: absolute;
+            /* Y-offset: Solid block + gap = 4.0 */
+            top: calc(var(--decor-cell) * 4);
+            right: calc(100% + var(--spacing-4));
+
+            --blocks-x: 3; /* Chính xác 3 ô theo chiều ngang */
+            --blocks-y: 5; /* Chính xác 3 ô theo chiều dọc */
+
+            width: calc(var(--decor-cell) * var(--blocks-x));
+            aspect-ratio: var(--blocks-x) / var(--blocks-y);
+
+            /* Gradient góc 1/4 lặp lại bằng % nội tại, loại trừ hoàn toàn rủi ro tính nhầm Pixel */
+            background: repeating-conic-gradient(
+                    transparent 0 90deg,
+                    var(--win-accent-pink) 0 180deg
+                )
+                0 0 / calc(100% / var(--blocks-x) * 2)
+                calc(100% / var(--blocks-y) * 2);
+        }
+
+        .info-section__title-row {
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .retro-window__body {
+            padding-top: var(--spacing-4);
+        }
+        .custom-list li {
+            padding-left: var(--spacing-2);
+        }
+        .custom-list {
+            margin: 0;
+            padding-left: var(--spacing-6);
+        }
+    }
+
+    @media (max-width: 640px) {
+        .retro-window__header {
+            flex-direction: row;
+        }
+
+        .retro-window__socials-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .retro-window__socials {
+            display: none;
+            position: absolute;
+            top: calc(100% + var(--spacing-2));
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%);
+            width: max-content;
+            background-color: var(--win-bg-body);
+            border: var(--border-width-sm) solid var(--win-border);
+            border-radius: 1.25rem;
+            padding: var(--spacing-3) var(--spacing-5);
+            box-shadow: 4px 4px 0 var(--win-border);
+            z-index: 20;
+            flex-direction: row;
+            gap: var(--spacing-6);
+        }
+
+        .retro-window__socials.is-open {
+            display: flex;
+        }
+        .retro-window__body {
+            padding: var(--spacing-12) var(--spacing-6) var(--spacing-6);
+        }
+    }
+</style>

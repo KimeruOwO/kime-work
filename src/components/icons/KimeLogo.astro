@@ -1,0 +1,32 @@
+---
+// src/components/icons/KimeLogo.astro
+export interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<svg 
+  xmlns="http://www.w3.org/2000/svg" 
+  viewBox="0 0 900 283"
+  width="900"
+  height="283"
+  class={`vector-icon ${className}`}
+  aria-hidden="true"
+  fill="currentColor"
+>
+  <polygon fill-rule="evenodd" points="564 0 522 32 435 175 356 166 260 254 474 264 537 216 593 167 564 0"/>
+  <path d="M762,613.51a125.51,125.51,0,1,1-88.73,36.76A124.62,124.62,0,0,1,762,613.51m0-2.51A128,128,0,1,0,890,739,128,128,0,0,0,762,611Z" transform="translate(-264 -584)"/>
+  <path fill-rule="evenodd" d="M881,804H815a9,9,0,0,0,0,18h66a9,9,0,0,0,0-18Z" transform="translate(-264 -584)"/>
+  <path d="M669.5,624.81a41.69,41.69,0,1,1-41.69,41.69,41.73,41.73,0,0,1,41.69-41.69m0-19.81A61.5,61.5,0,1,0,731,666.5,61.49,61.49,0,0,0,669.5,605Z" transform="translate(-264 -584)"/>
+  <circle cx="725" cy="59" r="19"/>
+  <path fill-rule="evenodd" d="M1125,759h-72a14,14,0,0,0,0,28h72a14,14,0,0,0,0-28Z" transform="translate(-264 -584)"/>
+  <path fill-rule="evenodd" d="M1150,817h-72a14,14,0,0,0,0,28h72a14,14,0,0,0,0-28Z" transform="translate(-264 -584)"/>
+  <path fill-rule="evenodd" d="M1134.2,766.33a14,14,0,0,0-19.75,1.39l-47.22,54.35a14,14,0,1,0,21.13,18.36l47.22-54.35A14,14,0,0,0,1134.2,766.33Z" transform="translate(-264 -584)"/>
+  <path fill-rule="evenodd" d="M988.5,676A16.5,16.5,0,0,0,972,692.5v141a16.5,16.5,0,0,0,33,0v-141A16.5,16.5,0,0,0,988.5,676Z" transform="translate(-264 -584)"/>
+  <path fill-rule="evenodd" d="M907,831H778a9,9,0,0,0,0,18H907a9,9,0,0,0,0-18Z" transform="translate(-264 -584)"/>
+  <path fill-rule="evenodd" d="M444.5,813h-169a11.5,11.5,0,0,0,0,23h169a11.5,11.5,0,0,0,0-23Z" transform="translate(-264 -584)"/>
+  <path fill-rule="evenodd" d="M502.5,683h-169a11.5,11.5,0,0,0,0,23h169a11.5,11.5,0,0,0,0-23Z" transform="translate(-264 -584)"/>
+  <path fill-rule="evenodd" d="M511.06,684.3c-5.49-2.59-11.88-.56-14.29,4.53L434.81,820c-2.41,5.09.09,11.32,5.58,13.91s11.89.57,14.29-4.52l62-131.14C519.05,693.13,516.55,686.9,511.06,684.3Z" transform="translate(-264 -584)"/>
+</svg>

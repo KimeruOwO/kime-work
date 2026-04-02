@@ -1,0 +1,186 @@
+---
+export interface Props {
+  text: string;
+  variant?: "primary" | "secondary";
+  href?: string;
+  compact?: boolean;
+  noMargin?: boolean;
+  checkerPosition?: "start" | "end" | "both";
+  checkerPositionPc?: "start" | "end" | "both" | "none"; // Bổ sung tuỳ chỉnh cho PC
+  hideCheckerOnDesktop?: boolean; // Sắp bị thay thế bởi checkerPositionPc="none"
+  class?: string;
+  id?: string;
+}
+
+const {
+  text,
+  variant = "primary",
+  href,
+  compact = false,
+  noMargin = false,
+  checkerPosition = "start",
+  checkerPositionPc,
+  hideCheckerOnDesktop = false,
+  class: className,
+  id,
+} = Astro.props;
+
+const Tag = href ? "a" : "div";
+const finalPcPosition = checkerPositionPc || (hideCheckerOnDesktop ? "none" : undefined);
+
+---
+
+<Tag
+  id={id}
+  class:list={[
+    "page-decor-banner",
+    `page-decor-banner--checker-${checkerPosition}`,
+    finalPcPosition && `page-decor-banner--pc-${finalPcPosition}`,
+    variant === "secondary" && "page-decor-banner--secondary",
+    compact && "page-decor-banner--compact",
+    noMargin && "page-decor-banner--no-margin",
+    className,
+  ]}
+  href={href || undefined}
+>
+  <span class="page-decor-banner__text">{text}</span>
+</Tag>
+
+<style>
+  .page-decor-banner {
+    --banner-h: 48px; /* Phải chia hết cho 3 → mỗi ô caro = integer pixel */
+    --checker-cell: calc(var(--banner-h) / 1.5);
+    background-color: var(--accent-primary);
+    display: flex;
+    align-items: stretch;
+    height: var(--banner-h);
+    width: fit-content;
+    margin: 0 0 var(--spacing-8) 0;
+    text-decoration: none;
+  }
+
+  .page-decor-banner::before,
+  .page-decor-banner::after {
+    content: none;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+    background-color: inherit;
+    background-image: repeating-conic-gradient(
+      var(--bg-primary) 0 90deg,
+      transparent 0 180deg
+    );
+    background-size: var(--checker-cell) var(--checker-cell);
+    background-position: 0 0;
+  }
+
+  .page-decor-banner--checker-start::before {
+    content: "";
+  }
+  .page-decor-banner--checker-end::after {
+    content: "";
+  }
+  .page-decor-banner--checker-both::before,
+  .page-decor-banner--checker-both::after {
+    content: "";
+  }
+
+  .page-decor-banner__text {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--spacing-10);
+    color: var(--bg-secondary);
+    font-size: var(--text-base);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+    line-height: 1;
+  }
+
+  .page-decor-banner--secondary {
+    background-color: var(--color-secondary-light);
+  }
+
+  .page-decor-banner--secondary .page-decor-banner__text {
+    color: var(--text-primary);
+  }
+
+  .page-decor-banner--compact {
+    --banner-h: 42px; /* 42 / 3 = 14px per square */
+    margin: 0;
+  }
+
+  .page-decor-banner--compact .page-decor-banner__text {
+    justify-content: flex-start;
+  }
+
+  .page-decor-banner--compact.page-decor-banner--checker-both
+    .page-decor-banner__text {
+    justify-content: center;
+  }
+
+  .page-decor-banner--compact.page-decor-banner--checker-both {
+    margin-inline: auto;
+  }
+
+  .page-decor-banner--no-margin {
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .page-decor-banner {
+      --banner-h: 50px;
+    }
+    .page-decor-banner__text {
+      font-size: var(--text-2xl);
+      padding: 0 var(--spacing-36) 0 var(--spacing-10);
+    }
+    .page-decor-banner--compact .page-decor-banner__text {
+      font-size: var(--text-lg);
+      padding: 0 var(--spacing-10);
+    }
+  }
+
+  /* [REFACTORED]: Tuỳ chỉnh vị trí caro trên PC */
+  @media (min-width: 1024px) {
+    .page-decor-banner--pc-none::before,
+    .page-decor-banner--pc-none::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .page-decor-banner--pc-start::before {
+      content: "" !important;
+      display: block !important;
+    }
+    .page-decor-banner--pc-start::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .page-decor-banner--pc-end::before {
+      content: none !important;
+      display: none !important;
+    }
+    .page-decor-banner--pc-end::after {
+      content: "" !important;
+      display: block !important;
+    }
+
+    .page-decor-banner--pc-both::before,
+    .page-decor-banner--pc-both::after {
+      content: "" !important;
+      display: block !important;
+    }
+
+    /* Reset alignment for end PC specifically for compact Banners */
+    .page-decor-banner--pc-end.page-decor-banner--compact {
+      margin-inline: 0 !important;
+    }
+    .page-decor-banner--pc-end.page-decor-banner--compact .page-decor-banner__text {
+      justify-content: flex-start !important;
+    }
+  }
+</style>

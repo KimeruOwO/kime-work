@@ -1,0 +1,17 @@
+
+> kime-work@0.0.1 build
+> astro build
+
+[2m22:31:38[22m [34m[types][39m Generated [2m29ms[22m
+[2m22:31:38[22m [34m[build][39m output: [34m"static"[39m
+[2m22:31:38[22m [34m[build][39m mode: [34m"static"[39m
+[2m22:31:38[22m [34m[build][39m directory: [34mC:\Users\Caelith\Workspace\kime-work\dist\[39m
+[2m22:31:38[22m [34m[build][39m Collecting build info...
+[2m22:31:38[22m [34m[build][39m [32mΓ£ô Completed in 44ms.[39m
+[2m22:31:38[22m [34m[build][39m Building static entrypoints...
+22:31:39 [ERROR] [vite] Γ£ù Build failed in 507ms
+Could not resolve "../layouts/Layout.astro" from "src/pages/work/[...page].astro"
+file: C:/Users/Caelith/Workspace/kime-work/src/pages/work/[...page].astro
+  Stack trace:
+    at getRollupError (file:///C:/Users/Caelith/Workspace/kime-work/node_modules/rollup/dist/es/shared/parseAst.js:402:41)
+    at ModuleLoader.handleInvalidResolvedId (file:///C:/Users/Caelith/Workspace/kime-work/node_modules/rollup/dist/es/shared/node-entry.js:21710:24)

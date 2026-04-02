@@ -1,0 +1,68 @@
+---
+// src/components/ui/Button.astro
+// Reusable Button component applying the global design system
+
+export interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary';
+  target?: string;
+  rel?: string;
+  class?: string;
+}
+
+const { href, variant = 'primary', target, rel, class: className = '' } = Astro.props;
+
+// If href is provided, it's an anchor tag. Otherwise, a button tag.
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  href={href}
+  target={target}
+  rel={rel}
+  class={`btn btn--${variant} ${className}`}
+>
+  <slot />
+</Tag>
+
+<style>
+  /* --- BUTTON SYSTEM --- */
+  .btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-3) var(--spacing-6); /* Thay thế magic 14px 28px */
+    font-weight: 700;
+    font-size: var(--text-base);
+    text-transform: uppercase;
+    letter-spacing: 0.0625em; /* 1px / 16px */
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; /* KHÔNG DÙNG 'all' -> Nướng CPU */
+    cursor: pointer;
+    text-decoration: none !important;
+  }
+
+  .btn--primary {
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+    border: var(--border-width) solid var(--accent-primary);
+  }
+
+  .btn--primary:hover {
+    background-color: transparent;
+    color: var(--accent-primary);
+    box-shadow: 0 0 20px rgba(255, 101, 153, 0.4);
+  }
+
+  .btn--secondary {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: var(--border-width) solid var(--border-color);
+  }
+
+  .btn--secondary:hover {
+    border-color: var(--text-primary);
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+  }
+</style>

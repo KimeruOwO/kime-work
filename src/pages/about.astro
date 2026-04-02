@@ -1,0 +1,829 @@
+---
+import { Picture, getImage } from "astro:assets";
+
+import Layout from "../layouts/Layout.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import PageDecorBanner from "../components/PageDecorBanner.astro";
+import InfoWindow from "../components/InfoWindow.astro";
+import PlayIcon from "../components/icons/PlayIcon.astro";
+
+import kimeyuPFP from "../assets/images/kimeyu.jpg";
+
+// ==========================================================
+// DATA & CONFIG (Nguồn sự thật chỉ chứa Logic, KHÔNG chứa CSS)
+// ==========================================================
+
+const AVATAR_WIDTHS = [150, 300, 450, 500];
+const AVATAR_MOBILE_PX = 150;
+const AVATAR_DESKTOP_PX = 170;
+
+const avatarSizes = `(max-width: 1023px) ${AVATAR_MOBILE_PX}px, ${AVATAR_DESKTOP_PX}px`;
+
+const toolsFocus = [
+    { id: "ae", name: "Ae", variant: "ae" },
+    { id: "ai", name: "Ai", variant: "ai" },
+    { id: "ps", name: "Ps", variant: "ps" },
+];
+
+const valueCards = [
+    {
+        id: "1",
+        title: "MOVIE",
+        desc: "Motion graphics, 2D Music Video, 2D Advertising",
+        variant: "movie",
+    },
+    {
+        id: "2",
+        title: "ILLUST",
+        desc: "Character Design, Background, Landscape.",
+        variant: "illust",
+    },
+    {
+        id: "3",
+        title: "DESIGN",
+        desc: "Graphics, Package, Web, Editorial",
+        variant: "design",
+    },
+];
+
+const avifSrcset = (
+    await Promise.all(
+        AVATAR_WIDTHS.map((w) =>
+            getImage({ src: kimeyuPFP, format: "avif", width: w }),
+        ),
+    )
+)
+    .map((img, i) => `${img.src} ${AVATAR_WIDTHS[i]}w`)
+    .join(", ");
+---
+
+<Layout title="Kime Work - About">
+    <Fragment slot="head">
+        <link
+            rel="preload"
+            as="image"
+            imagesrcset={avifSrcset}
+            imagesizes={avatarSizes}
+            type="image/avif"
+            fetchpriority="high"
+        />
+    </Fragment>
+
+    <Fragment slot="banner">
+        <div class="banner-headers">
+            <SectionHeader
+                title="ABOUT ME"
+                isBanner={true}
+                align="responsive"
+            />
+            <SectionHeader
+                title="ABOUT"
+                subtitle="プロフィール"
+                subtitleOrientation="horizontal"
+                align="responsive"
+            />
+        </div>
+    </Fragment>
+
+    <div class="page-layout wrapper banner-spacing">
+        <nav class="sidebar-nav">
+            <PageDecorBanner
+                text="ABOUT ME"
+                href="#about-me"
+                compact
+                checkerPosition="end"
+            />
+            <PageDecorBanner
+                text="VALUE"
+                href="#value"
+                variant="secondary"
+                compact
+                checkerPosition="end"
+            />
+        </nav>
+
+        <div class="page-content">
+            <!-- ================= SECTION: HERO ================= -->
+            <PageDecorBanner id="about-me" text="ABOUT ME" />
+
+            <header
+                class="profile-hero-header grid-area-hero"
+                style={`--avatar-min: ${AVATAR_MOBILE_PX}px; --avatar-max: ${AVATAR_DESKTOP_PX}px;`}
+            >
+                <div class="avatar-container">
+                    <Picture
+                        src={kimeyuPFP}
+                        formats={["avif", "webp"]}
+                        fallbackFormat="jpg"
+                        alt="Kimeyu Profile Picture"
+                        fetchpriority="high"
+                        class="avatar-img"
+                        widths={AVATAR_WIDTHS}
+                        sizes={avatarSizes}
+                    />
+                </div>
+
+                <div class="info-banner">
+                    <div class="info-title-group">
+                        <h1 class="info-name">KIMEYU</h1>
+                        <PlayIcon class="icon-play" />
+                    </div>
+                </div>
+
+                <div class="info-badge">MOTION GRAPHICS DESIGNER</div>
+            </header>
+
+            <!-- ================= SECTION: TOOLS ================= -->
+            <section class="tools-section">
+                <div class="tools-section__head">
+                    <PageDecorBanner
+                        text="TOOLS FOCUS"
+                        compact
+                        checkerPosition="both"
+                        checkerPositionPc="end"
+                    />
+                </div>
+
+                <div class="tools-grid">
+                    {
+                        toolsFocus.map((tool) => (
+                            <div class={`tool-card tool-card--${tool.variant}`}>
+                                <span class="tool-name">{tool.name}</span>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <!-- ================= SECTION: BIO ================= -->
+            <section class="bio-section grid-area-bio">
+                <p class="bio-text">
+                    Born in VietNam in 2005. Worked as a freelancer who has
+                    creative journey began with anime to form a way of seeing
+                    the world through emotion, color, and movement.
+                </p>
+                <p class="bio-quote">
+                    <strong>Curiosity in motion, stories in rhythm.</strong>
+                </p>
+            </section>
+
+            <section class="bio-section grid-area-window">
+                <InfoWindow />
+            </section>
+
+            <!-- ================= SECTION: VALUE ================= -->
+            <div id="value" class="bottom-banners">
+                <PageDecorBanner text="VALUE" variant="secondary" noMargin />
+
+                <div class="banner-empty-filler" aria-hidden="true"></div>
+
+                <p class="value-desc">
+                    As a 2D-focused creative, I bring together illustration,
+                    animation, editing, and design into one cohesive production
+                    line. From concept development to final visuals, every stage
+                    is crafted with precision and intention.
+                </p>
+
+                <div class="value-cards-layout">
+                    {
+                        valueCards.map((card) => (
+                            <article class={`v-card v-card--${card.variant}`}>
+                                <header class="v-card__header" />
+                                <div class="v-card__body">
+                                    <div class="v-card__number-banner">
+                                        <span class="v-card__number">
+                                            {card.id}
+                                        </span>
+                                    </div>
+                                    <h4 class="v-card__title">{card.title}</h4>
+                                    <p class="v-card__desc">{card.desc}</p>
+                                </div>
+                            </article>
+                        ))
+                    }
+                </div>
+
+                <div class="value-conclusion">
+                    <div class="v-concl-graphic" aria-hidden="true"></div>
+                    <p class="v-concl-text">
+                        Music videos, animated visuals, illustrations, and
+                        graphic design are not separate disciplines, they are
+                        connected expressions working toward a single goal:
+                        delivering the client's message with clarity, emotion,
+                        and impact.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    /* ==========================================================
+                        GLOBAL & UTILITIES
+    ========================================================= */
+    .wrapper {
+        max-width: var(--content-max-width);
+        margin: 0 auto;
+        padding: 0 var(--spacing-4);
+    }
+    .banner-spacing {
+        margin-top: var(--spacing-8);
+    }
+    .banner-headers {
+        display: flex;
+        flex-direction: column;
+    }
+    .sidebar-nav {
+        display: none;
+    }
+    .page-content {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* ==========================================================
+                        CLASS VARIANTS (CLEAN ARCHITECTURE)
+    ========================================================= */
+    .tool-card--ae {
+        --brand-color: #ff6b9e;
+    }
+    .tool-card--ai {
+        --brand-color: #ff9b6a;
+    }
+    .tool-card--ps {
+        --brand-color: #005b6e;
+    }
+
+    .v-card--movie {
+        --card-head-bg: var(--color-primary);
+        --card-banner-bg: var(--color-secondary-light);
+        --card-dot-bg: var(--color-secondary-light);
+    }
+    .v-card--illust {
+        --card-head-bg: var(--color-secondary-light);
+        --card-banner-bg: var(--color-secondary-light);
+        --card-dot-bg: var(--color-accent-badge);
+    }
+    .v-card--design {
+        --card-head-bg: var(--color-secondary-light);
+        --card-banner-bg: var(--color-secondary-light);
+        --card-dot-bg: var(--color-accent-badge);
+    }
+
+    /* ==========================================================
+                        SECTION: VALUE
+    ========================================================= */
+    .bottom-banners {
+        --filler-h: 50px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: var(--filler-h) auto auto auto;
+        width: 100%;
+        column-gap: var(--spacing-4);
+    }
+    .bottom-banners > :global(.page-decor-banner) {
+        grid-column: 1;
+        grid-row: 1;
+        align-self: flex-end;
+    }
+
+    .banner-empty-filler {
+        --checker-cell: 34px;
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        align-items: center;
+        height: var(--filler-h);
+        margin-bottom: var(--spacing-6);
+    }
+    .banner-empty-filler::before {
+        content: "";
+        height: 100%;
+        aspect-ratio: 1 / 1;
+        flex-shrink: 0;
+        background-color: var(--bg-primary);
+        background-image: repeating-conic-gradient(
+            var(--color-secondary-light) 0 90deg,
+            transparent 0 180deg
+        );
+        background-size: var(--checker-cell) var(--checker-cell);
+        background-position: calc(var(--checker-cell) / 2) 0;
+    }
+    .banner-empty-filler::after {
+        content: "";
+        flex: 1;
+        height: 100%;
+        background-color: var(--color-secondary-light);
+    }
+
+    .value-desc {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        position: relative;
+        margin: var(--spacing-10) 0 0;
+        padding-left: var(--spacing-4);
+        color: var(--color-secondary-dark);
+        font-size: clamp(var(--text-base), 2vw, var(--text-base));
+        font-weight: 500;
+        line-height: 1.6;
+        text-align: justify;
+        hyphens: auto;
+        -webkit-hyphens: auto;
+    }
+    .value-desc::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: var(--color-secondary-dark);
+    }
+
+    /* VALUE CARDS */
+    .value-cards-layout {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-8);
+        margin-top: var(--spacing-10);
+        width: 100%;
+    }
+    .v-card {
+        border: var(--border-width-sm) solid var(--color-secondary-darker);
+        border-radius: var(--spacing-3);
+        background-color: var(--bg-secondary);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .v-card__header {
+        height: 2rem;
+        background-color: var(--card-head-bg);
+        border-bottom: var(--border-width-sm) solid
+            var(--color-secondary-darker);
+        display: flex;
+        align-items: center;
+        padding: 0 var(--spacing-2);
+        flex-shrink: 0;
+    }
+    .v-card__header::before {
+        content: "";
+        display: block;
+        width: 1rem;
+        height: 1rem;
+        background-color: var(--card-dot-bg);
+        border: 2px solid var(--color-secondary-darker);
+        border-radius: 50%;
+    }
+
+    .v-card__body {
+        padding: var(--spacing-6) var(--spacing-4);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        flex-grow: 1;
+        justify-content: center;
+    }
+    .v-card__number-banner {
+        --checker-cell: 16px;
+        width: 100%;
+        height: 1.5rem;
+        background-color: var(--card-banner-bg);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: var(--spacing-4);
+        flex-shrink: 0;
+    }
+    .v-card__number-banner::before,
+    .v-card__number-banner::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 2rem;
+        background: repeating-conic-gradient(
+                var(--bg-secondary) 0 90deg,
+                transparent 0 180deg
+            )
+            0 0 / var(--checker-cell) var(--checker-cell);
+    }
+    .v-card__number-banner::before {
+        left: 0;
+    }
+    .v-card__number-banner::after {
+        right: 0;
+    }
+    .v-card__number {
+        font-size: var(--text-lg);
+        font-weight: 900;
+        color: var(--color-secondary-darker);
+        line-height: 1;
+        position: relative;
+        z-index: 2;
+    }
+    .v-card__title {
+        font-size: var(--text-xl);
+        font-weight: 900;
+        color: var(--color-secondary-darker);
+        margin: 0 0 var(--spacing-2) 0;
+        letter-spacing: 0.05em;
+    }
+    .v-card__desc {
+        font-size: var(--text-sm);
+        font-weight: 500;
+        color: var(--color-secondary-dark);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* ==========================================================
+                        VALUE: CONCLUSION BLOCK
+    ========================================================= */
+    .value-conclusion {
+        grid-column: 1 / -1;
+        grid-row: 4;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-6);
+        margin-top: var(--spacing-8);
+        padding: var(--spacing-6) var(--spacing-4);
+        background-color: var(--bg-secondary);
+        border-radius: var(--spacing-2);
+    }
+
+    .v-concl-graphic {
+        --checker-cell: 30px;
+        --c-pink: var(--color-primary, #ff6b9e);
+        display: flex;
+        width: 100%;
+        height: calc(var(--checker-cell) * 1.5);
+        max-width: 100%;
+        flex-shrink: 0;
+    }
+    .v-concl-graphic::before {
+        content: "";
+        height: 100%;
+        width: calc(var(--checker-cell) * 1.5);
+        flex-shrink: 0;
+        aspect-ratio: 1 / 1;
+        background-color: var(--bg-primary);
+        background-image: repeating-conic-gradient(
+            var(--c-pink) 0 90deg,
+            var(--bg-secondary) 0 180deg
+        );
+        background-size: var(--checker-cell) var(--checker-cell);
+        background-position: calc(var(--checker-cell) / 2) 0;
+    }
+    .v-concl-graphic::after {
+        content: "";
+        flex: 1;
+        height: 100%;
+        background-color: var(--c-pink);
+    }
+
+    .v-concl-text {
+        color: var(--color-secondary-dark);
+        font-size: clamp(var(--text-base), 1.5vw, var(--text-base));
+        font-weight: 500;
+        line-height: 1.6;
+        margin: 0;
+        position: relative;
+        padding-left: var(--spacing-4);
+        text-align: justify;
+    }
+
+    .v-concl-text::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: inherit;
+    }
+
+    /* ==========================================================
+                        SECTION: HERO & OTHERS
+    ========================================================= */
+    .profile-hero-header {
+        --avatar-size: clamp(var(--avatar-min), 25vw, var(--avatar-max));
+        --avatar-overlap: var(--spacing-7);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+    .avatar-container {
+        position: relative;
+        z-index: 2;
+        flex-shrink: 0;
+        width: var(--avatar-size);
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+        border: var(--border-width-md) solid var(--color-secondary-dark);
+        margin-bottom: calc(-1 * var(--avatar-overlap));
+    }
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        display: block;
+        color: transparent;
+        background-color: var(--bg-secondary);
+    }
+    .info-banner {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        z-index: 1;
+        align-items: center;
+        gap: var(--spacing-4);
+        border-radius: 0 clamp(var(--spacing-10), 10vw, var(--spacing-2))
+            clamp(var(--spacing-10), 10vw, var(--spacing-2)) 0;
+        margin-bottom: clamp(var(--spacing-4), 3vw, var(--spacing-6));
+        padding: clamp(var(--spacing-9), 5vw, var(--spacing-10))
+            clamp(var(--spacing-4), 3vw, var(--spacing-6))
+            clamp(var(--spacing-6), 4vw, var(--spacing-8));
+        width: 100%;
+        background: linear-gradient(
+            to right,
+            var(--color-tertiary),
+            var(--color-secondary-medium)
+        );
+    }
+    .info-banner::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 100%;
+        width: calc(50vw - 50%);
+        background-color: var(--color-secondary-soft);
+    }
+    .info-title-group {
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        position: relative;
+    }
+    .info-title-group :global(.icon-play) {
+        position: absolute;
+        left: calc(100% + var(--spacing-2));
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .info-name {
+        font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+        font-weight: 900;
+        color: var(--text-primary);
+        margin: 0;
+        line-height: 1;
+    }
+    .info-badge {
+        position: relative;
+        z-index: 3;
+        align-self: center;
+        margin-top: calc(-1 * var(--spacing-8));
+        background-color: var(--color-accent-badge);
+        color: var(--text-inverse);
+        font-weight: 800;
+        font-size: clamp(var(--text-sm), 3vw, var(--text-base));
+        padding: clamp(var(--spacing-1), 1vw, var(--spacing-2))
+            clamp(var(--spacing-3), 2.5vw, var(--spacing-5));
+        border-radius: var(--radius-3xl);
+        border: var(--border-width-sm) solid var(--color-secondary-darker);
+        white-space: nowrap;
+        max-width: 90vw;
+        box-shadow: var(--spacing-2) var(--spacing-2) 0
+            var(--color-secondary-light);
+    }
+
+    .tools-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: var(--spacing-10) 0 var(--spacing-2);
+        gap: var(--spacing-6);
+    }
+    .tools-section__head {
+        width: 100%;
+    }
+    .tools-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-4);
+        align-items: center;
+        justify-content: center;
+    }
+    .tool-card {
+        --current-color: var(--brand-color, var(--color-secondary-dark));
+        display: grid;
+        place-items: center;
+        width: clamp(3.75rem, 15vw, 5.625rem);
+        aspect-ratio: 1 / 1;
+        border: var(--border-width-md) solid var(--current-color);
+        border-radius: 1.25rem;
+        font-weight: 900;
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        color: var(--current-color);
+        background-color: transparent;
+    }
+
+    .bio-section {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-2);
+        text-align: justify;
+        text-align-last: center;
+        hyphens: auto;
+        -webkit-hyphens: auto;
+        margin: var(--spacing-6) 0 var(--spacing-10);
+    }
+    .bio-text {
+        color: var(--color-secondary-dark);
+        font-size: clamp(1rem, 2.5vw, var(--text-base));
+        line-height: 1.6;
+        margin: 0;
+    }
+    .bio-quote {
+        color: var(--color-secondary-dark);
+        font-size: clamp(1rem, 2.5vw, var(--text-lg));
+        margin: 0;
+    }
+
+    @media (max-width: 1023px) {
+        .tools-section__head {
+            display: flex;
+            justify-content: center;
+        }
+    }
+
+    /* ==========================================================
+        RESPONSIVE TABLET & SMALL PC (>= 1024px)
+        Chỉ kích hoạt Layout tổng thể (Sidebar xuất hiện).
+        Nội dung bên trong .page-content vẫn giữ nguyên 1 cột.
+    ========================================================= */
+    @media (min-width: 1024px) {
+        .page-layout {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: var(--spacing-8);
+            align-items: start;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-4);
+            position: sticky;
+            top: calc(var(--header-height-pc) + var(--spacing-4));
+            align-self: start;
+        }
+
+        .sidebar-nav :global(.page-decor-banner) {
+            width: 100%;
+        }
+        .info-banner::before {
+            width: 0;
+        }
+    }
+
+    /* ==========================================================
+        RESPONSIVE LARGE PC (>= 1200px)
+        Đủ không gian rộng -> .page-content chuyển sang Grid phức tạp.
+    ========================================================= */
+    @media (min-width: 1200px) {
+        .page-content {
+            display: grid;
+            grid-template-columns: minmax(0, 3.5fr) minmax(0, 6.5fr);
+            grid-template-areas:
+                "banner      banner"
+                "hero        window"
+                "bio         window"
+                "tools       window"
+                "valueArea   valueArea";
+            gap: var(--spacing-8) var(--spacing-10);
+            grid-template-rows: auto max-content max-content 1fr auto;
+            align-items: start;
+        }
+
+        .page-content > :global(.page-decor-banner:first-of-type) {
+            grid-area: banner;
+        }
+
+        .bottom-banners {
+            grid-area: valueArea;
+            display: grid;
+            grid-template-columns: subgrid;
+            grid-template-rows: var(--filler-h) auto auto auto;
+        }
+
+        .bottom-banners > :global(.page-decor-banner) {
+            grid-column: 1;
+            grid-row: 1 / span 2;
+            align-self: flex-end;
+        }
+
+        /* Định vị Filler Graphic vào Grid của PC */
+        .banner-empty-filler {
+            grid-column: 2;
+            grid-row: 1;
+            align-self: center;
+        }
+
+        .value-desc {
+            grid-column: 2;
+            grid-row: 2;
+            margin: 0;
+            text-align: left;
+        }
+
+        .value-cards-layout {
+            grid-column: 1 / -1;
+            grid-row: 3;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-6);
+            align-items: stretch;
+        }
+
+        .value-conclusion {
+            grid-column: 1 / -1;
+            grid-row: 4;
+            display: grid;
+            grid-template-columns: subgrid;
+            align-items: center;
+            background-color: transparent;
+            padding: var(--spacing-10) 0 0 0;
+            border-radius: 0;
+            margin-top: 0;
+        }
+
+        /* Định vị Graphic Block vào Grid của PC */
+        .v-concl-graphic {
+            grid-column: 1;
+            justify-self: start;
+            max-width: 100%;
+        }
+
+        .v-concl-text {
+            grid-column: 2;
+            text-align: left;
+        }
+
+        .tools-section {
+            grid-area: tools;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding-left: calc(var(--avatar-size) + var(--spacing-6));
+            margin-top: 0;
+        }
+
+        .tools-grid {
+            justify-content: flex-start;
+        }
+
+        .profile-hero-header {
+            grid-area: hero;
+            align-items: flex-start;
+            --avatar-overlap: calc(0.5 * var(--avatar-size));
+        }
+
+        .info-banner {
+            width: auto;
+            align-items: flex-start;
+            padding: clamp(var(--spacing-8), 5vw, var(--spacing-4))
+                var(--spacing-20) var(--spacing-8)
+                calc(var(--avatar-size) + var(--spacing-6));
+        }
+
+        .info-banner::before {
+            width: 0;
+        }
+
+        .info-badge {
+            position: static;
+            z-index: auto;
+            align-self: flex-start;
+            margin-top: 0;
+        }
+
+        .grid-area-bio {
+            grid-area: bio;
+            padding-left: calc(var(--avatar-size) + var(--spacing-6));
+            text-align-last: left;
+            margin: 0;
+            max-width: calc(var(--avatar-size) + 12.5rem);
+        }
+
+        .grid-area-window {
+            grid-area: window;
+            margin-top: calc(0.5 * var(--avatar-size));
+        }
+    }
+</style>

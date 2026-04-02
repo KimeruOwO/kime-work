@@ -1,0 +1,285 @@
+---
+// src/components/ModeSwitch.astro
+import SwitchIcon from "./icons/SwitchIcon.astro";
+import VideoIcon from "./icons/VideoIcon.astro";
+import ArtworkIcon from "./icons/ArtworkIcon.astro";
+---
+
+<mode-switch-ctrl class="mode-switch-section">
+    <h2 class="mode-switch-title">MODE SWITCH</h2>
+
+    <!-- Nút bấm -->
+    <div class="mode-switch-container">
+        <button class="switch-btn" data-target="motions">
+            <span>MOTIONS</span>
+            <VideoIcon width="20" height="20" />
+        </button>
+
+        <!-- Divider Toggle Button -->
+        <button
+            type="button"
+            class="switch-divider-btn"
+            aria-label="Toggle Mode"
+        >
+            <SwitchIcon width="24" height="24" />
+        </button>
+
+        <!-- Nút Artwork -->
+        <button class="switch-btn" data-target="artwork">
+            <span>ARTWORK</span>
+            <ArtworkIcon width="20" height="20" />
+        </button>
+    </div>
+</mode-switch-ctrl>
+
+<script>
+    class ModeSwitchCtrl extends HTMLElement {
+        connectedCallback() {
+            const buttons =
+                this.querySelectorAll<HTMLButtonElement>(".switch-btn");
+            const toggleBtn = this.querySelector<HTMLButtonElement>(
+                ".switch-divider-btn",
+            );
+
+            const switchMode = (mode: string) => {
+                if (document.documentElement.dataset.workMode === mode) return;
+                document.documentElement.dataset.workMode = mode;
+                window.history.replaceState(null, "", "#" + mode);
+            };
+
+            buttons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const target = btn.getAttribute("data-target");
+                    if (target) switchMode(target);
+                });
+            });
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener("click", () => {
+                    const current = document.documentElement.dataset.workMode;
+                    switchMode(current === "artwork" ? "motions" : "artwork");
+                });
+            }
+        }
+    }
+
+    if (!customElements.get("mode-switch-ctrl")) {
+        customElements.define("mode-switch-ctrl", ModeSwitchCtrl);
+    }
+</script>
+
+<style>
+    /* ==========================================================
+       1. KIẾN TRÚC CSS GRID (MOBILE FIRST)
+    ========================================================== */
+    .mode-switch-section {
+        --banner-h: clamp(var(--spacing-12), 8vw, var(--spacing-16));
+        --cell: calc(var(--banner-h) / 1.5);
+        --checker-w: calc(var(--cell) * 1.5);
+
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        grid-template-rows: var(--banner-h) auto;
+
+        position: relative;
+        width: 100%;
+        background-color: var(--bg-secondary);
+        border-top-left-radius: clamp(1.5rem, 4vw, 2.5rem);
+        border-top-right-radius: clamp(1.5rem, 4vw, 2.5rem);
+
+        padding-bottom: var(--spacing-4);
+        overflow: hidden;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    /* ==========================================================
+       2. MẶT NẠ CSS: BLOCK -> CARO ĐƯỢC ĐẨY THÀNH GRID ITEMS
+    ========================================================== */
+    .mode-switch-section::before,
+    .mode-switch-section::after {
+        content: "";
+        height: var(--banner-h);
+        background-color: var(--color-secondary-medium);
+        --c: var(--bg-secondary);
+
+        background-image:
+            linear-gradient(
+                to right,
+                transparent 0,
+                transparent calc(var(--checker-w) - 1px),
+                var(--color-secondary-medium) calc(var(--checker-w) - 1px),
+                var(--color-secondary-medium) 100%
+            ),
+            linear-gradient(
+                45deg,
+                var(--c) calc(25% + 0.5px),
+                transparent calc(25% + 0.5px),
+                transparent calc(75% - 0.5px),
+                var(--c) calc(75% - 0.5px)
+            ),
+            linear-gradient(
+                45deg,
+                var(--c) calc(25% + 0.5px),
+                transparent calc(25% + 0.5px),
+                transparent calc(75% - 0.5px),
+                var(--c) calc(75% - 0.5px)
+            );
+
+        /* Lớp mặt nạ kéo full 100%, 2 Lớp Caro chẻ nhau bù đắp khối pixel vuông nét căng */
+        background-size:
+            100% 100%,
+            var(--cell) var(--cell),
+            var(--cell) var(--cell);
+
+        background-repeat: no-repeat, repeat, repeat;
+        background-position:
+            right top,
+            left top,
+            calc(var(--cell) / 2) calc(var(--cell) / 2);
+    }
+
+    .mode-switch-section::before {
+        grid-column: 1;
+        grid-row: 1;
+        transform: scaleX(-1);
+    }
+
+    .mode-switch-section::after {
+        grid-column: 3;
+        grid-row: 1;
+    }
+
+    /* ==========================================================
+       3. HEADER VÀ TITLE
+    ========================================================== */
+    .mode-switch-title {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        margin: 0;
+        padding: 0 clamp(1rem, 4vw, 3rem);
+        color: var(--color-secondary-darker);
+        font-size: clamp(1.25rem, 4vw, 2.5rem);
+        font-weight: 900;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+    }
+
+    .mode-switch-title::before,
+    .mode-switch-title::after {
+        content: "";
+        display: block;
+        width: clamp(12px, 3vw, 20px);
+        aspect-ratio: 1 / 1;
+        background-color: var(--color-primary);
+    }
+    .mode-switch-title::before {
+        clip-path: polygon(0 0, 100% 50%, 0 100%);
+    }
+    .mode-switch-title::after {
+        clip-path: polygon(100% 0, 0 50%, 100% 100%);
+    }
+
+    /* ==========================================================
+       4. CONTAINER NÚT BẤM
+    ========================================================== */
+    .mode-switch-container {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: center;
+        margin-top: var(--spacing-4);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: fit-content;
+        border: var(--border-width-xs) solid var(--color-secondary-darker);
+        border-radius: var(--radius-pill);
+        padding: var(--spacing-1) var(--spacing-2);
+        background-color: var(--bg-secondary);
+    }
+
+    .switch-btn {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        border: var(--border-width-xs) solid transparent;
+        border-radius: var(--radius-pill);
+        padding: var(--spacing-2) clamp(var(--spacing-4), 4vw, var(--spacing-8));
+        font-size: clamp(var(--text-sm), 2.5vw, var(--text-base));
+        font-weight: 900;
+        color: var(--color-secondary-darker);
+        cursor: pointer;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            opacity 0.2s ease;
+    }
+
+    .switch-btn:hover {
+        opacity: 0.7;
+    }
+
+    /* State-Driven: Nút active phản ứng theo data-work-mode trên <html> */
+    :global(html[data-work-mode="motions"]) .switch-btn[data-target="motions"],
+    :global(html[data-work-mode="artwork"]) .switch-btn[data-target="artwork"] {
+        background-color: var(--color-primary);
+        color: var(--text-inverse);
+        border-color: var(--color-secondary-darker);
+        box-shadow: 3px 3px 0 var(--color-secondary-bright);
+        opacity: 1;
+    }
+
+    .switch-btn :global(svg) {
+        flex-shrink: 0;
+    }
+
+    .switch-divider-btn {
+        color: var(--color-secondary-darker);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 var(--spacing-4);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .switch-divider-btn:hover {
+        color: var(--color-primary);
+    }
+
+    .switch-divider-btn:focus-visible {
+        outline: var(--border-width-xs) dashed var(--color-primary);
+        outline-offset: 2px;
+        border-radius: var(--radius-sm);
+    }
+
+    /* ==========================================================
+       5. BẢN LỀ RESPONSIVE CHO PC (>= 1024px)
+    ========================================================== */
+    @media (min-width: 1024px) {
+        .mode-switch-section {
+            grid-template-columns: 1fr auto auto 1fr;
+            grid-template-rows: var(--banner-h);
+            padding-bottom: 0;
+        }
+
+        .mode-switch-container {
+            grid-column: 3;
+            grid-row: 1;
+            margin-top: 0;
+            margin-right: var(--spacing-8);
+            align-self: center;
+        }
+
+        .mode-switch-section::after {
+            grid-column: 4;
+        }
+    }
+</style>
