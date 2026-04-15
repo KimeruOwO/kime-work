@@ -5,7 +5,7 @@ import KimeyuIcon from "./icons/KimeyuIcon.astro";
 export interface Props {
   title: string;
   subtitle?: string;
-  subtitleOrientation?: "vertical" | "horizontal";
+  subtitleOrientation?: "vertical" | "horizontal" | "stacked";
   isBanner?: boolean;
   isHeroBanner?: boolean;
   align?: "center" | "left" | "responsive";
@@ -27,15 +27,12 @@ const {
       "page-banner", 
       `page-banner--align-${align}`,
       isHeroBanner && "page-banner--hero"
-    ]}>
-      <div class="page-banner__bg-text" aria-hidden="true">
-        {title}
-      </div>
+    ]} data-title={title} aria-hidden="true">
     </div>
   ) : (
     <div class:list={["section-header", `section-header--align-${align}`]}>
       
-      <!-- LAYER HOẠ TIẾT TRÁI: Zero DOM Bloat bằng Flex Order -->
+      <!-- LAYER HOẠ TIẾT TRÁI -->
       <div class="section-header__left" aria-hidden="true">
         <div class="section-header__symbols">
           <span class="symbol-cross"></span>
@@ -48,7 +45,8 @@ const {
         <div class="section-header__title-anchor">
           <h2 class:list={[
             "section-header__title",
-            subtitleOrientation === "horizontal" && "section-header__title--horizontal-subtitle"
+            subtitleOrientation === "horizontal" && "section-header__title--horizontal",
+            subtitleOrientation === "stacked" && "section-header__title--stacked"
           ]}>
             <span class="section-header__title-text">{title}</span>
             {subtitle && (
@@ -110,7 +108,6 @@ const {
     --pad: var(--spacing-4, 1rem);
     --distance-to-sidebar: max(var(--pad), calc(50vw - (var(--c-max) / 2) + var(--pad)));
     
-    /* Clamp tự nội suy mượt mà từ 320px đến 1023px */
     --decor-cell: clamp(26px, 4vw, 30px);
     --decor-width: calc(var(--decor-cell) * 2);
     --decor-height: calc(var(--decor-cell) * 1.5); 
@@ -130,7 +127,6 @@ const {
     --cross-length: clamp(16px, 3vw, 18px);
     --symbol-thickness: 4px;
     --border-cross: 3px;
-    
     
     --current-right-edge: calc(var(--block-width) + var(--fixed-decor-width));
     --max-allowed-right-edge: calc(var(--text-start) - var(--safe-gap-left));
@@ -188,7 +184,7 @@ const {
       linear-gradient(45deg, var(--c) calc(25% + 0.5px), transparent calc(25% + 0.5px), transparent calc(75% - 0.5px), var(--c) calc(75% - 0.5px)),
       linear-gradient(45deg, var(--c) calc(25% + 0.5px), transparent calc(25% + 0.5px), transparent calc(75% - 0.5px), var(--c) calc(75% - 0.5px));
     background-position: 0 0, calc(var(--decor-cell) / 2) calc(var(--decor-cell) / 2);
-    background-size: var(--decor-cell) var(--decor-cell);
+    background-size: 50% calc(100% / 1.5);
     background-repeat: repeat;
     margin-left: calc(var(--decor-overlap) * -1);
     flex-shrink: 0;
@@ -206,7 +202,7 @@ const {
   .symbol-circle {
     width: var(--symbol-size);
     height: var(--symbol-size);
-    border: var(--symbol-thickness) solid var(--accent-primary);
+    border: var(--symbol-thickness) solid var(--color-primary);
     border-radius: var(--radius-pill);
   }
 
@@ -222,8 +218,8 @@ const {
     position: absolute;
     width: var(--cross-length);
     height: var(--symbol-thickness);
-    background-color: var(--accent-primary);
-    border: var(--border-cross) solid var(--accent-primary);
+    background-color: var(--color-primary);
+    border: var(--border-cross) solid var(--color-primary);
     top: 50%;
     left: 50%;
   }
@@ -237,16 +233,16 @@ const {
   }
   
   /* ==========================================================
-     TEXT SETTINGS
+     TEXT SETTINGS (MOBILE FIRST)
   ========================================================== */
   .section-header__title {
     font-size: clamp(1rem, 6vw, 2.6rem);
     font-weight: 800;
-    color: var(--accent-primary);
+    color: var(--color-primary);
     display: flex;
-    flex-direction: row; /* Chuyển thành hàng ngang */
+    flex-direction: row;
     justify-content: center;
-    align-items: stretch; /* Đẩy Subtitle Vertical cao bằng đúng Title */
+    align-items: stretch;
     gap: clamp(8px, 1.5vw, 12px);
     text-transform: uppercase;
     text-align: center;
@@ -255,23 +251,32 @@ const {
   }
   
   .section-header__title-text {
-    line-height: 0.85; /* Offset bounding box để loại trừ khoảng trắng dư của font */
+    line-height: 0.85; 
     display: flex;
     align-items: center;
   }
 
-  .section-header__title--horizontal-subtitle {
-    flex-direction: column; /* Trên Mobile mặc định xếp dọc xuống dòng */
+  /* Variant: Horizontal (About) - Canh giữa trên Mobile */
+  .section-header__title--horizontal {
+    flex-direction: column;
     align-items: center; 
-    gap: var(--spacing-4); /* Thêm một chút khoảng cách để chữ không bị dính sát nhau */
+    gap: var(--spacing-4);
+  }
+
+  /* Variant: Stacked (Motions) - Ép trái, dính sát trên mọi màn hình */
+  .section-header__title--stacked {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2); 
   }
 
   .section-header__subtitle {
     font-weight: 800;
-    color: var(--accent-primary);
+    color: var(--color-primary);
     line-height: 1;
   }
 
+  /* Form Artwork (Dọc) */
   .section-header__subtitle--vertical {
     font-size: calc(0.9em / var(--char-count, 4));
     writing-mode: vertical-lr;
@@ -281,11 +286,19 @@ const {
     padding-bottom: 1px;
   }
 
-  .section-header__subtitle--horizontal {
-    font-size: 0.35em; /* Tỷ lệ vàng tương quan với font chữ TITLE */
+  /* Form nằm ngang dùng chung */
+  .section-header__subtitle--horizontal,
+  .section-header__subtitle--stacked {
+    font-size: 0.35em;
     writing-mode: horizontal-tb;
     letter-spacing: 0.05em;
-    padding-bottom: 0.05em; /* Tinh chỉnh baseline khớp với dòng text do font có offset nhẹ */
+    padding-bottom: 0.05em;
+  }
+
+  /* Motions Only: Màu Xanh Đen, Không viết hoa */
+  .section-header__subtitle--stacked {
+    color: var(--text-primary);
+    text-transform: none;
   }
   
   /* ==========================================================
@@ -315,21 +328,15 @@ const {
   }
   
   .section-header__right-top {
-    /* Scale properties up for the right side */
     --symbol-size: clamp(20px, 5vw, 24px);
     --cross-length: clamp(20px, 4vw, 24px);
     --symbol-thickness: 5px;
     --border-cross: 4px;
-    
-    /* Make blocks the exact same height as the symbols */
     --checker-h: var(--symbol-size);
-    /* Scale checker pattern proportionally to the new height */
     --checker-cell: calc(var(--checker-h) / 1.5);
-    /* Dynamically derive width from cell size to perfectly hug the pattern bounds */
     --checker-w: calc(var(--checker-cell) * 1.5);
-    
-    /* Set gap as variable for accurate math overlap */
     --top-gap: 8px;
+
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -347,12 +354,11 @@ const {
   .section-header__right-top::before {
     content: "";
     order: 3;
-    /* Đổi flex 1 thành 0 để nó không giãn ra mút chỉ */
     flex: 0 0 auto;
-    width: clamp(30px, 8vw, 80px); /* Bề ngang vừa phải, có thể tự co giãn theo tỷ lệ màn chứ không chiếm hết */
+    width: clamp(30px, 8vw, 80px);
     min-width: calc(var(--checker-h) * var(--block-ratio));
     height: var(--checker-h);
-    background-color: var(--accent-primary);
+    background-color: var(--color-primary);
   }
 
   .section-header__right-top::after {
@@ -362,18 +368,15 @@ const {
     height: var(--checker-h);
     background-color: var(--bg-primary);
     
-    --c: var(--accent-primary);
+    --c: var(--color-primary);
     background-image: 
       linear-gradient(45deg, var(--c) calc(25% + 0.5px), transparent calc(25% + 0.5px), transparent calc(75% - 0.5px), var(--c) calc(75% - 0.5px)),
       linear-gradient(45deg, var(--c) calc(25% + 0.5px), transparent calc(25% + 0.5px), transparent calc(75% - 0.5px), var(--c) calc(75% - 0.5px));
-    background-size: var(--checker-cell) var(--checker-cell);
+    background-size: calc(100% / 1.5) calc(100% / 1.5);
     background-repeat: repeat;
-    /* Shift pattern to match the original conic-gradient 90deg offset */
     background-position: 
       calc(var(--checker-cell) / 2) 0, 
       var(--checker-cell) calc(var(--checker-cell) / 2);
-    
-    /* Neutralize flex gap distance to explicitly overlap by exactly half a cell */
     margin-left: calc((var(--checker-cell) / -2) - var(--top-gap));
   }
   
@@ -447,11 +450,12 @@ const {
 
   .section-header__right-bottom :global(.vector-icon path),
   .section-header__right-bottom :global(.vector-icon circle) {
-    fill: var(--color-secondary-bright) !important;
+    fill: var(--color-secondary-bright);
   }
   
-  .is-pc-only {
-    display: none !important;
+  .decor-mini-squares.is-pc-only,
+  .decor-kimeyu-wrapper.is-pc-only {
+    display: none;
   }
   
   /* ==========================================================
@@ -461,12 +465,13 @@ const {
     position: relative;
     width: 100%;
     height: var(--banner-height-mobile);
-    background-color: var(--accent-primary);
+    background-color: var(--color-primary);
     overflow: hidden;
     user-select: none;
   }
 
-  .page-banner__bg-text {
+  .page-banner::before {
+    content: attr(data-title);
     position: absolute;
     top: 50%;
     left: 0;
@@ -482,9 +487,6 @@ const {
     pointer-events: none;
   }
   
-  /* ==========================================================
-     PAGE BANNER HERO (VARIANT ÔM SÁT CHIỀU CAO CHỮ DÀNH CHO WORKS)
-  ========================================================== */
   .page-banner--hero {
     height: auto;
     display: flex;
@@ -493,13 +495,13 @@ const {
     padding: var(--spacing-1) 0;
   }
 
-  .page-banner--hero .page-banner__bg-text {
+  .page-banner--hero::before {
     position: relative;
     top: auto;
     left: auto;
     transform: none;
     width: auto;
-    flex-shrink: 0; /* Cho phép chữ tràn viền phân bổ đều 2 bên */
+    flex-shrink: 0;
     font-size: clamp(6rem, 28vw, 12rem);
     line-height: 0.85;
   }
@@ -519,10 +521,8 @@ const {
   
   /* ==========================================================
      RESPONSIVE PC (>= 1024px)
-     ĐIỂM GÃY DUY NHẤT: Bật Layout tĩnh cỡ lớn, tránh vỡ Tablet
   ========================================================== */
   @media (min-width: 1024px) {
-    /* 1. Kích hoạt kích thước họa tiết khổng lồ */
     .section-header {
       padding: var(--spacing-12) 0;
       --decor-cell: 60px;
@@ -538,23 +538,41 @@ const {
       gap: var(--spacing-6);
     }
 
-    /* 2. Kích thước text cho PC */
+    /* -------------------------------------
+       TEXT SETTINGS FOR PC 
+       ------------------------------------- */
     .section-header__title {
       font-size: var(--text-8xl);
       flex-direction: row;
       align-items: flex-end;
     }
 
-    .section-header__title--horizontal-subtitle {
+    /* About: Dàn hàng ngang (Row) */
+    .section-header__title--horizontal {
       flex-direction: row;
       align-items: flex-end;
       gap: var(--spacing-4);
     }
 
+    /* Motions: Rớt hàng dọc (Column) và ép sát lề trái */
+    .section-header__title--stacked {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-4);
+    }
+
+    /* Subtitle chung */
     .section-header__subtitle {
       font-size: var(--text-2xl);
       margin-left: var(--spacing-4);
     }
+
+    /* Khử margin trái thừa kế trên Motions */
+    .section-header__subtitle--stacked {
+      margin-left: 0;
+    }
+
+    /* ------------------------------------- */
 
     .page-banner {
       height: var(--banner-height-pc);
@@ -562,14 +580,14 @@ const {
     
     .page-banner--hero {
       justify-content: flex-start;
-      height: auto; /* Override default banner height safely in scope */
+      height: auto;
     }
 
-    .page-banner__bg-text {
+    .page-banner::before {
       font-size: var(--text-super);
     }
 
-    .page-banner--hero .page-banner__bg-text {
+    .page-banner--hero::before {
       width: auto;
       text-align: left;
     }
@@ -578,37 +596,30 @@ const {
       --border-cross: 8px;
     }
 
-    /* 3. Họa tiết bên phải phóng to */
     .section-header__right {
       --r-thickness: 5px;
       --checker-cell: 20px;
       --checker-w: calc(var(--checker-cell) * 1.5);
       --symbol-h: 30px;
       --block-ratio: 1.8;
-
       align-items: stretch;
     }
 
     .section-header__right-top {
-      /* Scale up slightly specifically for PC right side */
       --symbol-size: 50px;
       --cross-length: 46px;
       --symbol-thickness: 10px;
       --border-cross: 10px;
     }
     
-    /* 4. Kích hoạt Grid phức tạp (Thêm cột, thêm khối vuông) */
     .section-header__right-bottom {
       --gap-size: 4px;
       --h-top: clamp(8px, 1.5vw, 12px);
       --h-bottom: clamp(14px, 2.5vw, 18px);
       --border-pad: var(--spacing-2);
-      
-      /* Mở rộng Grid: Vuông | Stack 1 | Khoảng cách | Vuông 2 | Stack 2 */
       grid-template-columns: var(--sq-width) auto var(--spacing-6) var(--sq-width) auto;
     }
     
-    /* Khối vuông lớn thứ 2 (PC Only) được vẽ bằng Grid Area */
     .section-header__right-bottom::after {
       content: "";
       grid-column: 4;
@@ -629,15 +640,15 @@ const {
       grid-row: 2;
     }
     
-    /* Bật hiển thị các node phụ dành cho PC */
-    .is-pc-only {
-      display: flex !important;
+    .decor-mini-squares.is-pc-only,
+    .decor-kimeyu-wrapper.is-pc-only {
+      display: flex;
     }
 
-    /* 5. Ép trục canh lề khi Sidebar xuất hiện */
     .section-header--align-responsive {
       --text-start: var(--distance-to-sidebar);
     }
+
     .section-header--align-responsive .section-header__wrapper {
       justify-content: flex-start;
     }

@@ -1,0 +1,42 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import SectionHeader from "../../../components/SectionHeader.astro";
+import ModeSwitch from "../../../components/ModeSwitch.astro";
+import MotionGallery from "../../../features/motions/components/MotionGallery.astro";
+import { fetchVideos } from "../../../lib/hygraph";
+import type { Video } from "../../../lib/hygraph";
+import type { GetStaticPaths, Page } from "astro";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const videos = await fetchVideos();
+  return paginate(videos, { pageSize: 24 });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<Video>;
+}
+
+const { page } = Astro.props;
+---
+
+<Layout title={`Kime Work - Motions Page ${page.currentPage}`} description="Browse Kimeyu's motion graphics portfolio — music videos, debut trailers, and animated visuals.">
+  <Fragment slot="banner">
+    <div class="works-hero-group">
+      <SectionHeader
+        title="WORKS"
+        isBanner={true}
+        isHeroBanner={true}
+        align="responsive"
+      />
+      <div class="switch-overlap">
+        <ModeSwitch activeMode="motions" />
+      </div>
+    </div>
+  </Fragment>
+
+  <MotionGallery page={page} />
+</Layout>
+
+<style>
+  @import "../../../styles/works-hero.css";
+</style>

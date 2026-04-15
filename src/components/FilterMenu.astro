@@ -52,38 +52,78 @@ const {
 
 <script>
     class FilterMenuCtrl extends HTMLElement {
-        connectedCallback() {
-            const buttons = Array.from(this.querySelectorAll(".filter-btn"));
-            const groupName = this.getAttribute("data-group");
+        private _buttons: NodeListOf<HTMLElement> | null = null;
+        private _groupName: string = "";
 
-            buttons.forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    const targetValue = btn.getAttribute("data-value");
-                    if (!targetValue || btn.classList.contains("is-active"))
-                        return;
-
-                    // Giải nén các nút và bỏ class active
-                    buttons.forEach((b) => {
-                        b.classList.remove("is-active");
-                        b.setAttribute("aria-pressed", "false");
-                    });
-
-                    // Set Active cho nút vừa bấm
-                    btn.classList.add("is-active");
-                    btn.setAttribute("aria-pressed", "true");
-
-                    // Bắn event ra DOM thông báo bộ lọc đã thay đổi
-                    this.dispatchEvent(
-                        new CustomEvent("filter-changed", {
-                            detail: {
-                                group: groupName,
-                                value: targetValue,
-                            },
-                            bubbles: true,
-                        }),
-                    );
-                });
+        // DRY: Helper gom nhóm thay đổi UI DOM tránh trùng lặp code
+        private _activateBtn(buttons: NodeListOf<HTMLElement>, targetBtn: HTMLElement) {
+            buttons.forEach((b) => {
+                b.classList.remove("is-active");
+                b.setAttribute("aria-pressed", "false");
             });
+            targetBtn.classList.add("is-active");
+            targetBtn.setAttribute("aria-pressed", "true");
+        }
+
+        connectedCallback() {
+            this._buttons = this.querySelectorAll<HTMLElement>(".filter-btn");
+            this._groupName = this.dataset.group || "";
+            if (!this._groupName) return;
+
+            // Khôi phục state Filter từ LocalStorage khi chuyển trang
+            const savedFilter = localStorage.getItem(`kime-filter-${this._groupName}`);
+            
+            // Truy xuất trực tiếp bằng Query thay vì chạy vòng lặp tìm kiếm O(N)
+            if (savedFilter) {
+                const initialTargetBtn = this.querySelector<HTMLElement>(`.filter-btn[data-value="${CSS.escape(savedFilter)}"]`);
+                if (initialTargetBtn && !initialTargetBtn.classList.contains("is-active")) {
+                    this._activateBtn(this._buttons, initialTargetBtn);
+                    
+                    // Đẩy vào next frame để đảm bảo Gallery Manager đã kết nối
+                    requestAnimationFrame(() => {
+                        this.dispatchEvent(
+                            new CustomEvent("filter-changed", {
+                                detail: { group: this._groupName, value: savedFilter, isRestore: true },
+                                bubbles: true,
+                            })
+                        );
+                    });
+                }
+            }
+
+            // Gắn Event Delegation cực sạch chặn đứng Memory Leak:
+            // Truyền cứng Object interface "this" thay vì nhồi Anonymous Arrow Function. 
+            // Trình duyệt tự gọi hàm handleEvent() bằng C++ Native!
+            this.addEventListener("click", this);
+        }
+
+        disconnectedCallback() {
+            this.removeEventListener("click", this);
+        }
+
+        handleEvent(e: Event) {
+            // Bộ định tuyến (Event Router) chuẩn Unix
+            if (e.type === "click") {
+                const target = e.target as HTMLElement;
+                const btn = target.closest(".filter-btn") as HTMLElement | null;
+                
+                if (!btn || btn.classList.contains("is-active")) return;
+
+                const targetValue = btn.dataset.value;
+                if (!targetValue || !this._buttons) return;
+
+                localStorage.setItem(`kime-filter-${this._groupName}`, targetValue);
+                
+                this._activateBtn(this._buttons, btn);
+
+                // Bắn event ra DOM thông báo bộ lọc đã thay đổi
+                this.dispatchEvent(
+                    new CustomEvent("filter-changed", {
+                        detail: { group: this._groupName, value: targetValue },
+                        bubbles: true,
+                    }),
+                );
+            }
         }
     }
 
@@ -114,7 +154,7 @@ const {
 
     /* Label góc màn bên Trái */
     .filter-group__label {
-        border-radius: var(--radius-4xl) 0 0 var(--radius-4xl);
+        border-radius: var(--radius-2xl) 0 0 var(--radius-2xl);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -129,7 +169,7 @@ const {
     .filter-group::after {
         content: "";
         display: block;
-        border-radius: 0 var(--radius-4xl) var(--radius-4xl) 0;
+        border-radius: 0 var(--radius-2xl) var(--radius-2xl) 0;
     }
 
     /* Danh sách Option 1 Tầng ở Giữa */
@@ -174,6 +214,8 @@ const {
         box-shadow: 4px 4px 0 var(--color-primary);
     }
 
+    /* KHI Ở MOBILE (DƯỚI 768px): CÁC NÚT VUÔNG VẮN HOÀN TOÀN (BORDER-RADIUS: 0) ĐÃ ĐƯỢC KẾ THỪA TỪ .filter-btn */
+
     /* Hover Nút chưa Active */
     .filter-btn:hover:not(.is-active) {
         transform: translate(-1px, -1px);
@@ -212,6 +254,23 @@ const {
         .filter-group__options {
             flex-direction: row;
             min-width: unset;
+        }
+
+        /* TRÊN DESKTOP: Tạo hình khối viên thuốc ngắt quãng */
+        
+        /* 1. Nút Đầu Tiên (ALL MOTIONS) - Bo nửa MẶT TRÁI khớp với Label */
+        .filter-group__options .filter-btn:first-child {
+            border-radius: 0 var(--radius-2xl) var(--radius-2xl) 0;
+        }
+
+        /* 2. Nút Ở Giữa - Bo toàn bộ 4 góc độc lập */
+        .filter-group__options .filter-btn:nth-child(2) {
+            border-radius: var(--radius-2xl);
+        }
+
+        /* 3. Nút Cuối Cùng (DEBUT//TRAILER) - Bo nửa MẶT PHẢI khớp với khối giả ::after */
+        .filter-group__options .filter-btn:last-child {
+            border-radius: var(--radius-2xl) 0 0 var(--radius-2xl);
         }
 
         /* Tăng nhẹ vách 2 bên để ôm trọn vòm cung đẹp hơn trên màn lớn */

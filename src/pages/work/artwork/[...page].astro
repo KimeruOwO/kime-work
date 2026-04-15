@@ -1,0 +1,480 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import SectionHeader from "../../../components/SectionHeader.astro";
+import ModeSwitch from "../../../components/ModeSwitch.astro";
+import FilterMenu from "../../../components/FilterMenu.astro";
+import Pagination from "../../../components/Pagination.astro";
+import { fetchArtworks } from "../../../lib/hygraph";
+import type { Artwork } from "../../../lib/hygraph";
+import type { GetStaticPaths, Page } from "astro";
+
+interface Props {
+  page: Page<Artwork>;
+}
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const artworks = await fetchArtworks();
+  return paginate(artworks, { pageSize: 9 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<Layout title={`Kime Work - Artwork Page ${page.currentPage}`} description="Explore Kimeyu's illustration and graphic design gallery — character art, landscapes, and editorial work.">
+  <Fragment slot="banner">
+    <div class="works-hero-group">
+      <SectionHeader
+        title="WORKS"
+        isBanner={true}
+        isHeroBanner={true}
+        align="responsive"
+      />
+      <div class="switch-overlap">
+        <ModeSwitch activeMode="artwork" />
+      </div>
+    </div>
+  </Fragment>
+
+  <div class="works-content">
+    <artwork-gallery-manager class="gallery-view" id="works-gallery">
+      <SectionHeader title="ARTWORK" subtitle="作品" align="responsive" />
+
+      <div class="wrapper">
+        <FilterMenu
+          groupName="artwork-filter"
+          options={[
+            { label: "ILLUSTRATION", value: "illustration" },
+            { label: "GRAPHICS DESIGN", value: "graphics" },
+          ]}
+        />
+
+        <div class="artwork-masonry">
+          {
+            page.data.map((art, index) => {
+              const catMatch = art.category?.slug || "all";
+
+              return (
+                <div
+                  class="artwork-card"
+                  role="button"
+                  tabindex="0"
+                  data-category={catMatch}
+                  data-full-src={art.image.fullUrl || art.image.url}
+                >
+                  <img
+                    src={art.image.url}
+                    loading={index < 3 ? "eager" : "lazy"}
+                    fetchpriority={index < 3 ? "high" : "auto"}
+                    decoding={index < 3 ? "sync" : "async"}
+                    alt={art.title}
+                  />
+                </div>
+              );
+            })
+          }
+        </div>
+
+        <hr class="artwork-loader-decor" />
+
+        <Pagination
+          page={page}
+          baseUrl="/work/artwork"
+          targetId="works-gallery"
+        />
+      </div>
+
+      <dialog class="lightbox-modal">
+        <header class="lightbox-header">
+          <div class="lightbox-title-group">
+            <h2 class="lightbox-title">PREVIEW</h2>
+          </div>
+          <button class="lightbox-close" aria-label="Close preview">✕</button>
+        </header>
+        <div class="lightbox-body">
+          <img src="" alt="" class="lightbox-img" decoding="async" />
+        </div>
+      </dialog>
+    </artwork-gallery-manager>
+  </div>
+</Layout>
+
+<script>
+  // Retain Image() references during preload to prevent GC from canceling downloads
+  const _preloadCache = new Set<HTMLImageElement>();
+
+  class ArtworkGalleryManager extends HTMLElement {
+    private _dialog: HTMLDialogElement | null = null;
+    private _closeBtn: HTMLButtonElement | null = null;
+    private _cards: NodeListOf<HTMLElement> | null = null;
+    private _galleryContainer: HTMLElement | null = null;
+
+    constructor() {
+      super();
+      this.handleCardClick = this.handleCardClick.bind(this);
+      this.handleCardHover = this.handleCardHover.bind(this);
+      this.handleFilterChange = this.handleFilterChange.bind(this);
+      this.closeDialog = this.closeDialog.bind(this);
+      this.handleBackdropClick = this.handleBackdropClick.bind(this);
+    }
+
+    connectedCallback() {
+      this._dialog = this.querySelector<HTMLDialogElement>(".lightbox-modal");
+      this._closeBtn = this.querySelector<HTMLButtonElement>(".lightbox-close");
+      this._cards = this.querySelectorAll<HTMLElement>(".artwork-card");
+      this._galleryContainer =
+        this.querySelector<HTMLElement>(".artwork-masonry");
+
+      if (this._galleryContainer !== null) {
+        this._galleryContainer.addEventListener("click", this.handleCardClick);
+        this._galleryContainer.addEventListener(
+          "mouseover",
+          this.handleCardHover,
+        );
+      }
+
+      if (this._closeBtn !== null) {
+        this._closeBtn.addEventListener("click", this.closeDialog);
+      }
+
+      if (this._dialog !== null) {
+        this._dialog.addEventListener("click", this.handleBackdropClick);
+      }
+
+      this.addEventListener(
+        "filter-changed",
+        this.handleFilterChange as EventListener,
+      );
+    }
+
+    disconnectedCallback() {
+      if (this._galleryContainer !== null) {
+        this._galleryContainer.removeEventListener(
+          "click",
+          this.handleCardClick,
+        );
+        this._galleryContainer.removeEventListener(
+          "mouseover",
+          this.handleCardHover,
+        );
+      }
+
+      if (this._closeBtn !== null) {
+        this._closeBtn.removeEventListener("click", this.closeDialog);
+      }
+
+      if (this._dialog !== null) {
+        this._dialog.removeEventListener("click", this.handleBackdropClick);
+      }
+
+      this.removeEventListener(
+        "filter-changed",
+        this.handleFilterChange as EventListener,
+      );
+
+      // Cắt đứt tham chiếu, nhường chỗ cho Garbage Collector
+      this._dialog = null;
+      this._closeBtn = null;
+      this._cards = null;
+      this._galleryContainer = null;
+    }
+
+    private closeDialog() {
+      if (this._dialog !== null) {
+        this._dialog.close();
+      }
+    }
+
+    private handleBackdropClick(e: MouseEvent) {
+      if (e.target === this._dialog && this._dialog !== null) {
+        this._dialog.close();
+      }
+    }
+
+    private handleFilterChange(e: CustomEvent) {
+      if (this._cards === null) return;
+      const FILTER_ALL = "all";
+      const filterValue = e.detail.value.toLowerCase();
+
+      for (const card of this._cards) {
+        const cardCat = card.dataset.category;
+        card.hidden = filterValue !== FILTER_ALL && cardCat !== filterValue;
+      }
+    }
+
+    private handleCardHover(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      const card = target.closest<HTMLElement>(".artwork-card");
+      if (card === null) return;
+
+      const fullSrc = card.dataset.fullSrc;
+      if (fullSrc !== undefined && card.dataset.preloaded !== "true") {
+        card.dataset.preloaded = "true";
+        const preloadImg = new Image();
+        // Prevent GC from collecting before download completes
+        _preloadCache.add(preloadImg);
+        preloadImg.onload = preloadImg.onerror = () => _preloadCache.delete(preloadImg);
+        preloadImg.src = fullSrc;
+      }
+    }
+
+    private handleCardClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      const card = target.closest<HTMLElement>(".artwork-card");
+
+      if (card === null || this._dialog === null) return;
+
+      const fullSrc = card.dataset.fullSrc;
+      const img = card.querySelector("img");
+
+      if (fullSrc === undefined || img === null) return;
+
+      const dialogImg =
+        this._dialog.querySelector<HTMLImageElement>(".lightbox-img");
+      if (dialogImg !== null) {
+        dialogImg.src = img.src;
+        dialogImg.alt = img.alt || "Expanded artwork preview";
+        this._dialog.showModal();
+        if (fullSrc !== img.src) {
+          const highResLoader = new Image();
+          highResLoader.onload = () => {
+            if (dialogImg.src === img.src) {
+              dialogImg.src = fullSrc;
+            }
+          };
+          highResLoader.src = fullSrc;
+        }
+      }
+    }
+  }
+
+  if (customElements.get("artwork-gallery-manager") === undefined) {
+    customElements.define("artwork-gallery-manager", ArtworkGalleryManager);
+  }
+</script>
+
+<style>
+  @import "../../../styles/works-hero.css";
+
+  .works-content {
+    padding-top: var(--spacing-8);
+  }
+
+  artwork-gallery-manager {
+    display: block;
+    width: 100%;
+    min-height: 50vh;
+  }
+
+  .artwork-card[hidden] {
+    display: none;
+  }
+
+  .artwork-masonry {
+    column-count: 1;
+    column-gap: var(--spacing-4);
+    padding-top: var(--spacing-4);
+  }
+  .artwork-card {
+    break-inside: avoid;
+    margin-bottom: var(--spacing-4);
+    border-radius: var(--radius-lg);
+    background-color: color-mix(in srgb, var(--color-primary) 50%, transparent);
+    padding: clamp(6px, 1.5vw, 12px) clamp(6px, 1.5vw, 12px)
+      clamp(16px, 3vw, 24px);
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+    cursor: pointer;
+
+    position: relative;
+    z-index: 1;
+    contain: layout paint;
+  }
+
+  .artwork-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  .artwork-card:hover {
+    transform: translateY(-4px);
+    background-color: rgba(255, 205, 221, 0.5);
+  }
+
+  .artwork-card:hover::before {
+    opacity: 1;
+  }
+  .artwork-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    content-visibility: auto;
+    border-radius: var(--radius-sm);
+  }
+
+  /* LIGHTBOX MODAL */
+  .lightbox-modal {
+    padding: 0;
+    margin: auto;
+    background-color: var(--win-bg-body);
+    border: var(--border-width-sm) solid var(--win-border);
+    border-radius: var(--win-radius);
+    width: fit-content;
+    min-width: min(300px, 90vw);
+    max-width: 95vw;
+    max-height: 95vh;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  }
+  .lightbox-modal[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  .lightbox-modal::backdrop {
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    cursor: zoom-out;
+  }
+  .lightbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--win-bg-header);
+    border-bottom: var(--border-width-sm) solid var(--win-border);
+    padding: var(--spacing-3) var(--spacing-6);
+    flex-shrink: 0;
+  }
+  .lightbox-title-group {
+    display: flex;
+    align-items: center;
+  }
+  .lightbox-title {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 900;
+    color: var(--win-text-dark);
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+  }
+  .lightbox-title::before {
+    content: "";
+    display: inline-block;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    background-color: var(--win-accent-pink);
+    border: var(--border-width-sm) solid var(--win-border);
+    border-radius: 50%;
+    margin-right: var(--spacing-4);
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+  .lightbox-close {
+    background: transparent;
+    border: none;
+    color: var(--win-text-dark);
+    font-size: var(--text-2xl);
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      transform 0.2s ease;
+    padding: 0 0 0 var(--spacing-4);
+  }
+  .lightbox-close:hover {
+    color: var(--color-primary);
+    transform: scale(1.1);
+  }
+  .lightbox-body {
+    padding: var(--spacing-4);
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: radial-gradient(var(--color-tertiary) 1px, transparent 0);
+    background-size: 20px 20px;
+  }
+  .lightbox-img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: calc(95vh - 100px);
+    border: var(--border-width-sm) solid var(--win-border);
+    border-radius: var(--radius-sm);
+  }
+  :global(body:has(dialog[open])) {
+    overflow: hidden;
+  }
+
+  /* ARTWORK LOADER DECOR */
+  .artwork-loader-decor {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border: none;
+    --cell: clamp(10px, 1.2vw, 16px);
+    height: calc(var(--cell) * 3);
+    background-color: var(--color-primary);
+    margin: clamp(var(--spacing-8), 6vw, var(--spacing-12)) 0 0 0;
+    --gap: calc(var(--cell) * 2);
+    background-image:
+      radial-gradient(circle closest-side, #ffffff 98%, transparent 100%),
+      radial-gradient(circle closest-side, #ffffff 98%, transparent 100%),
+      radial-gradient(circle closest-side, #ffffff 98%, transparent 100%);
+    background-size: var(--cell) var(--cell);
+    background-repeat: no-repeat;
+    background-position:
+      calc(50% - var(--gap)) 50%,
+      50% 50%,
+      calc(50% + var(--gap)) 50%;
+  }
+  .artwork-loader-decor::before,
+  .artwork-loader-decor::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: calc(var(--cell) * 5);
+    height: 100%;
+    background-image: repeating-conic-gradient(
+      #ffffff 0 90deg,
+      transparent 0 180deg
+    );
+    background-size: 40% calc(100% / 1.5);
+  }
+  .artwork-loader-decor::before {
+    left: 0;
+  }
+  .artwork-loader-decor::after {
+    right: 0;
+  }
+
+  @media (min-width: 640px) {
+    .artwork-masonry {
+      column-count: 2;
+      column-gap: var(--spacing-6);
+    }
+    .artwork-card {
+      margin-bottom: var(--spacing-6);
+    }
+  }
+  @media (min-width: 1024px) {
+    .artwork-masonry {
+      column-count: 3;
+      column-gap: clamp(var(--spacing-6), 2vw, var(--spacing-8));
+    }
+    .artwork-card {
+      margin-bottom: clamp(var(--spacing-6), 2vw, var(--spacing-8));
+    }
+  }
+</style>

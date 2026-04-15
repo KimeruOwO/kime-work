@@ -1,0 +1,612 @@
+---
+import type { Page } from "astro";
+import type { Video } from "../../../lib/hygraph";
+import SectionHeader from "../../../components/SectionHeader.astro";
+import FilterMenu from "../../../components/FilterMenu.astro";
+import Pagination from "../../../components/Pagination.astro";
+import MotionCard from "./MotionCard.astro";
+
+interface Props {
+  page: Page<Video>;
+}
+
+const { page } = Astro.props;
+---
+
+<div class="works-content">
+  <motion-gallery-manager>
+    <section class="gallery-view" id="works-gallery">
+      <SectionHeader
+        title="MOTIONS"
+        subtitle="モーションプロジェクト"
+        subtitleOrientation="stacked"
+        align="responsive"
+      />
+
+      <div class="wrapper motions-wrapper">
+        <FilterMenu
+          groupName="motions-filter"
+          options={[
+            { label: "ALL MOTIONS", value: "all" },
+            { label: "MUSIC VIDEOS // MVs", value: "musicvideos//mvs" },
+            { label: "DEBUT // TRAILER", value: "debut//trailer" },
+          ]}
+        />
+
+        <div class="gallery-layout-split">
+          <aside class="sidebar-desktop">
+            <div class="sidebar-sticky-wrap">
+              <div class="sidebar-group">
+                <button
+                  class="s-btn grid-btn"
+                  data-cols="2"
+                  aria-label="2 Cột"
+                >
+                  <svg viewBox="0 0 32 32"><rect x="4" y="11" width="10" height="10" rx="2"></rect><rect x="18" y="11" width="10" height="10" rx="2"></rect></svg>
+                </button>
+                <button
+                  class="s-btn grid-btn"
+                  data-cols="3"
+                  aria-label="3 Cột"
+                >
+                  <svg viewBox="0 0 32 32"><rect x="1.5" y="7" width="8" height="8" rx="2"></rect><rect x="12" y="7" width="8" height="8" rx="2"></rect><rect x="22.5" y="7" width="8" height="8" rx="2"></rect><rect x="1.5" y="17.5" width="8" height="8" rx="2"></rect><rect x="12" y="17.5" width="8" height="8" rx="2"></rect><rect x="22.5" y="17.5" width="8" height="8" rx="2"></rect></svg>
+                </button>
+                <button
+                  class="s-btn grid-btn active"
+                  data-cols="4"
+                  aria-label="4 Cột"
+                >
+                  <svg viewBox="0 0 42 42"><rect x="2" y="12" width="8" height="8" rx="2"></rect><rect x="12" y="12" width="8" height="8" rx="2"></rect><rect x="22" y="12" width="8" height="8" rx="2"></rect><rect x="32" y="12" width="8" height="8" rx="2"></rect><rect x="2" y="22" width="8" height="8" rx="2"></rect><rect x="12" y="22" width="8" height="8" rx="2"></rect><rect x="22" y="22" width="8" height="8" rx="2"></rect><rect x="32" y="22" width="8" height="8" rx="2"></rect></svg>
+                </button>
+              </div>
+
+              <div class="sidebar-group filter-group">
+                <button
+                  class="s-btn filter-btn vertical-text active"
+                  data-value="all">ALL</button>
+                <button
+                  class="s-btn filter-btn vertical-text"
+                  data-value="featured">FEATURED</button>
+              </div>
+            </div>
+          </aside>
+          <div class="gallery-main">
+            <div
+              class="motions-grid"
+              id="motions-grid-container"
+              data-grid-cols="default"
+            >
+              {
+                page.data.map((vid, index) => {
+                  const catMatch =
+                    vid.category?.name?.toLowerCase().replace(/\s+/g, "") ||
+                    "all";
+                  const visMatch = vid.isFeatured ? "featured" : "all";
+
+                  return (
+                    <MotionCard
+                      vid={vid}
+                      index={index}
+                      catMatch={catMatch}
+                      visMatch={visMatch}
+                    />
+                  );
+                })
+              }
+            </div>
+          </div>
+        </div>
+
+        <Pagination
+          page={page}
+          baseUrl="/work/motions"
+          targetId="works-gallery"
+        />
+      </div>
+    </section>
+  </motion-gallery-manager>
+</div>
+
+<script>
+  class MotionGalleryManager extends HTMLElement implements EventListenerObject {
+    private _cards: NodeListOf<HTMLElement> | null = null;
+    private _currentCat = "all";
+    private _currentVis = "all";
+
+    private _resizeHandler = () => {
+      requestAnimationFrame(() => {
+        this.querySelectorAll(".sidebar-group").forEach((group) => {
+          const activeBtn = group.querySelector(".s-btn.active") as HTMLElement;
+          if (activeBtn) {
+            if (activeBtn.offsetHeight === 0) {
+              (group as HTMLElement).style.setProperty(
+                "--tracker-opacity",
+                "0",
+              );
+            } else {
+              const offsetTop =
+                activeBtn.offsetTop + activeBtn.offsetHeight / 2;
+              (group as HTMLElement).style.setProperty(
+                "--tracker-y",
+                `${offsetTop}px`,
+              );
+              (group as HTMLElement).style.setProperty(
+                "--tracker-opacity",
+                "1",
+              );
+            }
+          }
+        });
+      });
+    };
+
+    private performFLIP(updateDOMCallback: () => void) {
+      if (!this._cards) return;
+
+      const firstRects = new Map<HTMLElement, DOMRect>();
+      this._cards.forEach((card) => {
+        if (!card.hidden) firstRects.set(card, card.getBoundingClientRect());
+      });
+
+      updateDOMCallback();
+
+      const lastRects = new Map<HTMLElement, DOMRect>();
+      this._cards.forEach((card) => {
+        if (!card.hidden) lastRects.set(card, card.getBoundingClientRect());
+      });
+
+      this._cards.forEach((card) => {
+        if (card.hidden || !firstRects.has(card)) return;
+
+        const first = firstRects.get(card)!;
+        const last = lastRects.get(card)!;
+
+        const dx = first.left - last.left;
+        const dy = first.top - last.top;
+        const dw = first.width / last.width;
+        const dh = first.height / last.height;
+
+        if (dx === 0 && dy === 0 && dw === 1 && dh === 1) return;
+
+        card.style.transition = "none";
+        card.style.transformOrigin = "top left";
+        card.style.transform = `translate(${dx}px, ${dy}px) scale(${dw}, ${dh})`;
+        card.style.zIndex = "10";
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            card.style.transition =
+              "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)";
+            card.style.transform = "";
+
+            const cleanup = () => {
+              card.style.transition = "";
+              card.style.transformOrigin = "";
+              card.style.zIndex = "";
+              card.removeEventListener("transitionend", cleanup);
+            };
+            card.addEventListener("transitionend", cleanup);
+          });
+        });
+      });
+    }
+
+    private updateCardThemes() {
+      requestAnimationFrame(() => {
+        if (!this._cards) return;
+        const grid = this.querySelector<HTMLElement>("#motions-grid-container");
+        let cols = parseInt(grid?.dataset.gridCols || "4", 10);
+        if (isNaN(cols)) cols = 4;
+
+        let visibleIndex = 0;
+        this._cards.forEach((card) => {
+          if (!card.hidden) {
+            const isPink = Math.floor(visibleIndex / cols) % 2 === 0;
+            const newTheme = isPink ? "pink" : "blue";
+            if (card.dataset.theme !== newTheme) {
+              card.dataset.theme = newTheme;
+            }
+            visibleIndex++;
+          }
+        });
+      });
+    }
+
+    connectedCallback() {
+      this._cards = this.querySelectorAll<HTMLElement>(".motion-card");
+      const grid = this.querySelector<HTMLElement>("#motions-grid-container");
+      const sidebarBtns = this.querySelectorAll<HTMLButtonElement>(".s-btn");
+
+      const savedCols = localStorage.getItem("kime-motions-cols");
+      if (savedCols && grid) {
+        grid.dataset.gridCols = savedCols;
+        sidebarBtns.forEach((b) => {
+          if (b.classList.contains("grid-btn")) {
+            if (b.dataset.cols === savedCols) b.classList.add("active");
+            else b.classList.remove("active");
+          }
+        });
+      }
+
+      this.updateCardThemes();
+
+      window.addEventListener("resize", this._resizeHandler);
+      this._resizeHandler();
+
+      this.addEventListener("filter-changed", this);
+      this.addEventListener("click", this);
+
+      const pendingSidebar = localStorage.getItem("kime-sidebar-pending");
+      if (pendingSidebar) {
+        localStorage.removeItem("kime-sidebar-pending");
+
+        const targetBtn = this.querySelector<HTMLButtonElement>(
+          `.sidebar-desktop .filter-btn[data-value="${CSS.escape(pendingSidebar)}"]`
+        );
+        if (targetBtn) {
+          this.querySelectorAll(".sidebar-desktop .filter-btn")
+            .forEach((b) => b.classList.remove("active"));
+          targetBtn.classList.add("active");
+          this._updateSidebarTracker(targetBtn);
+        }
+
+        requestAnimationFrame(() => {
+          this.dispatchEvent(
+            new CustomEvent("filter-changed", {
+              detail: { group: "sidebar", value: pendingSidebar, isRestore: true },
+              bubbles: true,
+            })
+          );
+        });
+      }
+    }
+
+    disconnectedCallback() {
+      window.removeEventListener("resize", this._resizeHandler);
+      this.removeEventListener("filter-changed", this);
+      this.removeEventListener("click", this);
+      this._cards = null;
+    }
+
+    handleEvent(e: Event) {
+      if (e.type === "filter-changed") {
+        this._handleFilterChange(e as CustomEvent);
+      } else if (e.type === "click") {
+        const target = e.target as HTMLElement;
+        const btn = target.closest<HTMLButtonElement>(".s-btn");
+        if (btn) this._handleSidebarClick(btn);
+      }
+    }
+
+    private _updateSidebarTracker(btn: HTMLElement) {
+      const group = btn.closest(".sidebar-group") as HTMLElement;
+      if (group) {
+        if (btn.offsetHeight === 0) {
+          group.style.setProperty("--tracker-opacity", "0");
+        } else {
+          const offsetTop = btn.offsetTop + btn.offsetHeight / 2;
+          group.style.setProperty("--tracker-y", `${offsetTop}px`);
+          group.style.setProperty("--tracker-opacity", "1");
+        }
+      }
+    }
+
+    private _handleSidebarClick(btn: HTMLButtonElement) {
+      this._updateSidebarTracker(btn);
+      const grid = this.querySelector<HTMLElement>("#motions-grid-container");
+
+      if (btn.classList.contains("grid-btn")) {
+        this.querySelectorAll(".grid-btn").forEach((b) =>
+          b.classList.remove("active"),
+        );
+        btn.classList.add("active");
+
+        if (
+          grid &&
+          btn.dataset.cols &&
+          grid.dataset.gridCols !== btn.dataset.cols
+        ) {
+          this.performFLIP(() => {
+            grid.dataset.gridCols = btn.dataset.cols!;
+            localStorage.setItem("kime-motions-cols", btn.dataset.cols!);
+            this.updateCardThemes();
+          });
+        }
+      }
+
+      if (btn.classList.contains("filter-btn")) {
+        this.querySelectorAll(
+          ".filter-btn:not(filter-menu-ctrl .filter-btn)",
+        ).forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        const filterValue = btn.dataset.value;
+        if (filterValue) {
+          this.dispatchEvent(
+            new CustomEvent("filter-changed", {
+              detail: { group: "sidebar", value: filterValue },
+              bubbles: true,
+            }),
+          );
+        }
+      }
+    }
+
+    private _handleFilterChange(e: CustomEvent) {
+      const cards = this._cards;
+      if (!cards) return;
+
+      const filterGroup = e.detail.group;
+      const filterValue = e.detail.value.toLowerCase();
+      const isRestore = e.detail.isRestore;
+
+      if (filterGroup === "sidebar") {
+        this._currentVis = filterValue;
+      } else {
+        this._currentCat = filterValue;
+      }
+
+      if (!isRestore) {
+        const path = window.location.pathname.replace(/\/$/, "");
+        if (path !== "/work/motions" && path !== "/work/motions/1") {
+          // Persist sidebar filter state across page redirect
+          if (filterGroup === "sidebar") {
+            localStorage.setItem("kime-sidebar-pending", filterValue);
+          }
+          window.location.href = "/work/motions";
+          return;
+        }
+      }
+
+      this.performFLIP(() => {
+        cards.forEach((card) => {
+          const cardCat = card.dataset.category;
+          const cardVis = card.dataset.visibility;
+
+          const matchCat =
+            this._currentCat === "all" || cardCat === this._currentCat;
+          const matchVis =
+            this._currentVis === "all" || cardVis === this._currentVis;
+
+          const shouldHide = !(matchCat && matchVis);
+
+          if (card.hidden !== shouldHide) {
+            card.hidden = shouldHide;
+          }
+        });
+
+        const paginationBlock = document.querySelector(".kime-pagination");
+        if (paginationBlock) {
+          if (this._currentCat === "all" && this._currentVis === "all") {
+            paginationBlock.classList.remove("is-filtered-state");
+          } else {
+            paginationBlock.classList.add("is-filtered-state");
+          }
+        }
+
+        this.updateCardThemes();
+      });
+    }
+  }
+
+  if (!customElements.get("motion-gallery-manager")) {
+    customElements.define("motion-gallery-manager", MotionGalleryManager);
+  }
+</script>
+
+<style>
+  :global(.kime-pagination.is-filtered-state .page-numbers li:nth-child(n + 2)) {
+    display: none;
+  }
+  :global(.kime-pagination.is-filtered-state .prev-btn),
+  :global(.kime-pagination.is-filtered-state .next-btn) {
+    pointer-events: none;
+    opacity: 0.3;
+  }
+
+  .works-content {
+    padding-top: var(--spacing-8);
+  }
+
+  motion-gallery-manager {
+    display: block;
+    width: 100%;
+    min-height: 50vh;
+  }
+
+  :global(.motion-card[hidden]) {
+    display: none;
+  }
+
+  .gallery-layout-split {
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--spacing-8);
+  }
+  .sidebar-desktop {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .gallery-layout-split {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--spacing-8);
+    }
+    .gallery-main {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+    }
+    .sidebar-desktop {
+      display: block;
+      position: sticky;
+      top: calc(var(--header-height-pc) + var(--spacing-8));
+      width: 48px;
+      flex-shrink: 0;
+    }
+    .sidebar-sticky-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+      align-items: center;
+    }
+    .sidebar-group {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      align-items: center;
+      position: relative;
+    }
+    .s-btn {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      padding: 0;
+      transition: opacity 0.2s ease;
+    }
+    .s-btn:active {
+      opacity: 0.6;
+    }
+
+    .sidebar-group::after {
+      content: "";
+      position: absolute;
+      right: -24px;
+      top: 0;
+      transform: translateY(calc(var(--tracker-y, 16px) - 50%));
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-right: 10px solid var(--color-primary);
+      will-change: transform;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+      opacity: var(--tracker-opacity, 1);
+    }
+
+    .grid-btn svg {
+      width: 32px;
+      height: 32px;
+      fill: rgba(250, 114, 157, 0.3);
+      transition: fill 0.2s ease;
+    }
+    .grid-btn:hover svg {
+      fill: rgba(250, 114, 157, 0.7);
+    }
+    .grid-btn.active svg {
+      fill: var(--color-primary);
+    }
+
+    .vertical-text {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #b0b0b0;
+      text-transform: uppercase;
+    }
+    .vertical-text:hover {
+      color: var(--color-primary-light);
+    }
+    .vertical-text.active {
+      color: var(--base-black-800);
+    }
+  }
+
+  .motions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+    padding-top: var(--spacing-4);
+    padding-bottom: var(--spacing-12);
+  }
+
+  /* ==============================================
+     GRID RESPONSIVE ARCHITECTURE
+     Ghi đè thuộc tính Grid và ra lệnh gập Tag cho Card
+     ============================================== */
+  @media (max-width: 1199px) {
+    .grid-btn[data-cols="3"],
+    .grid-btn[data-cols="4"] {
+      display: none;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .motions-grid[data-grid-cols="default"],
+    .motions-grid[data-grid-cols="2"] {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-10);
+    }
+    .motions-grid[data-grid-cols="default"] :global(.card-footer),
+    .motions-grid[data-grid-cols="2"] :global(.card-footer) {
+      flex-direction: row;
+      height: 34px;
+      align-items: center;
+      gap: var(--spacing-3);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .motions-grid[data-grid-cols="default"] {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-12);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .motions-grid[data-grid-cols="3"] {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .motions-grid[data-grid-cols="3"] :global(.card-footer) {
+      flex-direction: row;
+      height: 34px;
+      align-items: center;
+      gap: var(--spacing-3);
+    }
+
+    .motions-grid[data-grid-cols="4"] {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .motions-grid[data-grid-cols="4"] :global(.card-footer) {
+      flex-direction: column;
+      height: auto;
+      align-items: flex-start;
+      gap: var(--spacing-2);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .motions-grid[data-grid-cols="default"] {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .motions-grid[data-grid-cols="default"] :global(.card-footer) {
+      flex-direction: column;
+      height: auto;
+      align-items: flex-start;
+      gap: var(--spacing-2);
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .motions-wrapper {
+      max-width: 1800px;
+    }
+    .motions-grid[data-grid-cols="default"],
+    .motions-grid[data-grid-cols="4"] {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .motions-grid[data-grid-cols="default"] :global(.card-footer),
+    .motions-grid[data-grid-cols="4"] :global(.card-footer) {
+      flex-direction: row;
+      height: 34px;
+      align-items: center;
+      gap: var(--spacing-3);
+    }
+  }
+</style>

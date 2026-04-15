@@ -3,16 +3,26 @@ import FacebookIcon from "./icons/FacebookIcon.astro";
 import XIcon from "./icons/XIcon.astro";
 import YouTubeIcon from "./icons/YouTubeIcon.astro";
 import PixivIcon from "./icons/PixivIcon.astro";
+import { SOCIAL_LINKS } from "../lib/socials";
+
+const iconMap: Record<string, any> = {
+  facebook: FacebookIcon,
+  x: XIcon,
+  youtube: YouTubeIcon,
+  pixiv: PixivIcon,
+};
 ---
 
 <footer class="site-footer">
     <div class="footer-socials">
-        <a href="#" aria-label="Facebook" class="social-link"
-            ><FacebookIcon /></a
-        >
-        <a href="#" aria-label="X (Twitter)" class="social-link"><XIcon /></a>
-        <a href="#" aria-label="YouTube" class="social-link"><YouTubeIcon /></a>
-        <a href="#" aria-label="Pixiv" class="social-link"><PixivIcon /></a>
+        {SOCIAL_LINKS.map((link) => {
+            const Icon = iconMap[link.platform];
+            return (
+                <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} class="social-link">
+                    <Icon />
+                </a>
+            );
+        })}
     </div>
 
     <div class="footer-banner">
@@ -81,7 +91,7 @@ import PixivIcon from "./icons/PixivIcon.astro";
             var(--bg-primary) 0 90deg,
             transparent 0 180deg
         );
-        background-size: var(--checker-cell) var(--checker-cell);
+        background-size: var(--checker-cell) calc(100% / 1.5);
         flex-shrink: 0;
     }
 

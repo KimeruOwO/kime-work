@@ -5,10 +5,11 @@ import type { Page } from "astro";
 export interface Props {
     page: Page<any>;
     baseUrl?: string;
+    suffix?: string;
     targetId?: string;
 }
 
-const { page, baseUrl = "/work", targetId = "works-gallery" } = Astro.props;
+const { page, baseUrl = "/work", suffix = "", targetId = "works-gallery" } = Astro.props;
 
 // 2. Thuật toán Cửa sổ trượt (Sliding Window)
 const MAX_VISIBLE = 5;
@@ -25,10 +26,10 @@ const pages = Array.from(
     (_, i) => windowStart + i,
 );
 
-// 3. Hàm Builder URL chuẩn: Chặn lỗi /work/1 và tự động móc hash neo (#)
+// 3. Hàm Builder URL chuẩn: Chặn lỗi /work/1 và tự động móc suffix
 const getPageUrl = (p: number) => {
-    const url = p === 1 ? baseUrl : `${baseUrl}/${p}`;
-    return `${url}#artwork`;
+    const base = p === 1 ? baseUrl : `${baseUrl}/${p}`;
+    return suffix ? `${base}/${suffix}` : base;
 };
 
 // 4. Infinite Looping bằng Toán học (Nhanh & An toàn hơn gọi page.url)
@@ -49,6 +50,7 @@ const nextUrl = getPageUrl(nextPageNum);
         href={prevUrl}
         class="page-nav-btn prev-btn"
         aria-label="Go to previous page"
+        data-astro-prefetch="hover"
     >
         PREVIOUS
     </a>
@@ -64,6 +66,7 @@ const nextUrl = getPageUrl(nextPageNum);
                             class={`page-link ${isActive ? "is-active" : ""}`}
                             aria-current={isActive ? "page" : undefined}
                             aria-label={`Go to page ${p}`}
+                            data-astro-prefetch="hover"
                         >
                             {p}
                         </a>
@@ -77,6 +80,7 @@ const nextUrl = getPageUrl(nextPageNum);
         href={nextUrl}
         class="page-nav-btn next-btn"
         aria-label="Go to next page"
+        data-astro-prefetch="hover"
     >
         NEXT
     </a>

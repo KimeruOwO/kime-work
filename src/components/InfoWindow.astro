@@ -3,14 +3,20 @@ import FacebookIcon from "./icons/FacebookIcon.astro";
 import XIcon from "./icons/XIcon.astro";
 import YouTubeIcon from "./icons/YouTubeIcon.astro";
 import PixivIcon from "./icons/PixivIcon.astro";
+import { SOCIAL_LINKS } from "../lib/socials";
+
+const iconMap: Record<string, any> = {
+  facebook: FacebookIcon,
+  x: XIcon,
+  youtube: YouTubeIcon,
+  pixiv: PixivIcon,
+};
 ---
 
 <retro-window class="retro-window">
     <header class="retro-window__header">
-        <div class="retro-window__controls">
-            <!-- decor-dot dùng ::before của title (Tối ưu DOM thành công) -->
-            <h2 class="retro-window__title">INFORMATION</h2>
-        </div>
+        <!-- decor-dot dùng ::before của title (Tối ưu DOM thành công) -->
+        <h2 class="retro-window__title">INFORMATION</h2>
 
         <div class="retro-window__socials-wrapper">
             <button
@@ -36,18 +42,14 @@ import PixivIcon from "./icons/PixivIcon.astro";
                 class="retro-window__socials"
                 aria-label="Social Links"
             >
-                <a href="#" class="social-link" aria-label="Facebook">
-                    <FacebookIcon />
-                </a>
-                <a href="#" class="social-link" aria-label="X (Twitter)">
-                    <XIcon />
-                </a>
-                <a href="#" class="social-link" aria-label="YouTube">
-                    <YouTubeIcon />
-                </a>
-                <a href="#" class="social-link" aria-label="Pixiv">
-                    <PixivIcon />
-                </a>
+                {SOCIAL_LINKS.map((link) => {
+                    const Icon = iconMap[link.platform];
+                    return (
+                        <a href={link.href} target="_blank" rel="noopener noreferrer" class="social-link" aria-label={link.label}>
+                            <Icon />
+                        </a>
+                    );
+                })}
             </nav>
         </div>
     </header>
@@ -55,8 +57,6 @@ import PixivIcon from "./icons/PixivIcon.astro";
     <div class="retro-window__body">
         <section class="info-section">
             <div class="info-section__title-row">
-                <!-- Thẻ này được giữ lại vì nó quản lý Layout Grid logic -->
-                <div class="info-section__decor" aria-hidden="true"></div>
                 <h3 class="info-section__heading">// ABOUT ME //</h3>
             </div>
             <div class="info-section__content">
@@ -73,8 +73,6 @@ import PixivIcon from "./icons/PixivIcon.astro";
 
         <section class="info-section info-section--no-decor">
             <div class="info-section__title-row">
-                <!-- Thẻ này được giữ lại vì nó quản lý Layout Grid logic -->
-                <div class="info-section__decor" aria-hidden="true"></div>
                 <h3 class="info-section__heading">
                     // ABOUT THE NAME "KIMEYU" //
                 </h3>
@@ -97,6 +95,8 @@ import PixivIcon from "./icons/PixivIcon.astro";
 
 <script>
     class RetroWindow extends HTMLElement {
+        private _cleanup: (() => void) | null = null;
+
         connectedCallback() {
             const wrapper = this.querySelector<HTMLElement>(
                 ".retro-window__socials-wrapper",
@@ -143,12 +143,12 @@ import PixivIcon from "./icons/PixivIcon.astro";
             document.addEventListener("click", handleOutsideClick);
 
             // Gắn cờ dọn dẹp để tránh Memory Leak khi Component bị gỡ khỏi DOM
-            (this as any)._cleanup = () =>
+            this._cleanup = () =>
                 document.removeEventListener("click", handleOutsideClick);
         }
 
         disconnectedCallback() {
-            if ((this as any)._cleanup) (this as any)._cleanup();
+            if (this._cleanup) this._cleanup();
         }
     }
 
@@ -160,13 +160,6 @@ import PixivIcon from "./icons/PixivIcon.astro";
 <style>
     .retro-window {
         display: block;
-        --win-border: var(--color-secondary-darker, #004b5c);
-        --win-bg-header: var(--color-secondary-light, #6ce4eb);
-        --win-bg-body: var(--bg-secondary, #f3f4f8);
-        --win-text-dark: var(--color-secondary-darker, #004b5c);
-        --win-accent-pink: var(--color-accent-badge, #ff6b9e);
-        --win-radius: var(--spacing-3);
-
         border: var(--border-width-sm) solid var(--win-border);
         border-radius: var(--win-radius);
         background-color: var(--win-bg-body);
@@ -189,12 +182,6 @@ import PixivIcon from "./icons/PixivIcon.astro";
             var(--win-radius) - var(--border-width-sm)
         );
         position: relative;
-    }
-
-    .retro-window__controls {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-4);
     }
 
     .retro-window__title {
@@ -286,41 +273,44 @@ import PixivIcon from "./icons/PixivIcon.astro";
         gap: var(--spacing-4);
     }
 
-    /* TRẢ LẠI CSS GỐC CHO CHUẨN XÁC TOÁN HỌC */
-    .info-section__decor {
+    /* ZERO DOM BLOAT DOCTRINE: Replacing empty <div> with structural multi-layer math mask */
+    .info-section__title-row::before {
+        content: "";
+        display: block;
+        flex-shrink: 0;
+
         --decor-h: var(--spacing-6);
         --decor-width: 8.75rem;
         --checker-cell: calc(var(--decor-h) / 1.5);
+        --gap: var(--spacing-1);
 
-        display: flex;
-        align-items: center;
         height: var(--decor-h);
         width: var(--decor-width);
-        gap: var(--spacing-1);
-    }
 
-    .info-section__decor::before {
-        content: "";
-        height: 100%;
-        aspect-ratio: 1 / 1;
-        flex-shrink: 0;
         background-color: var(--win-bg-body);
-        background-image: repeating-conic-gradient(
-            var(--win-bg-header) 0 90deg,
-            transparent 0 180deg
-        );
-        background-size: var(--checker-cell) var(--checker-cell);
-        background-position: calc(var(--checker-cell) / 2) 0;
+        background-image: 
+            linear-gradient(
+                to right,
+                transparent 0,
+                transparent var(--decor-h),
+                var(--win-bg-body) var(--decor-h),
+                var(--win-bg-body) calc(var(--decor-h) + var(--gap)),
+                var(--win-bg-header) calc(var(--decor-h) + var(--gap)),
+                var(--win-bg-header) 100%
+            ),
+            repeating-conic-gradient(
+                var(--win-bg-header) 0 90deg,
+                transparent 0 180deg
+            );
+        background-size: 
+            100% 100%,
+            var(--checker-cell) var(--checker-cell);
+        background-position: 
+            0 0,
+            calc(var(--checker-cell) / 2) 0;
     }
 
-    .info-section__decor::after {
-        content: "";
-        flex: 1;
-        height: 100%;
-        background-color: var(--win-bg-header);
-    }
-
-    .info-section--no-decor .info-section__decor {
+    .info-section--no-decor .info-section__title-row::before {
         display: none;
     }
 

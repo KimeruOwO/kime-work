@@ -1,21 +1,25 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
 
-// https://astro.build/config
 export default defineConfig({
+    output: 'static',
+    scopedStyleStrategy: 'class',
+    redirects: {
+        '/': '/about'
+    },
     devToolbar: {
         enabled: false,
     },
-
     build: {
-        inlineStylesheets: 'auto'
+        inlineStylesheets: 'never'
     },
-
     vite: {
         build: {
             cssMinify: 'lightningcss',
-
             sourcemap: false,
         }
+    },
+    image: {
+        domains: ['media.graphassets.com', 'eu-central-1-shared-euc1-02.graphassets.com'],
+        remotePatterns: [{ protocol: "https" }]
     }
 });

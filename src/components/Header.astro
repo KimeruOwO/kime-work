@@ -2,24 +2,28 @@
 import KimeLogo from "./icons/KimeLogo.astro";
 import KimeyuIcon from "./icons/KimeyuIcon.astro";
 
-const currentPath = Astro.url.pathname;
+const rawPath = Astro.url.pathname;
+const currentPath =
+  rawPath.length > 1 && rawPath.endsWith("/") ? rawPath.slice(0, -1) : rawPath;
 
-// JS Hiện đại: Strict Type và Logic gọn gàng
-const getActiveAttr = (path: string): "page" | undefined => {
-  if (currentPath === path || currentPath.startsWith(`${path}/`)) {
-    return "page";
-  }
-  return undefined;
-};
+const isAbout = currentPath === "/about";
+const isContact = currentPath === "/contact";
+
+// Nhận diện active state cực mượt bằng độ phức tạp O(1)
+const isWorks = currentPath.startsWith("/work");
 ---
 
 <header class="cyber-header">
-  <a href="/" class="cyber-header__logo-link" aria-label="Home">
+  <a
+    href="/about"
+    class="cyber-header__logo-link"
+    aria-label="Home"
+    data-astro-prefetch="hover"
+  >
     <KimeLogo />
   </a>
 
   <div class="cyber-header__right">
-    <!-- DOM RÁC ĐÃ BỊ TIÊU DIỆT. Gắn class trực tiếp vào Icon -->
     <KimeyuIcon class="cyber-header__brand-icon" />
   </div>
 
@@ -27,26 +31,51 @@ const getActiveAttr = (path: string): "page" | undefined => {
     <a
       href="/about"
       class="cyber-header__nav-btn"
-      aria-current={getActiveAttr("/about")}
+      aria-current={isAbout ? "page" : undefined}
+      data-astro-prefetch="hover"
     >
       ABOUT
     </a>
+
     <a
-      href="/work"
+      href="/work/motions"
       class="cyber-header__nav-btn"
-      aria-current={getActiveAttr("/work")}
+      aria-current={isWorks ? "page" : undefined}
+      data-astro-prefetch="hover"
+      data-works-link
     >
       WORKS
     </a>
+
     <a
       href="/contact"
       class="cyber-header__nav-btn"
-      aria-current={getActiveAttr("/contact")}
+      aria-current={isContact ? "page" : undefined}
+      data-astro-prefetch="hover"
     >
       CONTACT
     </a>
   </nav>
 </header>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const path = window.location.pathname.replace(/\/$/, "");
+    const link = document.querySelector<HTMLAnchorElement>("[data-works-link]");
+    if (!link) return;
+
+    // Save mode when user is on a works page
+    if (path.startsWith("/work/motions")) {
+      localStorage.setItem("kime-works-mode", "motions");
+    } else if (path.startsWith("/work/artwork")) {
+      localStorage.setItem("kime-works-mode", "artwork");
+    }
+
+    // Update WORKS link to match saved preference (default: motions)
+    const savedMode = localStorage.getItem("kime-works-mode");
+    link.href = savedMode === "artwork" ? "/work/artwork" : "/work/motions";
+  });
+</script>
 
 <style>
   .cyber-header {
@@ -92,7 +121,7 @@ const getActiveAttr = (path: string): "page" | undefined => {
   .cyber-header__nav::before,
   .cyber-header__nav::after {
     content: "";
-    --blocks-x: 2; /* Giảm số ô ngang xuống 2 để tiết kiệm 1 khoảng trống khổng lồ cho màn hình nhỏ */
+    --blocks-x: 3; /* Giảm số ô ngang xuống 2 để tiết kiệm 1 khoảng trống khổng lồ cho màn hình nhỏ */
     --blocks-y: 3; /* Cố định 2 ô chiều dọc để form cân đối với chiều cao Nav */
 
     /* Xếp chồng lên phần padding của Nav bằng Margin âm để chiếm trọn vẹn chiều cao */
@@ -102,11 +131,18 @@ const getActiveAttr = (path: string): "page" | undefined => {
     /* Giao phó hoàn toàn tỷ lệ cho aspect-ratio để width tự động nở ra dựa trên height */
     aspect-ratio: var(--blocks-x) / var(--blocks-y);
 
-    background: repeating-conic-gradient(
-        transparent 0 90deg,
-        var(--bg-secondary) 0 180deg
-      )
-      0 0 / calc(100% / var(--blocks-x) * 2) calc(100% / var(--blocks-y) * 2);
+    background-color: var(
+      --color-primary
+    ); /* Đảm bảo nền cơ sở là màu chính để che khe nứt vi điểm */
+    background-image: repeating-conic-gradient(
+      var(--color-primary) 0 90deg,
+      var(--bg-secondary) 0 180deg
+    );
+    /* Tăng Scale nhẹ 0.5px để bù trừ sai số dấu phẩy động của Firefox (Subpixel Anti-aliasing) */
+    background-size: calc((100% + 0.5px) / var(--blocks-x) * 2)
+      calc((100% + 0.5px) / var(--blocks-y) * 2);
+    /* Set explicitly to avoid subpixel overlap errors */
+    background-position: 0 0;
   }
 
   .cyber-header__nav::before {
@@ -153,20 +189,23 @@ const getActiveAttr = (path: string): "page" | undefined => {
   /* TOÁN HỌC ĐỘNG CHO CARO BÊN PHẢI (KỸ SƯ HỆ THỐNG) */
   .cyber-header__right::before {
     content: "";
-    --blocks-x: 6; /* Số ô caro theo chiều ngang (Bạn tùy ý tăng giảm ở đây nhé) */
-    --blocks-y: 3; /* Số ô caro theo chiều dọc (Nên cố định 3 để khít viền) */
+    --blocks-x: 6; /* Số ô caro theo chiều ngang */
+    --blocks-y: 3; /* Số ô caro theo chiều dọc */
 
-    /* 1) Chiều cao gắn cứng theo Header hiện tại */
+    /* Trả lại kiến trúc Aspect-Ratio gốc (Chrome Flexbox Friendly) */
     height: var(--spacing-12);
-    /* Tỷ lệ khung hình tự nở ra dựa trên cấu hình lưới, không cần set width cứng */
     aspect-ratio: var(--blocks-x) / var(--blocks-y);
+    flex-shrink: 0; /* Khoá tử không cho Flexbox bóp nghẹt khung hình (Nguyên nhân lỗi Chrome) */
 
-    /* 2) Background tự đo đạc không gian X/Y để vẽ chính xác không móp méo */
-    background: repeating-conic-gradient(
-        transparent 0 90deg,
-        var(--checkerboard-primary) 0 180deg
-      )
-      0 0 / calc(100% / var(--blocks-x) * 2) calc(100% / var(--blocks-y) * 2);
+    background-color: var(--color-primary); /* Đổi màu lót thành Pink để Firefox có rò rỉ pixel cũng không lộ */
+    background-image: repeating-conic-gradient(
+      var(--bg-secondary) 0 90deg,
+      var(--color-primary) 0 180deg
+    );
+    /* Tăng Scale nhẹ 0.5px để triệt tiêu lỗi hở khe trắng do Firefox (Subpixel Tiling Bug) */
+    background-size: calc((100% + 0.5px) / var(--blocks-x) * 2)
+      calc((100% + 0.5px) / var(--blocks-y) * 2);
+    background-position: 0 0;
   }
 
   /* Ghi đè trực tiếp lên SVG, cần dùng :global để xuyên qua component Astro */
@@ -175,6 +214,16 @@ const getActiveAttr = (path: string): "page" | undefined => {
     width: auto;
     color: var(--color-primary);
     padding: 0 var(--spacing-6);
+  }
+
+  /* ==========================================================
+     RESPONSIVE KHI VƯỢT QUA MOBILE NHỎ (>= 480px)
+  ========================================================== */
+  @media (min-width: 480px) {
+    .cyber-header__nav::before,
+    .cyber-header__nav::after {
+      --blocks-x: 5;
+    }
   }
 
   /* ==========================================================
@@ -194,8 +243,10 @@ const getActiveAttr = (path: string): "page" | undefined => {
 
     .cyber-header__nav {
       order: 2;
-      width: auto;
-      padding: 0 clamp(var(--spacing-8), 5vw, var(--spacing-20));
+      flex: 1; /* Hấp thụ linh hoạt khối không gian thừa */
+      justify-content: flex-start; /* Thỏa đam mê bám trái theo ý chủ nhân */
+      padding: 0 var(--spacing-4) 0
+        clamp(var(--spacing-4), 3vw, var(--spacing-12)); /* Trả lại khoảng cách thẩm mỹ với Logo */
       gap: clamp(var(--spacing-2), 2vw, var(--spacing-8));
     }
 
@@ -233,30 +284,25 @@ const getActiveAttr = (path: string): "page" | undefined => {
   ========================================================== */
   @media (min-width: 1024px) {
     .cyber-header__logo-link {
-      padding: 0 0 0 clamp(var(--spacing-8), 6vw, var(--spacing-20));
+      padding: 0 0 0 clamp(var(--spacing-4), 4vw, var(--spacing-12));
     }
 
     .cyber-header__logo-link :global(svg) {
       height: var(--spacing-10);
     }
 
-    .cyber-header__nav {
-      padding: 0 clamp(var(--spacing-8), 6vw, var(--spacing-20));
-    }
+    /* cyber-header__nav tự động mượt mà thừa kế padding và flex-start từ 768px */
 
     .cyber-header__right {
-      gap: clamp(var(--spacing-6), 4vw, var(--spacing-12));
-      padding-right: clamp(var(--spacing-8), 5vw, var(--spacing-16));
+      gap: clamp(var(--spacing-2), 2vw, var(--spacing-8));
+      padding-right: clamp(var(--spacing-4), 4vw, var(--spacing-12));
     }
 
-    .cyber-header__right::before {
-      --checker-cell: 60px;
-      --blocks: 3; /* Cố định 3 ô như yêu cầu */
-    }
+
 
     .cyber-header__nav-btn {
-      font-size: var(--text-lg);
-      padding: var(--spacing-2) clamp(var(--spacing-4), 2vw, var(--spacing-12));
+      font-size: clamp(var(--text-base), 1.5vw, var(--text-lg));
+      padding: var(--spacing-2) clamp(var(--spacing-3), 1.5vw, var(--spacing-8));
     }
   }
 </style>

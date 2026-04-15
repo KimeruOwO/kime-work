@@ -1,12 +1,25 @@
 /* =========================================
+   TYPOGRAPHY (LOCAL VARIABLE FONT)
+   ========================================= */
+@font-face {
+  font-family: "Murecho";
+  font-style: normal;
+  font-weight: 100 900;
+  /* Khai báo trục weight động */
+  font-display: swap;
+  /* Chống mù chữ (Anti-FOIT) */
+  src: url("/fonts/Murecho-Variable.woff2") format("woff2-variations");
+}
+
+/* =========================================
    GLOBAL VARIABLES (FLATTENED & PURGED)
    ========================================= */
 :root {
   /* Primitive Colors (Chỉ giữ lại những mã Hex cần thiết) */
-  --base-gray-50: #F4F5F8;
-  --base-gray-100: #F2F2F9;
-  --base-white: #FFFFFF;
-  --base-black-800: #01010D;
+  --base-gray-50: #f4f5f8;
+  --base-gray-100: #f2f2f9;
+  --base-white: #ffffff;
+  --base-black-800: #01010d;
 
   /* Semantic UI Colors (Gán Hex trực tiếp hoặc tối đa 1 cấp tham chiếu) */
   --bg-primary: var(--base-gray-50);
@@ -17,19 +30,14 @@
   /* base-cyan-700 */
   --text-inverse: var(--base-white);
 
-  --color-primary: #FA729D;
+  --color-primary: #fa729d;
   /* base-pink-500 */
-  --color-primary-light: #FF8AB1;
+  --color-primary-light: #ff8ab1;
   /* base-pink-400 */
-
-  /* Hủy bỏ chuỗi tham chiếu rác, trỏ trực tiếp vào primitive */
-  --accent-primary: #FA729D;
-  --checkerboard-primary: #FA729D;
-  --checkerboard-secondary: #7AE6FA;
 
   --color-black-active: var(--base-black-800);
 
-  --color-secondary: #5CE1E6;
+  --color-secondary: #5ce1e6;
   /* cyan-500 */
   --color-secondary-bright: #29d0f6;
   /* cyan-400 */
@@ -37,7 +45,7 @@
   /* cyan-700 */
   --color-secondary-darker: #005b6e;
   /* cyan-800 */
-  --color-secondary-light: #7AE6FA;
+  --color-secondary-light: #7ae6fa;
   /* cyan-300 */
   --color-secondary-soft: #d4f4ff;
   /* cyan-100 */
@@ -48,7 +56,9 @@
   /* pink-600 */
 
   /* Typography */
-  --font-sans: 'Murecho', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-sans:
+    "Murecho", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
 
   --text-xs: 0.75rem;
@@ -104,6 +114,14 @@
   --border-width-sm: 4px;
   --border-width-md: 6px;
   --border-width-lg: 8px;
+
+  /* Retro Window Design Tokens (shared: InfoWindow, Lightbox) */
+  --win-border: var(--color-secondary-darker);
+  --win-bg-header: var(--color-secondary-light);
+  --win-bg-body: var(--bg-secondary);
+  --win-text-dark: var(--color-secondary-darker);
+  --win-accent-pink: var(--color-accent-badge);
+  --win-radius: var(--spacing-3);
 }
 
 /* =========================================
@@ -131,18 +149,20 @@ dd {
   margin: 0;
 }
 
+/* 1. Standard CSS cho Firefox (Fallback) */
+/* CẤM TUYỆT ĐỐI không khai báo scrollbar-width vào chung thẻ HTML vì Chrome >121 sẽ dựa vào đó mà ghi đè tịt luôn WebKit. Rất nhiều DEV không biết cái này. */
+@supports (-moz-appearance: none) {
+  html {
+    scrollbar-width: auto;
+    scrollbar-color: var(--color-primary) var(--bg-primary);
+  }
+}
+
 html {
   font-family: var(--font-sans);
   color: var(--text-primary);
   background-color: var(--bg-primary);
-  /* Prevent sticky header from overlapping anchor targets when scrolling */
   scroll-padding-top: calc(var(--header-height-mobile) + var(--spacing-4));
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
 }
 
 @media (min-width: 768px) {
@@ -197,6 +217,26 @@ ol {
 }
 
 a {
-  color: var(--accent-primary);
+  color: var(--color-primary);
   text-decoration: none;
+}
+
+/* =========================================
+   UTILITY CLASSES (GLOBAL STRUCTURE)
+   ========================================= */
+
+.wrapper {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 clamp(var(--spacing-4), 5vw, var(--spacing-8));
+}
+
+/* Shared shimmer animation (used by MotionCard loader + [slug] preview) */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

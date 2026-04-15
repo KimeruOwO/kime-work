@@ -3,78 +3,70 @@
 import SwitchIcon from "./icons/SwitchIcon.astro";
 import VideoIcon from "./icons/VideoIcon.astro";
 import ArtworkIcon from "./icons/ArtworkIcon.astro";
+
+// Kỹ sư hệ thống giao tiếp bằng Props, không bằng DOM Query
+interface Props {
+    activeMode: "motions" | "artwork";
+}
+
+const { activeMode } = Astro.props;
+
+// Logic cho nút đảo chiều ở giữa (Click vào thì tự nghịch đảo URL)
+const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
 ---
 
-<mode-switch-ctrl class="mode-switch-section">
-    <h2 class="mode-switch-title">MODE SWITCH</h2>
+<div class="mode-switch-section">
+    <header class="mode-switch-header">
+        <h2 class="mode-switch-title">MODE SWITCH</h2>
+    </header>
 
-    <!-- Nút bấm -->
     <div class="mode-switch-container">
-        <button class="switch-btn" data-target="motions">
+        <a
+            href="/work/motions"
+            class:list={["switch-btn", activeMode === "motions" && "is-active"]}
+            aria-pressed={activeMode === "motions" ? "true" : "false"}
+            data-astro-prefetch="hover"
+        >
             <span>MOTIONS</span>
             <VideoIcon width="20" height="20" />
-        </button>
+        </a>
 
-        <!-- Divider Toggle Button -->
-        <button
-            type="button"
+        <a
+            href={toggleUrl}
             class="switch-divider-btn"
             aria-label="Toggle Mode"
+            data-astro-prefetch="hover"
         >
             <SwitchIcon width="24" height="24" />
-        </button>
+        </a>
 
-        <!-- Nút Artwork -->
-        <button class="switch-btn" data-target="artwork">
+        <a
+            href="/work/artwork"
+            class:list={["switch-btn", activeMode === "artwork" && "is-active"]}
+            aria-pressed={activeMode === "artwork" ? "true" : "false"}
+            data-astro-prefetch="hover"
+        >
             <span>ARTWORK</span>
             <ArtworkIcon width="20" height="20" />
-        </button>
+        </a>
     </div>
-</mode-switch-ctrl>
+</div>
 
-<script>
-    class ModeSwitchCtrl extends HTMLElement {
-        connectedCallback() {
-            const buttons =
-                this.querySelectorAll<HTMLButtonElement>(".switch-btn");
-            const toggleBtn = this.querySelector<HTMLButtonElement>(
-                ".switch-divider-btn",
-            );
-
-            const switchMode = (mode: string) => {
-                if (document.documentElement.dataset.workMode === mode) return;
-                document.documentElement.dataset.workMode = mode;
-                window.history.replaceState(null, "", "#" + mode);
-            };
-
-            buttons.forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    const target = btn.getAttribute("data-target");
-                    if (target) switchMode(target);
-                });
-            });
-
-            if (toggleBtn) {
-                toggleBtn.addEventListener("click", () => {
-                    const current = document.documentElement.dataset.workMode;
-                    switchMode(current === "artwork" ? "motions" : "artwork");
-                });
-            }
-        }
-    }
-
-    if (!customElements.get("mode-switch-ctrl")) {
-        customElements.define("mode-switch-ctrl", ModeSwitchCtrl);
-    }
-</script>
+<!-- KHÔNG CÓ THẺ <SCRIPT> NÀO Ở ĐÂY CẢ. ZERO JS BLOAT. -->
 
 <style>
     /* ==========================================================
        1. KIẾN TRÚC CSS GRID (MOBILE FIRST)
     ========================================================== */
     .mode-switch-section {
-        --banner-h: clamp(var(--spacing-12), 8vw, var(--spacing-16));
-        --cell: calc(var(--banner-h) / 1.5);
+        --banner-h-raw: clamp(var(--spacing-12), 8vw, var(--spacing-16));
+        
+        /* [THUẬT TOÁN GRID 1:1] Bước 1: Tính toán Cell, ép tròn về số nguyên chẵn để Chrome KHÔNG THỂ kích hoạt nội suy Sub-pixel (Răng cưa) */
+        --cell: calc(var(--banner-h-raw) / 1.5); /* Fallback chạy ngầm */
+        --cell: round(nearest, calc(var(--banner-h-raw) / 1.5), 2px);
+        
+        /* Bước 2: Bắt buộc Layout Height giãn nở thuận ngược lại theo Cell đã làm tròn, triệt tiêu 100% khe hở rác */
+        --banner-h: calc(var(--cell) * 1.5);
         --checker-w: calc(var(--cell) * 1.5);
 
         display: grid;
@@ -93,68 +85,66 @@ import ArtworkIcon from "./icons/ArtworkIcon.astro";
     }
 
     /* ==========================================================
-       2. MẶT NẠ CSS: BLOCK -> CARO ĐƯỢC ĐẨY THÀNH GRID ITEMS
+       2. MẶT NẠ CSS: ĐÃ QUÉT SẠCH RÁC SUB-PIXEL
     ========================================================== */
     .mode-switch-section::before,
     .mode-switch-section::after {
         content: "";
         height: var(--banner-h);
         background-color: var(--color-secondary-medium);
-        --c: var(--bg-secondary);
 
-        background-image:
-            linear-gradient(
-                to right,
-                transparent 0,
-                transparent calc(var(--checker-w) - 1px),
-                var(--color-secondary-medium) calc(var(--checker-w) - 1px),
-                var(--color-secondary-medium) 100%
-            ),
-            linear-gradient(
-                45deg,
-                var(--c) calc(25% + 0.5px),
-                transparent calc(25% + 0.5px),
-                transparent calc(75% - 0.5px),
-                var(--c) calc(75% - 0.5px)
-            ),
-            linear-gradient(
-                45deg,
-                var(--c) calc(25% + 0.5px),
-                transparent calc(25% + 0.5px),
-                transparent calc(75% - 0.5px),
-                var(--c) calc(75% - 0.5px)
-            );
-
-        /* Lớp mặt nạ kéo full 100%, 2 Lớp Caro chẻ nhau bù đắp khối pixel vuông nét căng */
-        background-size:
-            100% 100%,
-            var(--cell) var(--cell),
+        /* Kỹ thuật SVG Geometric Mask siêu việt: Giết đứt dứt điểm điểm mù nội suy đồ họa của Chromium */
+        mask-image:
+            linear-gradient(#000, #000),
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Cpath d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E");
+        mask-size:
+            calc(100% - var(--checker-w) + 1px) 100%,
             var(--cell) var(--cell);
-
-        background-repeat: no-repeat, repeat, repeat;
-        background-position:
-            right top,
-            left top,
-            calc(var(--cell) / 2) calc(var(--cell) / 2);
+        mask-repeat: no-repeat, repeat;
+        
+        -webkit-mask-image:
+            linear-gradient(#000, #000),
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Cpath d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E");
+        -webkit-mask-size:
+            calc(100% - var(--checker-w) + 1px) 100%,
+            var(--cell) var(--cell);
+        -webkit-mask-repeat: no-repeat, repeat;
     }
 
     .mode-switch-section::before {
         grid-column: 1;
         grid-row: 1;
-        transform: scaleX(-1);
+        mask-position:
+            right top,
+            left top;
+        -webkit-mask-position:
+            right top,
+            left top;
+        transform: scaleX(-1); /* Lật gương GPU */
     }
 
     .mode-switch-section::after {
         grid-column: 3;
         grid-row: 1;
+        mask-position:
+            right top,
+            left top;
+        -webkit-mask-position:
+            right top,
+            left top;
     }
 
     /* ==========================================================
        3. HEADER VÀ TITLE
     ========================================================== */
-    .mode-switch-title {
+    .mode-switch-header {
         grid-column: 2;
         grid-row: 1;
+        display: flex;
+        align-items: center;
+    }
+
+    .mode-switch-title {
         display: flex;
         align-items: center;
         gap: var(--spacing-2);
@@ -183,7 +173,7 @@ import ArtworkIcon from "./icons/ArtworkIcon.astro";
     }
 
     /* ==========================================================
-       4. CONTAINER NÚT BẤM
+       4. CONTAINER NÚT BẤM (LINKS)
     ========================================================== */
     .mode-switch-container {
         grid-column: 1 / -1;
@@ -196,7 +186,7 @@ import ArtworkIcon from "./icons/ArtworkIcon.astro";
         justify-content: space-between;
         width: fit-content;
         border: var(--border-width-xs) solid var(--color-secondary-darker);
-        border-radius: var(--radius-pill);
+        border-radius: var(--radius-3xl);
         padding: var(--spacing-1) var(--spacing-2);
         background-color: var(--bg-secondary);
     }
@@ -211,7 +201,7 @@ import ArtworkIcon from "./icons/ArtworkIcon.astro";
         font-size: clamp(var(--text-sm), 2.5vw, var(--text-base));
         font-weight: 900;
         color: var(--color-secondary-darker);
-        cursor: pointer;
+        text-decoration: none;
         transition:
             background-color 0.2s ease,
             color 0.2s ease,
@@ -220,18 +210,17 @@ import ArtworkIcon from "./icons/ArtworkIcon.astro";
             opacity 0.2s ease;
     }
 
-    .switch-btn:hover {
+    .switch-btn:hover:not(.is-active) {
         opacity: 0.7;
     }
 
-    /* State-Driven: Nút active phản ứng theo data-work-mode trên <html> */
-    :global(html[data-work-mode="motions"]) .switch-btn[data-target="motions"],
-    :global(html[data-work-mode="artwork"]) .switch-btn[data-target="artwork"] {
+
+    .switch-btn.is-active {
         background-color: var(--color-primary);
         color: var(--text-inverse);
         border-color: var(--color-secondary-darker);
         box-shadow: 3px 3px 0 var(--color-secondary-bright);
-        opacity: 1;
+        pointer-events: none;
     }
 
     .switch-btn :global(svg) {
@@ -269,7 +258,9 @@ import ArtworkIcon from "./icons/ArtworkIcon.astro";
             grid-template-rows: var(--banner-h);
             padding-bottom: 0;
         }
-
+        .mode-switch-header {
+            padding-right: var(--spacing-6);
+        }
         .mode-switch-container {
             grid-column: 3;
             grid-row: 1;
@@ -277,7 +268,6 @@ import ArtworkIcon from "./icons/ArtworkIcon.astro";
             margin-right: var(--spacing-8);
             align-self: center;
         }
-
         .mode-switch-section::after {
             grid-column: 4;
         }

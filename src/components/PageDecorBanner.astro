@@ -6,8 +6,7 @@ export interface Props {
   compact?: boolean;
   noMargin?: boolean;
   checkerPosition?: "start" | "end" | "both";
-  checkerPositionPc?: "start" | "end" | "both" | "none"; // Bổ sung tuỳ chỉnh cho PC
-  hideCheckerOnDesktop?: boolean; // Sắp bị thay thế bởi checkerPositionPc="none"
+  checkerPositionPc?: "start" | "end" | "both" | "none";
   class?: string;
   id?: string;
 }
@@ -20,14 +19,11 @@ const {
   noMargin = false,
   checkerPosition = "start",
   checkerPositionPc,
-  hideCheckerOnDesktop = false,
   class: className,
   id,
 } = Astro.props;
 
 const Tag = href ? "a" : "div";
-const finalPcPosition = checkerPositionPc || (hideCheckerOnDesktop ? "none" : undefined);
-
 ---
 
 <Tag
@@ -35,13 +31,13 @@ const finalPcPosition = checkerPositionPc || (hideCheckerOnDesktop ? "none" : un
   class:list={[
     "page-decor-banner",
     `page-decor-banner--checker-${checkerPosition}`,
-    finalPcPosition && `page-decor-banner--pc-${finalPcPosition}`,
     variant === "secondary" && "page-decor-banner--secondary",
     compact && "page-decor-banner--compact",
     noMargin && "page-decor-banner--no-margin",
     className,
   ]}
   href={href || undefined}
+  data-pc-checker={checkerPositionPc || undefined}
 >
   <span class="page-decor-banner__text">{text}</span>
 </Tag>
@@ -50,7 +46,7 @@ const finalPcPosition = checkerPositionPc || (hideCheckerOnDesktop ? "none" : un
   .page-decor-banner {
     --banner-h: 48px; /* Phải chia hết cho 3 → mỗi ô caro = integer pixel */
     --checker-cell: calc(var(--banner-h) / 1.5);
-    background-color: var(--accent-primary);
+    background-color: var(--color-primary);
     display: flex;
     align-items: stretch;
     height: var(--banner-h);
@@ -69,7 +65,7 @@ const finalPcPosition = checkerPositionPc || (hideCheckerOnDesktop ? "none" : un
       var(--bg-primary) 0 90deg,
       transparent 0 180deg
     );
-    background-size: var(--checker-cell) var(--checker-cell);
+    background-size: var(--checker-cell) calc(100% / 1.5);
     background-position: 0 0;
   }
 
@@ -143,44 +139,44 @@ const finalPcPosition = checkerPositionPc || (hideCheckerOnDesktop ? "none" : un
     }
   }
 
-  /* [REFACTORED]: Tuỳ chỉnh vị trí caro trên PC */
+  /* [REFACTORED]: PC checker position via data-attribute (zero !important) */
   @media (min-width: 1024px) {
-    .page-decor-banner--pc-none::before,
-    .page-decor-banner--pc-none::after {
-      content: none !important;
-      display: none !important;
+    .page-decor-banner[data-pc-checker="none"]::before,
+    .page-decor-banner[data-pc-checker="none"]::after {
+      content: none;
+      display: none;
     }
 
-    .page-decor-banner--pc-start::before {
-      content: "" !important;
-      display: block !important;
+    .page-decor-banner[data-pc-checker="start"]::before {
+      content: "";
+      display: block;
     }
-    .page-decor-banner--pc-start::after {
-      content: none !important;
-      display: none !important;
-    }
-
-    .page-decor-banner--pc-end::before {
-      content: none !important;
-      display: none !important;
-    }
-    .page-decor-banner--pc-end::after {
-      content: "" !important;
-      display: block !important;
+    .page-decor-banner[data-pc-checker="start"]::after {
+      content: none;
+      display: none;
     }
 
-    .page-decor-banner--pc-both::before,
-    .page-decor-banner--pc-both::after {
-      content: "" !important;
-      display: block !important;
+    .page-decor-banner[data-pc-checker="end"]::before {
+      content: none;
+      display: none;
+    }
+    .page-decor-banner[data-pc-checker="end"]::after {
+      content: "";
+      display: block;
+    }
+
+    .page-decor-banner[data-pc-checker="both"]::before,
+    .page-decor-banner[data-pc-checker="both"]::after {
+      content: "";
+      display: block;
     }
 
     /* Reset alignment for end PC specifically for compact Banners */
-    .page-decor-banner--pc-end.page-decor-banner--compact {
-      margin-inline: 0 !important;
+    .page-decor-banner[data-pc-checker="end"].page-decor-banner--compact {
+      margin-inline: 0;
     }
-    .page-decor-banner--pc-end.page-decor-banner--compact .page-decor-banner__text {
-      justify-content: flex-start !important;
+    .page-decor-banner[data-pc-checker="end"].page-decor-banner--compact .page-decor-banner__text {
+      justify-content: flex-start;
     }
   }
 </style>

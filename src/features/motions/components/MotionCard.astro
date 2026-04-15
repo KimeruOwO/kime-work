@@ -1,0 +1,311 @@
+---
+import type { Video } from "../../../lib/hygraph";
+import PlayIcon from "../../../components/icons/PlayIcon.astro";
+
+interface Props {
+  vid: Video;
+  index: number;
+  catMatch: string;
+  visMatch: string;
+}
+
+const { vid, index, catMatch, visMatch } = Astro.props;
+---
+
+<a
+  href={`/work/motions/${vid.slug}`}
+  class="motion-card"
+  data-category={catMatch}
+  data-visibility={visMatch}
+  data-link={vid.linkEmbed}
+>
+  <div class="card-hero">
+    <div class="motion-thumb-container">
+      <img
+        src={vid.thumbnail.url}
+        loading={index < 4 ? "eager" : "lazy"}
+        fetchpriority={index < 4 ? "high" : "auto"}
+        decoding={index < 4 ? "sync" : "async"}
+        alt={vid.title}
+      />
+    </div>
+    <div class="motion-info">
+      <div class="motion-text">
+        <h3 class="motion-title">{vid.title}</h3>
+        <p class="motion-subtitle">
+          {vid.nameArtist || "Kimeyu"}
+        </p>
+      </div>
+      <PlayIcon class="icon-play" />
+    </div>
+  </div>
+  <footer class="card-footer">
+    <span class="tag-cat">
+      {vid.category?.name?.toUpperCase() || "MOTION GRAPHICS"}
+    </span>
+    {
+      vid.category?.visibility && (
+        <span class="tag-vis">{vid.category.visibility}</span>
+      )
+    }
+  </footer>
+</a>
+
+<style>
+  .motion-card {
+    /* Design Tokens */
+    --theme-color-pink: var(--color-primary);
+    --theme-color-blue: #7ee6fa;
+    --theme-text-blue: #046277;
+
+    --card-bg: var(--theme-color-pink);
+    --card-shadow: var(--color-secondary-light);
+    --card-text: var(--base-white);
+
+    --thumb-width: 96%;
+    --thumb-pull-ratio: 38%;
+    --shoulder-curve-left: 60px;
+    --shoulder-right-width: 15%;
+    --shoulder-right-ratio: 1 / 0.8;
+    --shadow-dist: 6px;
+    --shadow-dist-hover: 10px;
+    --shoulder-overlap: var(--shadow-dist-hover);
+    --hover-offset: -4px;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    cursor: pointer;
+    min-width: 0;
+  }
+
+  .motion-card[data-theme="pink"] {
+    --card-bg: var(--theme-color-pink);
+    --card-shadow: var(--color-secondary-light);
+    --card-text: var(--base-white);
+  }
+  .motion-card[data-theme="blue"] {
+    --card-bg: var(--theme-color-blue);
+    --card-shadow: var(--theme-color-pink);
+    --card-text: var(--theme-text-blue);
+  }
+
+  .card-hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    margin-top: var(--thumb-pull-ratio);
+    background-color: var(--card-bg);
+    border: var(--border-width-sm) solid var(--color-secondary-darker);
+    border-radius: var(--shoulder-curve-left) var(--radius-md) var(--radius-md)
+      var(--radius-md);
+    box-shadow: var(--shadow-dist) var(--shadow-dist) 0 var(--card-shadow);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    background-clip: padding-box;
+  }
+  .card-hero::after {
+    content: "";
+    position: absolute;
+    bottom: calc(100% - var(--border-width-sm) - var(--shoulder-overlap));
+    right: calc(-1 * var(--border-width-sm));
+    width: var(--shoulder-right-width);
+    height: auto;
+    aspect-ratio: var(--shoulder-right-ratio);
+    background-color: var(--card-bg);
+    border: var(--border-width-sm) solid var(--color-secondary-darker);
+    border-bottom: none;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    box-shadow: var(--shadow-dist) 0 0 var(--card-shadow);
+    transition: box-shadow 0.2s ease;
+    z-index: 1;
+  }
+  .motion-card:hover .card-hero {
+    transform: translate(var(--hover-offset), var(--hover-offset));
+    box-shadow: var(--shadow-dist-hover) var(--shadow-dist-hover) 0
+      var(--card-shadow);
+  }
+  .motion-card:hover .card-hero::after {
+    box-shadow: var(--shadow-dist-hover) 0 0 var(--card-shadow);
+  }
+
+  .motion-thumb-container {
+    align-self: center;
+    position: relative;
+    width: var(--thumb-width);
+    margin-top: calc(-1 * var(--thumb-pull-ratio));
+    margin-bottom: var(--spacing-1);
+    background-color: var(--base-white, #ffffff);
+    border: var(--border-width-sm) solid var(--color-secondary-darker);
+    border-radius: var(--radius-sm);
+    padding-bottom: calc(var(--thumb-width) * 0.5625);
+    height: 0;
+    overflow: hidden;
+    z-index: 2;
+    flex-shrink: 0;
+  }
+
+  .motion-thumb-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    mask: url("../../../assets/kimeyu-loader.svg") center / 40% no-repeat;
+    -webkit-mask: url("../../../assets/kimeyu-loader.svg") center / 40%
+      no-repeat;
+    background-color: var(--theme-color-pink);
+    background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.8) 50%,
+      rgba(255, 255, 255, 0) 70%
+    );
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    animation: shimmer 2s infinite linear;
+    opacity: 1;
+    z-index: 1;
+  }
+
+
+
+  .motion-thumb-container img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 10;
+  }
+
+  .motion-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 0;
+    padding: var(--spacing-2)
+      max(var(--spacing-4), calc((100% - var(--thumb-width)) / 2))
+      var(--spacing-4)
+      max(var(--spacing-4), calc((100% - var(--thumb-width)) / 2));
+  }
+  .motion-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+    padding-right: var(--spacing-4);
+  }
+  .motion-title {
+    margin: 0;
+    font-size: clamp(18px, 3vw, 18px);
+    font-weight: 800;
+    color: var(--card-text);
+    line-height: 1.6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .motion-subtitle {
+    margin: 0;
+    font-size: clamp(13px, 2vw, 16px);
+    font-weight: 600;
+    color: var(--card-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .motion-card :global(.icon-play) {
+    width: clamp(24px, 4vw, 36px);
+    height: clamp(24px, 4vw, 36px);
+    color: var(--card-text);
+    flex-shrink: 0;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    gap: var(--spacing-3);
+    margin-top: var(--spacing-2);
+  }
+
+  /* ==============================================
+     GRID & CARD FOOTER RESPONSIVE ARCHITECTURE
+     ============================================== */
+  .tag-cat,
+  .tag-vis {
+    height: 34px;
+  }
+
+  .tag-cat {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-left: 19px;
+    margin-right: 35px;
+    padding: 0 var(--spacing-6);
+    background-color: var(--theme-color-pink);
+    color: var(--base-white);
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .tag-cat::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -19px;
+    width: 19px;
+    background-image:
+      linear-gradient(var(--theme-color-pink), var(--theme-color-pink)),
+      linear-gradient(var(--theme-color-pink), var(--theme-color-pink));
+    background-size:
+      19px 19px,
+      11px 12px;
+    background-position:
+      0 0,
+      0 100%;
+    background-repeat: no-repeat;
+  }
+  .tag-cat::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -35px;
+    width: 35px;
+    background-image:
+      linear-gradient(var(--theme-color-pink), var(--theme-color-pink)),
+      linear-gradient(var(--theme-color-pink), var(--theme-color-pink)),
+      linear-gradient(var(--theme-color-pink), var(--theme-color-pink)),
+      linear-gradient(var(--theme-color-pink), var(--theme-color-pink));
+    background-size:
+      11px 11px,
+      11px 12px,
+      12px 11px,
+      12px 11px;
+    background-position:
+      0px 0px,
+      0px 100%,
+      11px 11px,
+      23px 0px;
+    background-repeat: no-repeat;
+  }
+  .tag-vis {
+    height: 100%;
+    padding: 0 var(--spacing-6);
+    background-color: var(--color-secondary-light);
+    border: var(--border-width-xs) solid var(--color-secondary-darker);
+    color: var(--color-secondary-darker);
+    font-size: 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+</style>
