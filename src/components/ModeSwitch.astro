@@ -12,7 +12,7 @@ interface Props {
 const { activeMode } = Astro.props;
 
 // Logic cho nút đảo chiều ở giữa (Click vào thì tự nghịch đảo URL)
-const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
+const toggleUrl = activeMode === "motions" ? "/work/artwork/illustration" : "/work/motions";
 ---
 
 <div class="mode-switch-section">
@@ -41,7 +41,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
     </a>
 
     <a
-      href="/work/artwork"
+      href="/work/artwork/illustration"
       class:list={["switch-btn", activeMode === "artwork" && "is-active"]}
       aria-pressed={activeMode === "artwork" ? "true" : "false"}
       data-astro-prefetch="hover"

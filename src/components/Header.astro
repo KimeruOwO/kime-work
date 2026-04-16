@@ -73,7 +73,7 @@ const isWorks = currentPath.startsWith("/work");
 
     // Update WORKS link to match saved preference (default: motions)
     const savedMode = localStorage.getItem("kime-works-mode");
-    link.href = savedMode === "artwork" ? "/work/artwork" : "/work/motions";
+    link.href = savedMode === "artwork" ? "/work/artwork/illustration" : "/work/motions";
   });
 </script>
 
