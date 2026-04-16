@@ -376,19 +376,16 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
 <script>
   class HeroSlider extends HTMLElement {
-    // Khai báo trước thuộc tính để thỏa mãn TypeScript và tối ưu V8 Engine
     private slides: string[] = [];
     private currentIndex: number = 0;
     private isPlaying: boolean = true;
     private intervalDuration: number = 5000;
     private timer: ReturnType<typeof setTimeout> | null = null;
     
-    // Core states cho Drag tracking (Zero-Bloat Event Handling)
     private startTime: number = 0;
     private savedProgress: number = 0;
     private isDragging: boolean = false;
 
-    // Ép kiểu DOM Elements
     private grid: HTMLElement | null = null;
     private track: HTMLElement | null = null;
 
@@ -419,7 +416,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       if (!this.track) return;
       const scrub = (e: MouseEvent | TouchEvent | any) => {
         const rect = this.track!.getBoundingClientRect();
-        // Fallback cho Touch Event nếu PointerEvent không bung
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         let p = (clientX - rect.left) / rect.width;
         p = Math.max(0, Math.min(1, p));
@@ -430,13 +426,12 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
       this.track.addEventListener("pointerdown", (e: any) => {
         this.isDragging = true;
-        this.clearTimer(true); // Tạm lưu trút progress hiện tại
+        this.clearTimer(true); 
         scrub(e);
         this.track!.style.cursor = "grabbing";
         if (e.pointerId) this.track!.setPointerCapture(e.pointerId);
       });
 
-      // Ràng buộc sự kiện vào Window để theo dõi toàn cầu (Zero-Boundary Drag)
       window.addEventListener("pointermove", (e: any) => {
         if (!this.isDragging) return;
         scrub(e);
@@ -460,7 +455,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       });
     }
 
-    // Ép kiểu Event và Target
     handleEvent(e: Event) {
       if (e.type === "click") {
         const target = e.target as HTMLElement;
@@ -505,7 +499,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
         this.timer = null;
       }
       if (saveProgress && this.track && !this.isDragging) {
-        // Tính toán progress thực tế khi người dùng click Pause
         let elapsed = Date.now() - this.startTime;
         this.savedProgress += elapsed / this.intervalDuration;
         this.savedProgress = Math.max(0, Math.min(1, this.savedProgress));
@@ -525,7 +518,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       this.track.style.setProperty("--track-dur", "0ms");
       this.track.style.setProperty("--progress", `${startProgress * 100}%`);
 
-      // Reflow cycle - System Admin Trick để ngắt transition cache của browser
       void this.track.offsetWidth;
 
       this.track.style.setProperty("--track-dur", `${remainingTime}ms`);
@@ -575,36 +567,53 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 </script>
 
 <script>
-  // Kích hoạt Engine Bấm Sao chép (Zero Alert Bloat)
-  document.addEventListener("DOMContentLoaded", () => {
-    const copyBtns = document.querySelectorAll(".btn-copy");
+  const initCopyEngine = () => {
+    const copyBtns = document.querySelectorAll<HTMLButtonElement>(".btn-copy");
+    
+    if (!copyBtns.length) return; 
+
     copyBtns.forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         e.preventDefault();
-        const text = btn.getAttribute("data-copy-text");
-        if (text) {
-          try {
-            await navigator.clipboard.writeText(text);
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
-            setTimeout(() => {
-              btn.innerHTML = originalHtml;
-            }, 1500);
-          } catch (err) {
-            console.error("Failed to copy", err);
+        
+        const text = btn.dataset.copyText;
+        
+        if (!text) {
+          console.error("Clipboard Error: Missing data-copy-text");
+          return; 
+        }
+
+        try {
+          if (!navigator.clipboard) {
+            throw new Error("Clipboard API bị chặn. Phải chạy trên HTTPS hoặc Localhost.");
           }
+
+          await navigator.clipboard.writeText(text);
+          
+          const originalHtml = btn.innerHTML;
+          btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+          
+          setTimeout(() => {
+            btn.innerHTML = originalHtml;
+          }, 1500);
+          
+        } catch (err) {
+          console.error("Failed to write to Memory/Clipboard:", err);
         }
       });
     });
-  });
-</script>
+  };
 
+  initCopyEngine();
+
+  document.addEventListener('astro:page-load', initCopyEngine);
+</script>
 <style>
   /* ==============================================
      HERO SLIDER (Zero Layout Blueprint)
      ============================================== */
   hero-slider {
-    display: contents; /* Vượt ngục DOM: Tàng hình thẻ bọc, nhường quyền CSS Grid cho thẻ con */
+    display: contents; 
   }
 
   .sr-only {
@@ -1082,12 +1091,11 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /* Physical DVD Jewel Case Illusion */
     box-shadow: 
-      clamp(8px, 2vw, 16px) clamp(8px, 2vw, 16px) 0px var(--color-secondary-darker), /* Plastic spine thickness */
-      clamp(12px, 3vw, 24px) clamp(12px, 3vw, 24px) 25px rgba(0, 0, 0, 0.25), /* Deep ambient shadow */
-      inset 0px 6px 10px rgba(255, 255, 255, 0.3), /* Top glass/plastic rim light */
-      inset 0px -6px 10px rgba(0, 0, 0, 0.15); /* Bottom inner shadow */
+      clamp(8px, 2vw, 16px) clamp(8px, 2vw, 16px) 0px var(--color-secondary-darker), 
+      clamp(12px, 3vw, 24px) clamp(12px, 3vw, 24px) 25px rgba(0, 0, 0, 0.25), 
+      inset 0px 6px 10px rgba(255, 255, 255, 0.3), 
+      inset 0px -6px 10px rgba(0, 0, 0, 0.15); 
     border-radius: 4px;
     will-change: transform;
     transform: translateZ(0);
