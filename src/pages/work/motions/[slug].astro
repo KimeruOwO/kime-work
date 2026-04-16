@@ -234,8 +234,7 @@ const thumbUrl = ytId
   }
 
   /* ==================================
-     1. HERO RIBBON (PURE CSS PATTERN)
-     SVG Composite Tile: Big Square + 2 Mini Squares + Kimeyu Logo
+     1. HERO RIBBON 
      ================================== */
   .hero-ribbon {
     position: relative;
@@ -314,7 +313,7 @@ const thumbUrl = ytId
   .motion-title-bar {
     position: relative;
     width: 100%;
-    padding: var(--spacing-4) var(--spacing-16);
+    padding: clamp(var(--spacing-4), 3vw, var(--spacing-6)) clamp(var(--spacing-4), 8vw, var(--spacing-16));
     margin-bottom: var(--spacing-12);
     margin-top: var(--spacing-12);
 
@@ -323,15 +322,7 @@ const thumbUrl = ytId
     align-items: center;
     text-align: center;
 
-    background: linear-gradient(
-      90deg,
-      var(--color-secondary-light) 0%,
-      var(--color-secondary-light) 25%,
-      var(--color-primary) 40%,
-      var(--color-primary) 60%,
-      var(--color-secondary-light) 75%,
-      var(--color-secondary-light) 100%
-    );
+    background: var(--color-primary);
   }
 
   .motion-title-bar::before,
@@ -341,41 +332,57 @@ const thumbUrl = ytId
     top: 0;
     bottom: 0;
 
-    width: clamp(40px, 8vw, 76px);
+    width: auto;
+    aspect-ratio: 1 / 1;
     background-color: var(--base-white);
+    pointer-events: none;
 
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2' preserveAspectRatio='none'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0z'/%3E%3C/svg%3E");
     mask-size: calc(100% * 2 / 3) calc(100% * 2 / 3);
     mask-repeat: repeat;
     mask-position: top left;
 
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0z'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2' preserveAspectRatio='none'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0z'/%3E%3C/svg%3E");
     -webkit-mask-size: calc(100% * 2 / 3) calc(100% * 2 / 3);
     -webkit-mask-repeat: repeat;
     -webkit-mask-position: top left;
+    
+    transition: opacity 0.3s ease;
   }
 
   .motion-title-bar::before {
-    left: clamp(20px, 12vw, 15%);
+    left: clamp(10px, 6vw, 15%);
   }
 
   .motion-title-bar::after {
-    right: clamp(20px, 12vw, 15%);
+    right: clamp(10px, 6vw, 15%);
+  }
+
+  @media (max-width: 768px) {
+    .motion-title-bar::before,
+    .motion-title-bar::after {
+      opacity: 0.15;
+    }
   }
 
   .motion-title {
     position: relative;
     z-index: 4;
     margin: 0;
-    font-size: clamp(var(--text-lg), 3.5vw, var(--text-3xl));
+    font-size: clamp(1.25rem, 4vw, var(--text-3xl));
     font-weight: 900;
     color: var(--base-white);
     letter-spacing: 2px;
     text-transform: uppercase;
-    text-shadow: var(--border-width-xs) var(--border-width-xs) 0
-      rgba(0, 0, 0, 0.1);
+    text-shadow: 
+      -1.5px -1.5px 0 var(--color-primary),
+       1.5px -1.5px 0 var(--color-primary),
+      -1.5px  1.5px 0 var(--color-primary),
+       1.5px  1.5px 0 var(--color-primary),
+      0px 4px 10px rgba(0, 0, 0, 0.15);
     word-break: break-word;
     overflow-wrap: break-word;
+    line-height: 1.3;
   }
 
   /* ==================================
@@ -514,7 +521,6 @@ const thumbUrl = ytId
     pointer-events: none;
   }
 
-  /* GPU-Accelerated Layering Architecture chống Layout Thrashing */
   .video-players-wrapper {
     position: relative;
     width: 100%;

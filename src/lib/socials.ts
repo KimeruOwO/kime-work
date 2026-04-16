@@ -15,17 +15,17 @@ export const SOCIAL_LINKS: SocialLink[] = [
     platform: "facebook",
   },
   {
-    href: "https://x.com/kimeyu_art",
+    href: "https://twitter.com/Kimeru2001",
     label: "X (Twitter)",
     platform: "x",
   },
   {
-    href: "https://www.youtube.com/@kimeyu",
+    href: "https://www.youtube.com/@kimeru_kirisu8572",
     label: "YouTube",
     platform: "youtube",
   },
   {
-    href: "https://www.pixiv.net/users/kimeyu",
+    href: "https://www.pixiv.net/en/users/44620302",
     label: "Pixiv",
     platform: "pixiv",
   },

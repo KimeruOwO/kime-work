@@ -99,13 +99,12 @@ const { page } = Astro.props;
 </Layout>
 
 <script>
-  // Retain Image() references during preload to prevent GC from canceling downloads
   const _preloadCache = new Set<HTMLImageElement>();
 
   class ArtworkGalleryManager extends HTMLElement {
     private _dialog: HTMLDialogElement | null = null;
     private _closeBtn: HTMLButtonElement | null = null;
-    private _cards: NodeListOf<HTMLElement> | null = null;
+    private get _cards() { return this.querySelectorAll<HTMLElement>(".artwork-card"); }
     private _galleryContainer: HTMLElement | null = null;
 
     constructor() {
@@ -120,7 +119,6 @@ const { page } = Astro.props;
     connectedCallback() {
       this._dialog = this.querySelector<HTMLDialogElement>(".lightbox-modal");
       this._closeBtn = this.querySelector<HTMLButtonElement>(".lightbox-close");
-      this._cards = this.querySelectorAll<HTMLElement>(".artwork-card");
       this._galleryContainer =
         this.querySelector<HTMLElement>(".artwork-masonry");
 
@@ -171,10 +169,8 @@ const { page } = Astro.props;
         this.handleFilterChange as EventListener,
       );
 
-      // Cắt đứt tham chiếu, nhường chỗ cho Garbage Collector
       this._dialog = null;
       this._closeBtn = null;
-      this._cards = null;
       this._galleryContainer = null;
     }
 
@@ -191,7 +187,7 @@ const { page } = Astro.props;
     }
 
     private handleFilterChange(e: CustomEvent) {
-      if (this._cards === null) return;
+      if (this._cards.length === 0) return;
       const FILTER_ALL = "all";
       const filterValue = e.detail.value.toLowerCase();
 

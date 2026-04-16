@@ -16,8 +16,10 @@ const heroSlides = [
     ?.url,
   allVideos.find((v) => v.category?.name?.includes("Debut"))?.thumbnail?.url,
   allArtworks.find((a) => a.category?.name === "Illustration")?.image?.url,
-  allArtworks.find((a) => a.category?.name?.includes("Graphics"))?.image?.url,
 ].filter(Boolean) as string[];
+
+// Extract FEATURED videos
+const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 ---
 
 <Layout
@@ -55,15 +57,9 @@ const heroSlides = [
           <div class="top-decor-banner__body"></div>
         </div>
 
-        <div class="hero-layer-grid hero-layer-grid--white" aria-hidden="true">
-        </div>
-
         <div class="hero-layer-over">
           <div class="art-mask-grid" aria-label="Hero Artwork Focus" role="img">
-            <div class="art-mask-block art-mask-block--c1-top"></div>
-            <div class="art-mask-block art-mask-block--c1-bot"></div>
-            <div class="art-mask-block art-mask-block--c2-top"></div>
-            <div class="art-mask-block art-mask-block--c2-bot"></div>
+            <div class="art-mask-block art-mask-block--single"></div>
           </div>
         </div>
 
@@ -144,23 +140,28 @@ const heroSlides = [
 
       <div class="featured-cards-container">
         {
-          [1, 2, 3, 4, 5, 6].map((i) => (
+          featuredVideos.map((video, index) => (
             <article
-              class={`featured-card ${i === 1 ? "featured-card--new" : ""}`}
+              class={`featured-card ${index === 0 ? "featured-card--new" : ""}`}
             >
-              <div class="card-thumb" aria-label={`Thumbnail ${i}`}>
-                {i === 1 && <span class="card-badge">NEW!</span>}
-              </div>
+              <a 
+                href={`/work/motions/${video.slug}`} 
+                class="card-thumb" 
+                style={`background-image: url('${video.thumbnail.url}'); background-size: cover; background-position: center; display: block;`} 
+                aria-label={`Watch ${video.title}`}
+              >
+                {index === 0 && <span class="card-badge">NEW!</span>}
+              </a>
               <div class="card-info">
                 <div class="card-info__text">
-                  <h3 class="card-title">CYAN BLUE</h3>
-                  <p class="card-sub">Hatsune Miku</p>
+                  <h3 class="card-title">{video.title}</h3>
+                  <p class="card-sub">{video.nameArtist}</p>
                 </div>
-                <div class="card-play-btn" aria-hidden="true" />
+                <a href={`/work/motions/${video.slug}`} class="card-play-btn" aria-label={`Play ${video.title}`}></a>
               </div>
               <div class="card-tags">
-                <span class="tag-cat">MOTION GRAPHICS</span>
-                <span class="tag-status">Private</span>
+                <span class="tag-cat">{video.category?.name?.toUpperCase() || "MOTION GRAPHICS"}</span>
+                <span class="tag-status">{video.category?.visibility === "Private" ? "Private" : "Public"}</span>
               </div>
             </article>
           ))
@@ -169,10 +170,7 @@ const heroSlides = [
 
       <div class="featured-footer-row">
         <div class="featured-pagination" aria-label="Featured Pagination">
-          <button class="featured-dot featured-dot--active" aria-label="1"
-          ></button>
-          <button class="featured-dot" aria-label="2"></button>
-          <button class="featured-dot" aria-label="3"></button>
+          <button class="featured-dot featured-dot--active" aria-label="1"></button>
         </div>
 
         <PageDecorBanner
@@ -383,7 +381,12 @@ const heroSlides = [
     private currentIndex: number = 0;
     private isPlaying: boolean = true;
     private intervalDuration: number = 5000;
-    private timer: ReturnType<typeof setInterval> | null = null;
+    private timer: ReturnType<typeof setTimeout> | null = null;
+    
+    // Core states cho Drag tracking (Zero-Bloat Event Handling)
+    private startTime: number = 0;
+    private savedProgress: number = 0;
+    private isDragging: boolean = false;
 
     // Ép kiểu DOM Elements
     private grid: HTMLElement | null = null;
@@ -397,9 +400,11 @@ const heroSlides = [
       this.isPlaying = true;
       this.intervalDuration = 5000;
 
-      // Cache DOM O(1) - Dùng Generic Type để IDE không báo lỗi null
+      // Cache DOM O(1)
       this.grid = this.querySelector<HTMLElement>(".art-mask-grid");
       this.track = this.querySelector<HTMLElement>(".kime-media-track");
+
+      this.setupDrag();
 
       this.updateSlide(true);
       this.addEventListener("click", this);
@@ -407,7 +412,52 @@ const heroSlides = [
 
     disconnectedCallback() {
       this.removeEventListener("click", this);
-      this.clearTimer();
+      this.clearTimer(false);
+    }
+
+    setupDrag() {
+      if (!this.track) return;
+      const scrub = (e: MouseEvent | TouchEvent | any) => {
+        const rect = this.track!.getBoundingClientRect();
+        // Fallback cho Touch Event nếu PointerEvent không bung
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        let p = (clientX - rect.left) / rect.width;
+        p = Math.max(0, Math.min(1, p));
+        this.savedProgress = p;
+        this.track!.style.setProperty("--track-dur", `0ms`);
+        this.track!.style.setProperty("--progress", `${p * 100}%`);
+      };
+
+      this.track.addEventListener("pointerdown", (e: any) => {
+        this.isDragging = true;
+        this.clearTimer(true); // Tạm lưu trút progress hiện tại
+        scrub(e);
+        this.track!.style.cursor = "grabbing";
+        if (e.pointerId) this.track!.setPointerCapture(e.pointerId);
+      });
+
+      // Ràng buộc sự kiện vào Window để theo dõi toàn cầu (Zero-Boundary Drag)
+      window.addEventListener("pointermove", (e: any) => {
+        if (!this.isDragging) return;
+        scrub(e);
+      });
+
+      window.addEventListener("pointerup", (e: any) => {
+        if (!this.isDragging) return;
+        this.isDragging = false;
+        this.track!.style.cursor = "grab";
+        if (e.pointerId && this.track!.hasPointerCapture(e.pointerId)) {
+          this.track!.releasePointerCapture(e.pointerId);
+        }
+        if (this.isPlaying) {
+          this.startTimer(this.savedProgress);
+        }
+      });
+      
+      // Fallback
+      window.addEventListener("pointercancel", () => {
+        this.isDragging = false;
+      });
     }
 
     // Ép kiểu Event và Target
@@ -419,10 +469,8 @@ const heroSlides = [
 
         if (btn.classList.contains("kime-media-btn--prev")) {
           this.prevSlide();
-          this.resetTimer();
         } else if (btn.classList.contains("kime-media-btn--next")) {
           this.nextSlide();
-          this.resetTimer();
         } else if (btn.classList.contains("kime-media-btn--pause")) {
           this.togglePlay(btn);
         }
@@ -444,61 +492,79 @@ const heroSlides = [
       this.isPlaying = !this.isPlaying;
       if (this.isPlaying) {
         btn.classList.remove("paused");
-        this.resetTimer();
+        this.startTimer(this.savedProgress);
       } else {
         btn.classList.add("paused");
-        this.clearTimer();
+        this.clearTimer(true);
       }
     }
 
-    clearTimer() {
-      if (this.timer) clearInterval(this.timer);
-      if (this.track) {
+    clearTimer(saveProgress = false) {
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+      if (saveProgress && this.track && !this.isDragging) {
+        // Tính toán progress thực tế khi người dùng click Pause
+        let elapsed = Date.now() - this.startTime;
+        this.savedProgress += elapsed / this.intervalDuration;
+        this.savedProgress = Math.max(0, Math.min(1, this.savedProgress));
         this.track.style.setProperty("--track-dur", "0ms");
-        this.track.style.setProperty("--progress", "100%");
+        this.track.style.setProperty("--progress", `${this.savedProgress * 100}%`);
       }
     }
 
-    resetTimer() {
-      this.clearTimer();
+    startTimer(startProgress = 0) {
+      this.clearTimer(false);
+      this.savedProgress = startProgress;
       if (!this.isPlaying || !this.track) return;
 
-      this.track.style.setProperty("--track-dur", "0ms");
-      this.track.style.setProperty("--progress", "0%");
+      this.startTime = Date.now();
+      const remainingTime = this.intervalDuration * (1 - startProgress);
 
+      this.track.style.setProperty("--track-dur", "0ms");
+      this.track.style.setProperty("--progress", `${startProgress * 100}%`);
+
+      // Reflow cycle - System Admin Trick để ngắt transition cache của browser
       void this.track.offsetWidth;
 
-      this.track.style.setProperty("--track-dur", `${this.intervalDuration}ms`);
+      this.track.style.setProperty("--track-dur", `${remainingTime}ms`);
       this.track.style.setProperty("--progress", "100%");
 
-      this.timer = setInterval(() => {
+      this.timer = setTimeout(() => {
         this.nextSlide();
-
-        if (this.track) {
-          this.track.style.setProperty("--track-dur", "0ms");
-          this.track.style.setProperty("--progress", "0%");
-          void this.track.offsetWidth;
-          this.track.style.setProperty(
-            "--track-dur",
-            `${this.intervalDuration}ms`,
-          );
-          this.track.style.setProperty("--progress", "100%");
-        }
-      }, this.intervalDuration);
+      }, remainingTime);
     }
 
     updateSlide(init: boolean = false) {
       if (this.slides[this.currentIndex] && this.grid) {
-        this.grid.style.setProperty(
-          "--hero-thumb",
-          `url("${this.slides[this.currentIndex]}")`,
-        );
+        if (!init) {
+          // Fade cut illusion (Zero DOM duplication)
+          this.grid.classList.add("fade-switch");
+          setTimeout(() => {
+            if (!this.grid) return;
+            this.grid.style.setProperty(
+              "--hero-thumb",
+              `url("${this.slides[this.currentIndex]}")`,
+            );
+            this.grid.classList.remove("fade-switch");
+          }, 200);
+        } else {
+          this.grid.style.setProperty(
+            "--hero-thumb",
+            `url("${this.slides[this.currentIndex]}")`,
+          );
+        }
       }
 
-      if (!init && this.isPlaying) {
-        this.resetTimer();
-      } else if (init && this.isPlaying) {
-        this.resetTimer();
+      if (this.isPlaying) {
+        this.startTimer(0);
+      } else {
+        this.savedProgress = 0;
+        if (this.track) {
+          this.track.style.setProperty("--track-dur", "0ms");
+          this.track.style.setProperty("--progress", "0%");
+        }
       }
     }
   }
@@ -577,6 +643,7 @@ const heroSlides = [
   @media (max-width: 768px) {
     .art-header {
       padding: 0 clamp(0.8rem, 4vw, 3rem);
+      margin-bottom: var(--spacing-6);
     }
   }
 
@@ -960,68 +1027,6 @@ const heroSlides = [
     z-index: 5;
   }
 
-  .hero-layer-grid {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
-  @media (min-width: 769px) {
-    .hero-layer-grid {
-      clip-path: polygon(45% 0%, 100% 0%, 100% 100%, 45% 100%);
-    }
-  }
-  .hero-layer-grid--white {
-    z-index: 1;
-  }
-
-  .hero-layer-grid--white::before,
-  .hero-layer-grid--white::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: calc(50% + var(--hero-offset-x));
-    width: 250vw;
-    height: var(--ribbon-thick);
-    background-color: var(--grid-banner-bg);
-    border-top: var(--strip-w-border) solid var(--base-white);
-    border-bottom: var(--strip-w-border) solid var(--base-white);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
-    transform-origin: center;
-    background-image: url("/patterns/kimeyu-tile-pink.svg");
-    background-size: auto 100%;
-    background-repeat: repeat-x;
-    background-position: center;
-  }
-
-  .hero-layer-grid--white::before {
-    --tail-cut: -0.8;
-    width: 150vw;
-
-    transform: translate(-50%, -50%) rotate(-45deg)
-      translateX(
-        calc(75vw + var(--tail-cut) * var(--block-w) - var(--cross-gap) / 2)
-      )
-      translateY(
-        calc(
-          -1 *
-            (
-              var(--block-w) + var(--cross-gap) / 2 + var(--ribbon-thick) / 2 +
-                var(--ribbon-gap)
-            )
-        )
-      );
-  }
-
-  .hero-layer-grid--white::after {
-    transform: translate(-50%, -50%) rotate(-45deg)
-      translateY(
-        calc(
-          var(--block-w) + var(--cross-gap) / 2 + var(--ribbon-thick) / 2 +
-            var(--ribbon-gap)
-        )
-      );
-  }
 
   .hero-layer-over {
     position: absolute;
@@ -1039,26 +1044,23 @@ const heroSlides = [
   .art-mask-grid {
     position: relative;
     left: var(--hero-offset-x);
-    transform: rotate(45deg);
-
-    --r-c2t: 1;
-    --r-c2b: 2.8;
-    --r-c1t: 1.7;
-    --r-c1b: 1;
-    width: calc(var(--block-w) * 2 + var(--cross-gap));
-    height: calc(var(--block-w) * 3.8 + var(--cross-gap));
-
-    --offset-c2: calc(var(--block-w) * (var(--r-c2b) - var(--r-c2t)) / 2);
-    --offset-c1: calc(
-      var(--offset-c2) + var(--block-w) * (var(--r-c2t) - var(--r-c1t))
-    );
-
-    --art-size: clamp(600px, 120vw, 1500px);
     --hero-thumb: linear-gradient(
       135deg,
       var(--color-primary-light) 0%,
       var(--color-primary) 100%
     );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: clamp(280px, 45vw, 640px);
+    aspect-ratio: 1 / 1;
+    z-index: 5;
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  }
+
+  .art-mask-grid.fade-switch {
+    opacity: 0;
+    transform: scale(0.95);
   }
 
   @media (max-width: 768px) {
@@ -1066,78 +1068,29 @@ const heroSlides = [
       --block-w: clamp(75px, 26vw, 160px);
     }
 
-    .hero-layer-grid--white::before {
-      --tail-cut: -1.6;
-    }
-
     .art-mask-grid {
-      --r-c2t: 1;
-      --r-c2b: 2.2;
-      --r-c1t: 1.5;
-      --r-c1b: 1.7;
-      height: calc(var(--block-w) * 3.2 + var(--cross-gap));
+      width: clamp(300px, 85vw, 420px);
     }
   }
 
-  .art-mask-block {
-    position: absolute;
-    width: var(--block-w);
-    border: 3px solid var(--base-white);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    overflow: hidden;
+  .art-mask-block--single {
+    width: 100%;
+    height: 100%;
+    border: clamp(4px, 1vw, 8px) solid var(--base-white);
     background-color: var(--color-primary-light);
-    will-change: transform;
-    transform: translateZ(0);
-  }
-
-  .art-mask-block--c1-top {
-    height: calc(var(--block-w) * var(--r-c1t));
-    right: calc(50% + var(--cross-gap) / 2);
-    bottom: calc(50% + var(--cross-gap) / 2 + var(--offset-c1));
-  }
-  .art-mask-block--c1-bot {
-    height: calc(var(--block-w) * var(--r-c1b));
-    right: calc(50% + var(--cross-gap) / 2);
-    top: calc(50% + var(--cross-gap) / 2 - var(--offset-c1));
-  }
-  .art-mask-block--c2-top {
-    height: calc(var(--block-w) * var(--r-c2t));
-    left: calc(50% + var(--cross-gap) / 2);
-    bottom: calc(50% + var(--cross-gap) / 2 + var(--offset-c2));
-  }
-  .art-mask-block--c2-bot {
-    height: calc(var(--block-w) * var(--r-c2b));
-    left: calc(50% + var(--cross-gap) / 2);
-    top: calc(50% + var(--cross-gap) / 2 - var(--offset-c2));
-  }
-
-  .art-mask-block::before {
-    content: "";
-    position: absolute;
-    width: var(--art-size);
-    height: var(--art-size);
     background-image: var(--hero-thumb);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    transform: translate(-50%, -50%) rotate(-45deg);
-  }
-
-  .art-mask-block--c1-top::before {
-    left: calc(100% + var(--cross-gap) / 2);
-    top: calc(100% + var(--cross-gap) / 2 + var(--offset-c1));
-  }
-  .art-mask-block--c1-bot::before {
-    left: calc(100% + var(--cross-gap) / 2);
-    top: calc(var(--offset-c1) - var(--cross-gap) / 2);
-  }
-  .art-mask-block--c2-top::before {
-    left: calc(var(--cross-gap) / -2);
-    top: calc(100% + var(--cross-gap) / 2 + var(--offset-c2));
-  }
-  .art-mask-block--c2-bot::before {
-    left: calc(var(--cross-gap) / -2);
-    top: calc(var(--offset-c2) - var(--cross-gap) / 2);
+    /* Physical DVD Jewel Case Illusion */
+    box-shadow: 
+      clamp(8px, 2vw, 16px) clamp(8px, 2vw, 16px) 0px var(--color-secondary-darker), /* Plastic spine thickness */
+      clamp(12px, 3vw, 24px) clamp(12px, 3vw, 24px) 25px rgba(0, 0, 0, 0.25), /* Deep ambient shadow */
+      inset 0px 6px 10px rgba(255, 255, 255, 0.3), /* Top glass/plastic rim light */
+      inset 0px -6px 10px rgba(0, 0, 0, 0.15); /* Bottom inner shadow */
+    border-radius: 4px;
+    will-change: transform;
+    transform: translateZ(0);
   }
 
   /* ==============================================
@@ -1164,6 +1117,12 @@ const heroSlides = [
     align-items: center;
     --progress: 0%;
     --track-dur: 0ms;
+    cursor: grab;
+    touch-action: pan-y;
+  }
+
+  .kime-media-track:active {
+    cursor: grabbing;
   }
 
   .kime-media-track::before {
@@ -1195,7 +1154,7 @@ const heroSlides = [
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(30px, 8vw, 80px);
+    gap: clamp(60px, 15vw, 120px);
   }
 
   .kime-media-btn {
@@ -1652,8 +1611,8 @@ const heroSlides = [
   }
 
   .featured-card {
-    --c-border: 2px solid var(--color-secondary-darker);
-    --c-pink-line: 2px solid var(--color-primary-light);
+    --c-border: 3px solid var(--color-secondary-darker);
+    --c-pink-line: 4px solid var(--color-primary-light);
     display: flex;
     flex-direction: column;
     width: clamp(280px, 85vw, 360px);
@@ -1717,6 +1676,8 @@ const heroSlides = [
   .card-info__text {
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    padding-right: 16px;
   }
   .card-info__text .card-title {
     font-size: clamp(1rem, 5vw, 1.3rem);
@@ -1724,6 +1685,9 @@ const heroSlides = [
     color: var(--color-secondary-darker);
     line-height: 1.1;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .card-info__text .card-sub {
     font-size: clamp(0.75rem, 3.5vw, 0.85rem);
@@ -1876,7 +1840,7 @@ const heroSlides = [
   }
 
   /* =========================================
-     CONTACT ENTRY SECTION (Giao diện Liên Hệ siêu lõi)
+     CONTACT ENTRY SECTION
      ========================================= */
   .contact-entry-section {
     width: 100%;
@@ -2275,6 +2239,7 @@ const heroSlides = [
   .contact-pill-grid {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: var(--spacing-6);
     width: 100%;
   }
@@ -2282,7 +2247,8 @@ const heroSlides = [
   .social-pill-wrapper {
     position: relative;
     display: flex;
-    width: 80%;
+    width: 100%;
+    max-width: clamp(280px, 90vw, 560px);
     height: clamp(64px, 8vw, 86px);
     border-radius: 43px;
     border: 3px solid var(--base-white);
@@ -2398,7 +2364,7 @@ const heroSlides = [
     --b-gap: clamp(4px, 1vw, 8px);
     --b-h-top: clamp(6px, 1.5vw, 12px);
     --b-h-bottom: clamp(14px, 3.5vw, 28px);
-    --b-pad: clamp(4px, 1vw, 8px);
+    --b-pad: clamp(14px, 1vw, 18px);
 
     --tile-gap: var(--b-gap);
     --tile-h-top: var(--b-h-top);

@@ -109,7 +109,9 @@ const { page } = Astro.props;
 
 <script>
   class MotionGalleryManager extends HTMLElement implements EventListenerObject {
-    private _cards: NodeListOf<HTMLElement> | null = null;
+    private get _cards() {
+      return this.querySelectorAll<HTMLElement>(".motion-card");
+    }
     private _currentCat = "all";
     private _currentVis = "all";
 
@@ -141,7 +143,7 @@ const { page } = Astro.props;
     };
 
     private performFLIP(updateDOMCallback: () => void) {
-      if (!this._cards) return;
+      if (this._cards.length === 0) return;
 
       const firstRects = new Map<HTMLElement, DOMRect>();
       this._cards.forEach((card) => {
@@ -193,7 +195,7 @@ const { page } = Astro.props;
 
     private updateCardThemes() {
       requestAnimationFrame(() => {
-        if (!this._cards) return;
+        if (this._cards.length === 0) return;
         const grid = this.querySelector<HTMLElement>("#motions-grid-container");
         let cols = parseInt(grid?.dataset.gridCols || "4", 10);
         if (isNaN(cols)) cols = 4;
@@ -213,7 +215,6 @@ const { page } = Astro.props;
     }
 
     connectedCallback() {
-      this._cards = this.querySelectorAll<HTMLElement>(".motion-card");
       const grid = this.querySelector<HTMLElement>("#motions-grid-container");
       const sidebarBtns = this.querySelectorAll<HTMLButtonElement>(".s-btn");
 
@@ -265,7 +266,6 @@ const { page } = Astro.props;
       window.removeEventListener("resize", this._resizeHandler);
       this.removeEventListener("filter-changed", this);
       this.removeEventListener("click", this);
-      this._cards = null;
     }
 
     handleEvent(e: Event) {
@@ -333,7 +333,7 @@ const { page } = Astro.props;
 
     private _handleFilterChange(e: CustomEvent) {
       const cards = this._cards;
-      if (!cards) return;
+      if (cards.length === 0) return;
 
       const filterGroup = e.detail.group;
       const filterValue = e.detail.value.toLowerCase();
