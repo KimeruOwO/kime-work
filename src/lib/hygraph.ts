@@ -1,8 +1,5 @@
 // src/lib/hygraph.ts
 
-// ==========================================================
-// 1. INTERFACES (STRICT TYPING)
-// ==========================================================
 interface Asset {
   url: string;
   fullUrl?: string;
@@ -41,9 +38,6 @@ export interface Artwork {
   category: Category;
 }
 
-// ==========================================================
-// 2. CORE FETCH ENGINE
-// ==========================================================
 const HYGRAPH_ENDPOINT = import.meta.env.HYGRAPH_ENDPOINT;
 
 async function fetchAPI<T>(query: string, variables = {}): Promise<T> {
@@ -66,10 +60,6 @@ async function fetchAPI<T>(query: string, variables = {}): Promise<T> {
 
   return json.data as T;
 }
-
-// ==========================================================
-// 3. QUERIES & DATA SANITIZATION
-// ==========================================================
 
 export async function fetchArtworks(): Promise<Artwork[]> {
   const data = await fetchAPI<{ artworks: Artwork[] }>(`
@@ -126,21 +116,19 @@ export async function fetchVideos(): Promise<Video[]> {
     }
   `);
   
-  // Chuyển map từ Async về Sync. Không bao giờ fetch external API trong vòng lặp map.
   return data.videos.map((vid): Video => {
     let linkOriginal = vid.linkEmbed;
     
-    // An toàn bóc tách ID Youtube từ link Embed để tạo link gốc
     if (vid.linkEmbed && vid.linkEmbed.includes("/embed/")) {
       const videoId = vid.linkEmbed.split("/embed/")[1]?.split("?")[0];
       if (videoId) {
+        // ĐÃ FIX LỖI SYNTAX Ở ĐÂY
         linkOriginal = `https://www.youtube.com/watch?v=${videoId}`;
       }
     }
     
     let linkFacebook = vid.linkFacebook;
     if (linkFacebook) {
-      // Regex an toàn trên Stack Memory, không dính líu Network
       const reelMatch = linkFacebook.match(/\/reel\/(\d+)/);
       const watchMatch = linkFacebook.match(/watch\/\?v=(\d+)/);
 

@@ -1,11 +1,11 @@
 ---
-import Layout from "../../../layouts/Layout.astro";
-import SectionHeader from "../../../components/SectionHeader.astro";
-import ModeSwitch from "../../../components/ModeSwitch.astro";
-import FilterMenu from "../../../components/FilterMenu.astro";
-import Pagination from "../../../components/Pagination.astro";
-import { fetchArtworks } from "../../../lib/hygraph";
-import type { Artwork } from "../../../lib/hygraph";
+import Layout from "../../../../layouts/Layout.astro";
+import SectionHeader from "../../../../components/SectionHeader.astro";
+import ModeSwitch from "../../../../components/ModeSwitch.astro";
+import NavFilterMenu from "../../../../components/NavFilterMenu.astro";
+import Pagination from "../../../../components/Pagination.astro";
+import { fetchArtworks } from "../../../../lib/hygraph";
+import type { Artwork } from "../../../../lib/hygraph";
 import type { GetStaticPaths, Page } from "astro";
 
 interface Props {
@@ -14,13 +14,42 @@ interface Props {
 
 export const getStaticPaths = (async ({ paginate }) => {
   const artworks = await fetchArtworks();
-  return paginate(artworks, { pageSize: 9 });
+
+  const allRoutes = [];
+
+  // 1. ILLUSTRATION Filter
+  const illArtworks = artworks.filter((a) =>
+    a.category?.slug?.toLowerCase().startsWith("illustration"),
+  );
+  allRoutes.push(
+    ...paginate(illArtworks, {
+      params: { filter: "illustration" },
+      pageSize: 9,
+    }),
+  );
+
+  // 2. GRAPHICS DESIGN Filter
+  const gdArtworks = artworks.filter((a) =>
+    a.category?.slug?.toLowerCase().startsWith("graphics"),
+  );
+  allRoutes.push(
+    ...paginate(gdArtworks, {
+      params: { filter: "graphics" },
+      pageSize: 9,
+    }),
+  );
+
+  return allRoutes;
 }) satisfies GetStaticPaths;
 
 const { page } = Astro.props;
+const { filter } = Astro.params;
 ---
 
-<Layout title={`Kime Work - Artwork Page ${page.currentPage}`} description="Explore Kimeyu's illustration and graphic design gallery — character art, landscapes, and editorial work.">
+<Layout
+  title={`Kime Work - Artwork Page ${page.currentPage}`}
+  description="Explore Kimeyu's illustration and graphic design gallery — character art, landscapes, and editorial work."
+>
   <Fragment slot="banner">
     <div class="works-hero-group">
       <SectionHeader
@@ -40,8 +69,9 @@ const { page } = Astro.props;
       <SectionHeader title="ARTWORK" subtitle="作品" align="responsive" />
 
       <div class="wrapper">
-        <FilterMenu
-          groupName="artwork-filter"
+        <NavFilterMenu
+          baseUrl="/work/artwork"
+          activeValue={filter}
           options={[
             { label: "ILLUSTRATION", value: "illustration" },
             { label: "GRAPHICS DESIGN", value: "graphics" },
@@ -78,7 +108,7 @@ const { page } = Astro.props;
 
         <Pagination
           page={page}
-          baseUrl="/work/artwork"
+          baseUrl={`/work/artwork/${filter}`}
           targetId="works-gallery"
         />
       </div>
@@ -104,14 +134,15 @@ const { page } = Astro.props;
   class ArtworkGalleryManager extends HTMLElement {
     private _dialog: HTMLDialogElement | null = null;
     private _closeBtn: HTMLButtonElement | null = null;
-    private get _cards() { return this.querySelectorAll<HTMLElement>(".artwork-card"); }
+    private get _cards() {
+      return this.querySelectorAll<HTMLElement>(".artwork-card");
+    }
     private _galleryContainer: HTMLElement | null = null;
 
     constructor() {
       super();
       this.handleCardClick = this.handleCardClick.bind(this);
       this.handleCardHover = this.handleCardHover.bind(this);
-      this.handleFilterChange = this.handleFilterChange.bind(this);
       this.closeDialog = this.closeDialog.bind(this);
       this.handleBackdropClick = this.handleBackdropClick.bind(this);
     }
@@ -137,11 +168,6 @@ const { page } = Astro.props;
       if (this._dialog !== null) {
         this._dialog.addEventListener("click", this.handleBackdropClick);
       }
-
-      this.addEventListener(
-        "filter-changed",
-        this.handleFilterChange as EventListener,
-      );
     }
 
     disconnectedCallback() {
@@ -164,11 +190,6 @@ const { page } = Astro.props;
         this._dialog.removeEventListener("click", this.handleBackdropClick);
       }
 
-      this.removeEventListener(
-        "filter-changed",
-        this.handleFilterChange as EventListener,
-      );
-
       this._dialog = null;
       this._closeBtn = null;
       this._galleryContainer = null;
@@ -186,17 +207,6 @@ const { page } = Astro.props;
       }
     }
 
-    private handleFilterChange(e: CustomEvent) {
-      if (this._cards.length === 0) return;
-      const FILTER_ALL = "all";
-      const filterValue = e.detail.value.toLowerCase();
-
-      for (const card of this._cards) {
-        const cardCat = card.dataset.category;
-        card.hidden = filterValue !== FILTER_ALL && cardCat !== filterValue;
-      }
-    }
-
     private handleCardHover(e: MouseEvent) {
       const target = e.target as HTMLElement;
       const card = target.closest<HTMLElement>(".artwork-card");
@@ -208,7 +218,8 @@ const { page } = Astro.props;
         const preloadImg = new Image();
         // Prevent GC from collecting before download completes
         _preloadCache.add(preloadImg);
-        preloadImg.onload = preloadImg.onerror = () => _preloadCache.delete(preloadImg);
+        preloadImg.onload = preloadImg.onerror = () =>
+          _preloadCache.delete(preloadImg);
         preloadImg.src = fullSrc;
       }
     }
@@ -249,7 +260,7 @@ const { page } = Astro.props;
 </script>
 
 <style>
-  @import "../../../styles/works-hero.css";
+  @import "../../../../styles/works-hero.css";
 
   .works-content {
     padding-top: var(--spacing-8);

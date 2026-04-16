@@ -1,5 +1,5 @@
 ---
-// src/components/FilterMenu.astro
+// src/components/NavFilterMenu.astro
 import FilterIcon from "./icons/FilterIcon.astro";
 export interface FilterOption {
     label: string;
@@ -8,20 +8,20 @@ export interface FilterOption {
 
 export interface Props {
     title?: string;
-    groupName: string;
     options: FilterOption[];
     activeValue?: string;
+    baseUrl: string; // The base URL to append the filter value to
 }
 
 const {
     title = "FILTER",
-    groupName,
     options,
     activeValue = options[0]?.value,
+    baseUrl
 } = Astro.props;
 ---
 
-<filter-menu-ctrl class="filter-group" data-group={groupName} id={`filter-${groupName}`}>
+<div class="filter-group">
     <div class="filter-group__label">
         <span>{title}</span>
         <FilterIcon
@@ -35,102 +35,21 @@ const {
     <div class="filter-group__options">
         {
             options.map((opt) => (
-                <button
+                <a
+                    href={`${baseUrl}/${opt.value}`}
                     class:list={[
                         "filter-btn",
                         opt.value === activeValue && "is-active",
                     ]}
-                    data-value={opt.value}
                     aria-pressed={opt.value === activeValue ? "true" : "false"}
+                    data-astro-prefetch="hover"
                 >
                     {opt.label}
-                </button>
+                </a>
             ))
         }
     </div>
-</filter-menu-ctrl>
-
-<script>
-    class FilterMenuCtrl extends HTMLElement {
-        private _buttons: NodeListOf<HTMLElement> | null = null;
-        private _groupName: string = "";
-
-        // DRY: Helper gom nhóm thay đổi UI DOM tránh trùng lặp code
-        private _activateBtn(buttons: NodeListOf<HTMLElement>, targetBtn: HTMLElement) {
-            buttons.forEach((b) => {
-                b.classList.remove("is-active");
-                b.setAttribute("aria-pressed", "false");
-            });
-            targetBtn.classList.add("is-active");
-            targetBtn.setAttribute("aria-pressed", "true");
-        }
-
-        connectedCallback() {
-            this._buttons = this.querySelectorAll<HTMLElement>(".filter-btn");
-            this._groupName = this.dataset.group || "";
-            if (!this._groupName) return;
-
-            // Khôi phục state Filter từ LocalStorage khi chuyển trang
-            const savedFilter = localStorage.getItem(`kime-filter-${this._groupName}`);
-            
-            // Truy xuất trực tiếp bằng Query thay vì chạy vòng lặp tìm kiếm O(N)
-            if (savedFilter) {
-                const initialTargetBtn = this.querySelector<HTMLElement>(`.filter-btn[data-value="${CSS.escape(savedFilter)}"]`);
-                if (initialTargetBtn && !initialTargetBtn.classList.contains("is-active")) {
-                    this._activateBtn(this._buttons, initialTargetBtn);
-                    
-                    // Đẩy vào next frame để đảm bảo Gallery Manager đã kết nối
-                    requestAnimationFrame(() => {
-                        this.dispatchEvent(
-                            new CustomEvent("filter-changed", {
-                                detail: { group: this._groupName, value: savedFilter, isRestore: true },
-                                bubbles: true,
-                            })
-                        );
-                    });
-                }
-            }
-
-            // Gắn Event Delegation cực sạch chặn đứng Memory Leak:
-            // Truyền cứng Object interface "this" thay vì nhồi Anonymous Arrow Function. 
-            // Trình duyệt tự gọi hàm handleEvent() bằng C++ Native!
-            this.addEventListener("click", this);
-        }
-
-        disconnectedCallback() {
-            this.removeEventListener("click", this);
-        }
-
-        handleEvent(e: Event) {
-            // Bộ định tuyến (Event Router) chuẩn Unix
-            if (e.type === "click") {
-                const target = e.target as HTMLElement;
-                const btn = target.closest(".filter-btn") as HTMLElement | null;
-                
-                if (!btn || btn.classList.contains("is-active")) return;
-
-                const targetValue = btn.dataset.value;
-                if (!targetValue || !this._buttons) return;
-
-                localStorage.setItem(`kime-filter-${this._groupName}`, targetValue);
-                
-                this._activateBtn(this._buttons, btn);
-
-                // Bắn event ra DOM thông báo bộ lọc đã thay đổi
-                this.dispatchEvent(
-                    new CustomEvent("filter-changed", {
-                        detail: { group: this._groupName, value: targetValue },
-                        bubbles: true,
-                    }),
-                );
-            }
-        }
-    }
-
-    if (!customElements.get("filter-menu-ctrl")) {
-        customElements.define("filter-menu-ctrl", FilterMenuCtrl);
-    }
-</script>
+</div>
 
 <style>
     .filter-group {
@@ -195,6 +114,7 @@ const {
         text-transform: uppercase;
         letter-spacing: 0.05em;
         cursor: pointer;
+        text-decoration: none;
         transition:
             background-color 0.2s ease,
             color 0.2s ease,

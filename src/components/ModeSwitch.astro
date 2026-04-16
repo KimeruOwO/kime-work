@@ -6,7 +6,7 @@ import ArtworkIcon from "./icons/ArtworkIcon.astro";
 
 // Kỹ sư hệ thống giao tiếp bằng Props, không bằng DOM Query
 interface Props {
-    activeMode: "motions" | "artwork";
+  activeMode: "motions" | "artwork";
 }
 
 const { activeMode } = Astro.props;
@@ -16,260 +16,259 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
 ---
 
 <div class="mode-switch-section">
-    <header class="mode-switch-header">
-        <h2 class="mode-switch-title">MODE SWITCH</h2>
-    </header>
+  <header class="mode-switch-header">
+    <h2 class="mode-switch-title">MODE SWITCH</h2>
+  </header>
 
-    <div class="mode-switch-container">
-        <a
-            href="/work/motions"
-            class:list={["switch-btn", activeMode === "motions" && "is-active"]}
-            aria-pressed={activeMode === "motions" ? "true" : "false"}
-            data-astro-prefetch="hover"
-        >
-            <span>MOTIONS</span>
-            <VideoIcon width="20" height="20" />
-        </a>
+  <div class="mode-switch-container">
+    <a
+      href="/work/motions"
+      class:list={["switch-btn", activeMode === "motions" && "is-active"]}
+      aria-pressed={activeMode === "motions" ? "true" : "false"}
+      data-astro-prefetch="hover"
+    >
+      <span>MOTIONS</span>
+      <VideoIcon width="20" height="20" />
+    </a>
 
-        <a
-            href={toggleUrl}
-            class="switch-divider-btn"
-            aria-label="Toggle Mode"
-            data-astro-prefetch="hover"
-        >
-            <SwitchIcon width="24" height="24" />
-        </a>
+    <a
+      href={toggleUrl}
+      class="switch-divider-btn"
+      aria-label="Toggle Mode"
+      data-astro-prefetch="hover"
+    >
+      <SwitchIcon width="24" height="24" />
+    </a>
 
-        <a
-            href="/work/artwork"
-            class:list={["switch-btn", activeMode === "artwork" && "is-active"]}
-            aria-pressed={activeMode === "artwork" ? "true" : "false"}
-            data-astro-prefetch="hover"
-        >
-            <span>ARTWORK</span>
-            <ArtworkIcon width="20" height="20" />
-        </a>
-    </div>
+    <a
+      href="/work/artwork"
+      class:list={["switch-btn", activeMode === "artwork" && "is-active"]}
+      aria-pressed={activeMode === "artwork" ? "true" : "false"}
+      data-astro-prefetch="hover"
+    >
+      <span>ARTWORK</span>
+      <ArtworkIcon width="20" height="20" />
+    </a>
+  </div>
 </div>
 
 <!-- KHÔNG CÓ THẺ <SCRIPT> NÀO Ở ĐÂY CẢ. ZERO JS BLOAT. -->
 
 <style>
-    /* ==========================================================
+  /* ==========================================================
        1. KIẾN TRÚC CSS GRID (MOBILE FIRST)
     ========================================================== */
-    .mode-switch-section {
-        --banner-h-raw: clamp(var(--spacing-12), 8vw, var(--spacing-16));
-        
-        /* [THUẬT TOÁN GRID 1:1] Bước 1: Tính toán Cell, ép tròn về số nguyên chẵn để Chrome KHÔNG THỂ kích hoạt nội suy Sub-pixel (Răng cưa) */
-        --cell: calc(var(--banner-h-raw) / 1.5); /* Fallback chạy ngầm */
-        --cell: round(nearest, calc(var(--banner-h-raw) / 1.5), 2px);
-        
-        /* Bước 2: Bắt buộc Layout Height giãn nở thuận ngược lại theo Cell đã làm tròn, triệt tiêu 100% khe hở rác */
-        --banner-h: calc(var(--cell) * 1.5);
-        --checker-w: calc(var(--cell) * 1.5);
+  .mode-switch-section {
+    --banner-h-raw: clamp(var(--spacing-12), 8vw, var(--spacing-16));
 
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        grid-template-rows: var(--banner-h) auto;
+    /* [THUẬT TOÁN GRID 1:1] Bước 1: Tính toán Cell, ép tròn về số nguyên chẵn để Chrome KHÔNG THỂ kích hoạt nội suy Sub-pixel (Răng cưa) */
+    --cell: calc(var(--banner-h-raw) / 1.5); /* Fallback chạy ngầm */
+    --cell: round(nearest, calc(var(--banner-h-raw) / 1.5), 2px);
 
-        position: relative;
-        width: 100%;
-        background-color: var(--bg-secondary);
-        border-top-left-radius: clamp(1.5rem, 4vw, 2.5rem);
-        border-top-right-radius: clamp(1.5rem, 4vw, 2.5rem);
+    /* Bước 2: Bắt buộc Layout Height giãn nở thuận ngược lại theo Cell đã làm tròn, triệt tiêu 100% khe hở rác */
+    --banner-h: calc(var(--cell) * 1.5);
+    --checker-w: calc(var(--cell) * 1.5);
 
-        padding-bottom: var(--spacing-4);
-        overflow: hidden;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-    }
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: var(--banner-h) auto;
 
-    /* ==========================================================
+    position: relative;
+    width: 100%;
+    background-color: var(--bg-secondary);
+    border-top-left-radius: clamp(1.5rem, 4vw, 2.5rem);
+    border-top-right-radius: clamp(1.5rem, 4vw, 2.5rem);
+
+    padding-bottom: var(--spacing-4);
+    overflow: hidden;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  /* ==========================================================
        2. MẶT NẠ CSS: ĐÃ QUÉT SẠCH RÁC SUB-PIXEL
     ========================================================== */
-    .mode-switch-section::before,
-    .mode-switch-section::after {
-        content: "";
-        height: var(--banner-h);
-        background-color: var(--color-secondary-medium);
+  .mode-switch-section::before,
+  .mode-switch-section::after {
+    content: "";
+    height: var(--banner-h);
+    background-color: var(--color-secondary-medium);
 
-        /* Kỹ thuật SVG Geometric Mask siêu việt: Giết đứt dứt điểm điểm mù nội suy đồ họa của Chromium */
-        mask-image:
-            linear-gradient(#000, #000),
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Cpath d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E");
-        mask-size:
-            calc(100% - var(--checker-w) + 1px) 100%,
-            var(--cell) var(--cell);
-        mask-repeat: no-repeat, repeat;
-        
-        -webkit-mask-image:
-            linear-gradient(#000, #000),
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Cpath d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E");
-        -webkit-mask-size:
-            calc(100% - var(--checker-w) + 1px) 100%,
-            var(--cell) var(--cell);
-        -webkit-mask-repeat: no-repeat, repeat;
-    }
+    /* Kỹ thuật SVG Geometric Mask siêu việt: Giết đứt dứt điểm điểm mù nội suy đồ họa của Chromium */
+    mask-image:
+      linear-gradient(#000, #000),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Cpath d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E");
+    mask-size:
+      calc(100% - var(--checker-w) + 1px) 100%,
+      var(--cell) var(--cell);
+    mask-repeat: no-repeat, repeat;
 
-    .mode-switch-section::before {
-        grid-column: 1;
-        grid-row: 1;
-        mask-position:
-            right top,
-            left top;
-        -webkit-mask-position:
-            right top,
-            left top;
-        transform: scaleX(-1); /* Lật gương GPU */
-    }
+    -webkit-mask-image:
+      linear-gradient(#000, #000),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Cpath d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E");
+    -webkit-mask-size:
+      calc(100% - var(--checker-w) + 1px) 100%,
+      var(--cell) var(--cell);
+    -webkit-mask-repeat: no-repeat, repeat;
+  }
 
-    .mode-switch-section::after {
-        grid-column: 3;
-        grid-row: 1;
-        mask-position:
-            right top,
-            left top;
-        -webkit-mask-position:
-            right top,
-            left top;
-    }
+  .mode-switch-section::before {
+    grid-column: 1;
+    grid-row: 1;
+    mask-position:
+      right top,
+      left top;
+    -webkit-mask-position:
+      right top,
+      left top;
+    transform: scaleX(-1); /* Lật gương GPU */
+  }
 
-    /* ==========================================================
+  .mode-switch-section::after {
+    grid-column: 3;
+    grid-row: 1;
+    mask-position:
+      right top,
+      left top;
+    -webkit-mask-position:
+      right top,
+      left top;
+  }
+
+  /* ==========================================================
        3. HEADER VÀ TITLE
     ========================================================== */
-    .mode-switch-header {
-        grid-column: 2;
-        grid-row: 1;
-        display: flex;
-        align-items: center;
-    }
+  .mode-switch-header {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+  }
 
-    .mode-switch-title {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-2);
-        margin: 0;
-        padding: 0 clamp(1rem, 4vw, 3rem);
-        color: var(--color-secondary-darker);
-        font-size: clamp(1.25rem, 4vw, 2.5rem);
-        font-weight: 900;
-        letter-spacing: 0.05em;
-        white-space: nowrap;
-    }
+  .mode-switch-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin: 0;
+    padding: 0 clamp(1rem, 4vw, 3rem);
+    color: var(--color-secondary-darker);
+    font-size: clamp(1.25rem, 4vw, 2.5rem);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
 
-    .mode-switch-title::before,
-    .mode-switch-title::after {
-        content: "";
-        display: block;
-        width: clamp(12px, 3vw, 20px);
-        aspect-ratio: 1 / 1;
-        background-color: var(--color-primary);
-    }
-    .mode-switch-title::before {
-        clip-path: polygon(0 0, 100% 50%, 0 100%);
-    }
-    .mode-switch-title::after {
-        clip-path: polygon(100% 0, 0 50%, 100% 100%);
-    }
+  .mode-switch-title::before,
+  .mode-switch-title::after {
+    content: "";
+    display: block;
+    width: clamp(12px, 3vw, 20px);
+    aspect-ratio: 1 / 1;
+    background-color: var(--color-primary);
+  }
+  .mode-switch-title::before {
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+  .mode-switch-title::after {
+    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+  }
 
-    /* ==========================================================
+  /* ==========================================================
        4. CONTAINER NÚT BẤM (LINKS)
     ========================================================== */
-    .mode-switch-container {
-        grid-column: 1 / -1;
-        grid-row: 2;
-        justify-self: center;
-        margin-top: var(--spacing-4);
+  .mode-switch-container {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
+    margin-top: var(--spacing-4);
 
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: fit-content;
-        border: var(--border-width-xs) solid var(--color-secondary-darker);
-        border-radius: var(--radius-3xl);
-        padding: var(--spacing-1) var(--spacing-2);
-        background-color: var(--bg-secondary);
-    }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: fit-content;
+    border: var(--border-width-xs) solid var(--color-secondary-darker);
+    border-radius: var(--radius-3xl);
+    padding: var(--spacing-1) var(--spacing-2);
+    background-color: var(--bg-secondary);
+  }
 
-    .switch-btn {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-2);
-        border: var(--border-width-xs) solid transparent;
-        border-radius: var(--radius-pill);
-        padding: var(--spacing-2) clamp(var(--spacing-4), 4vw, var(--spacing-8));
-        font-size: clamp(var(--text-sm), 2.5vw, var(--text-base));
-        font-weight: 900;
-        color: var(--color-secondary-darker);
-        text-decoration: none;
-        transition:
-            background-color 0.2s ease,
-            color 0.2s ease,
-            border-color 0.2s ease,
-            box-shadow 0.2s ease,
-            opacity 0.2s ease;
-    }
+  .switch-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    border: var(--border-width-xs) solid transparent;
+    border-radius: var(--radius-pill);
+    padding: var(--spacing-2) clamp(var(--spacing-4), 4vw, var(--spacing-8));
+    font-size: clamp(var(--text-sm), 2.5vw, var(--text-base));
+    font-weight: 900;
+    color: var(--color-secondary-darker);
+    text-decoration: none;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      opacity 0.2s ease;
+  }
 
-    .switch-btn:hover:not(.is-active) {
-        opacity: 0.7;
-    }
+  .switch-btn:hover:not(.is-active) {
+    opacity: 0.7;
+  }
 
+  .switch-btn.is-active {
+    background-color: var(--color-primary);
+    color: var(--text-inverse);
+    border-color: var(--color-secondary-darker);
+    box-shadow: 3px 3px 0 var(--color-secondary-bright);
+    pointer-events: none;
+  }
 
-    .switch-btn.is-active {
-        background-color: var(--color-primary);
-        color: var(--text-inverse);
-        border-color: var(--color-secondary-darker);
-        box-shadow: 3px 3px 0 var(--color-secondary-bright);
-        pointer-events: none;
-    }
+  .switch-btn :global(svg) {
+    flex-shrink: 0;
+  }
 
-    .switch-btn :global(svg) {
-        flex-shrink: 0;
-    }
+  .switch-divider-btn {
+    color: var(--color-secondary-darker);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--spacing-4);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
 
-    .switch-divider-btn {
-        color: var(--color-secondary-darker);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 var(--spacing-4);
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        transition: color 0.2s ease;
-    }
+  .switch-divider-btn:hover {
+    color: var(--color-primary);
+  }
 
-    .switch-divider-btn:hover {
-        color: var(--color-primary);
-    }
+  .switch-divider-btn:focus-visible {
+    outline: var(--border-width-xs) dashed var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
 
-    .switch-divider-btn:focus-visible {
-        outline: var(--border-width-xs) dashed var(--color-primary);
-        outline-offset: 2px;
-        border-radius: var(--radius-sm);
-    }
-
-    /* ==========================================================
+  /* ==========================================================
        5. BẢN LỀ RESPONSIVE CHO PC (>= 1024px)
     ========================================================== */
-    @media (min-width: 1024px) {
-        .mode-switch-section {
-            grid-template-columns: 1fr auto auto 1fr;
-            grid-template-rows: var(--banner-h);
-            padding-bottom: 0;
-        }
-        .mode-switch-header {
-            padding-right: var(--spacing-6);
-        }
-        .mode-switch-container {
-            grid-column: 3;
-            grid-row: 1;
-            margin-top: 0;
-            margin-right: var(--spacing-8);
-            align-self: center;
-        }
-        .mode-switch-section::after {
-            grid-column: 4;
-        }
+  @media (min-width: 1024px) {
+    .mode-switch-section {
+      grid-template-columns: 1fr auto auto 1fr;
+      grid-template-rows: var(--banner-h);
+      padding-bottom: 0;
     }
+    .mode-switch-header {
+      padding-right: var(--spacing-6);
+    }
+    .mode-switch-container {
+      grid-column: 3;
+      grid-row: 1;
+      margin-top: 0;
+      margin-right: var(--spacing-8);
+      align-self: center;
+    }
+    .mode-switch-section::after {
+      grid-column: 4;
+    }
+  }
 </style>
