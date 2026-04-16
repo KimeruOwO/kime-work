@@ -4,7 +4,7 @@ export default defineConfig({
     output: 'static',
     scopedStyleStrategy: 'class',
     redirects: {
-        '/': '/about'
+        '/': '/contact'
     },
     devToolbar: {
         enabled: false,
