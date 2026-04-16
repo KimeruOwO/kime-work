@@ -41,8 +41,8 @@ const heroSlides = [
   aIllust
     ? {
         url: aIllust.image?.heroUrl || aIllust.image?.fullUrl || aIllust.image?.url,
-        link: `/work/illustrations/${aIllust.slug}`,
-        target: "_self",
+        link: aIllust.linkPixiv || `/work/artwork`,
+        target: "_blank",
       }
     : null,
 ].filter((s): s is { url: string; link: string; target: string } => Boolean(s && s.url));
