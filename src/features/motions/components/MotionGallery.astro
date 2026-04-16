@@ -24,53 +24,96 @@ const { page } = Astro.props;
       />
 
       <div class="wrapper motions-wrapper">
-        <FilterMenu
-          groupName="motions-filter"
-          options={[
-            { label: "ALL MOTIONS", value: "all" },
-            { label: "MUSIC VIDEOS // MVs", value: "musicvideos//mvs" },
-            { label: "DEBUT // TRAILER", value: "debut//trailer" },
-          ]}
-        />
-
         <div class="gallery-layout-split">
           <aside class="sidebar-desktop">
             <div class="sidebar-sticky-wrap">
               <div class="sidebar-group">
-                <button
-                  class="s-btn grid-btn"
-                  data-cols="2"
-                  aria-label="2 Cột"
-                >
-                  <svg viewBox="0 0 32 32"><rect x="4" y="11" width="10" height="10" rx="2"></rect><rect x="18" y="11" width="10" height="10" rx="2"></rect></svg>
+                <button class="s-btn grid-btn" data-cols="2" aria-label="2 Cột">
+                  <svg viewBox="0 0 32 32"
+                    ><rect x="4" y="11" width="10" height="10" rx="2"
+                    ></rect><rect x="18" y="11" width="10" height="10" rx="2"
+                    ></rect></svg
+                  >
                 </button>
-                <button
-                  class="s-btn grid-btn"
-                  data-cols="3"
-                  aria-label="3 Cột"
-                >
-                  <svg viewBox="0 0 32 32"><rect x="1.5" y="7" width="8" height="8" rx="2"></rect><rect x="12" y="7" width="8" height="8" rx="2"></rect><rect x="22.5" y="7" width="8" height="8" rx="2"></rect><rect x="1.5" y="17.5" width="8" height="8" rx="2"></rect><rect x="12" y="17.5" width="8" height="8" rx="2"></rect><rect x="22.5" y="17.5" width="8" height="8" rx="2"></rect></svg>
+                <button class="s-btn grid-btn" data-cols="3" aria-label="3 Cột">
+                  <svg viewBox="0 0 32 32"
+                    ><rect x="1.5" y="7" width="8" height="8" rx="2"
+                    ></rect><rect x="12" y="7" width="8" height="8" rx="2"
+                    ></rect><rect x="22.5" y="7" width="8" height="8" rx="2"
+                    ></rect><rect x="1.5" y="17.5" width="8" height="8" rx="2"
+                    ></rect><rect x="12" y="17.5" width="8" height="8" rx="2"
+                    ></rect><rect x="22.5" y="17.5" width="8" height="8" rx="2"
+                    ></rect></svg
+                  >
                 </button>
                 <button
                   class="s-btn grid-btn active"
                   data-cols="4"
                   aria-label="4 Cột"
                 >
-                  <svg viewBox="0 0 42 42"><rect x="2" y="12" width="8" height="8" rx="2"></rect><rect x="12" y="12" width="8" height="8" rx="2"></rect><rect x="22" y="12" width="8" height="8" rx="2"></rect><rect x="32" y="12" width="8" height="8" rx="2"></rect><rect x="2" y="22" width="8" height="8" rx="2"></rect><rect x="12" y="22" width="8" height="8" rx="2"></rect><rect x="22" y="22" width="8" height="8" rx="2"></rect><rect x="32" y="22" width="8" height="8" rx="2"></rect></svg>
+                  <svg viewBox="0 0 42 42"
+                    ><rect x="2" y="12" width="8" height="8" rx="2"></rect><rect
+                      x="12"
+                      y="12"
+                      width="8"
+                      height="8"
+                      rx="2"></rect><rect
+                      x="22"
+                      y="12"
+                      width="8"
+                      height="8"
+                      rx="2"></rect><rect
+                      x="32"
+                      y="12"
+                      width="8"
+                      height="8"
+                      rx="2"></rect><rect
+                      x="2"
+                      y="22"
+                      width="8"
+                      height="8"
+                      rx="2"></rect><rect
+                      x="12"
+                      y="22"
+                      width="8"
+                      height="8"
+                      rx="2"></rect><rect
+                      x="22"
+                      y="22"
+                      width="8"
+                      height="8"
+                      rx="2"></rect><rect
+                      x="32"
+                      y="22"
+                      width="8"
+                      height="8"
+                      rx="2"></rect></svg
+                  >
                 </button>
               </div>
 
               <div class="sidebar-group filter-group">
                 <button
                   class="s-btn filter-btn vertical-text active"
-                  data-value="all">ALL</button>
+                  data-value="all">ALL</button
+                >
                 <button
                   class="s-btn filter-btn vertical-text"
-                  data-value="featured">FEATURED</button>
+                  data-value="featured">FEATURED</button
+                >
               </div>
             </div>
           </aside>
           <div class="gallery-main">
+            <FilterMenu
+              groupName="motions-filter"
+              options={[
+                { label: "ALL MOTIONS", value: "all" },
+                { label: "MUSIC VIDEOS // MVs", value: "musicvideos//mvs" },
+                { label: "DEBUT // TRAILER", value: "debut//trailer" },
+              ]}
+            />
+
             <div
               class="motions-grid"
               id="motions-grid-container"
@@ -108,7 +151,10 @@ const { page } = Astro.props;
 </div>
 
 <script>
-  class MotionGalleryManager extends HTMLElement implements EventListenerObject {
+  class MotionGalleryManager
+    extends HTMLElement
+    implements EventListenerObject
+  {
     private get _cards() {
       return this.querySelectorAll<HTMLElement>(".motion-card");
     }
@@ -242,11 +288,12 @@ const { page } = Astro.props;
         localStorage.removeItem("kime-sidebar-pending");
 
         const targetBtn = this.querySelector<HTMLButtonElement>(
-          `.sidebar-desktop .filter-btn[data-value="${CSS.escape(pendingSidebar)}"]`
+          `.sidebar-desktop .filter-btn[data-value="${CSS.escape(pendingSidebar)}"]`,
         );
         if (targetBtn) {
-          this.querySelectorAll(".sidebar-desktop .filter-btn")
-            .forEach((b) => b.classList.remove("active"));
+          this.querySelectorAll(".sidebar-desktop .filter-btn").forEach((b) =>
+            b.classList.remove("active"),
+          );
           targetBtn.classList.add("active");
           this._updateSidebarTracker(targetBtn);
         }
@@ -254,9 +301,13 @@ const { page } = Astro.props;
         requestAnimationFrame(() => {
           this.dispatchEvent(
             new CustomEvent("filter-changed", {
-              detail: { group: "sidebar", value: pendingSidebar, isRestore: true },
+              detail: {
+                group: "sidebar",
+                value: pendingSidebar,
+                isRestore: true,
+              },
               bubbles: true,
-            })
+            }),
           );
         });
       }
@@ -394,7 +445,9 @@ const { page } = Astro.props;
 </script>
 
 <style>
-  :global(.kime-pagination.is-filtered-state .page-numbers li:nth-child(n + 2)) {
+  :global(
+    .kime-pagination.is-filtered-state .page-numbers li:nth-child(n + 2)
+  ) {
     display: none;
   }
   :global(.kime-pagination.is-filtered-state .prev-btn),
@@ -428,9 +481,10 @@ const { page } = Astro.props;
 
   @media (min-width: 1024px) {
     .gallery-layout-split {
+      display: flex;
       flex-direction: row;
       align-items: flex-start;
-      gap: var(--spacing-8);
+      gap: clamp(16px, 4vw, 80px);
     }
     .gallery-main {
       flex: 1;
@@ -439,21 +493,22 @@ const { page } = Astro.props;
     }
     .sidebar-desktop {
       display: block;
+      margin-top: calc(48px + var(--spacing-8));
       position: sticky;
       top: calc(var(--header-height-pc) + var(--spacing-8));
-      width: 48px;
+      width: clamp(48px, 4vw, 72px);
       flex-shrink: 0;
     }
     .sidebar-sticky-wrap {
       display: flex;
       flex-direction: column;
-      gap: 60px;
+      gap: clamp(40px, 4vw, 72px);
       align-items: center;
     }
     .sidebar-group {
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: clamp(24px, 2vw, 32px);
       align-items: center;
       position: relative;
     }
@@ -475,22 +530,24 @@ const { page } = Astro.props;
     .sidebar-group::after {
       content: "";
       position: absolute;
-      right: -24px;
+      right: clamp(-24px, -2vw, -32px);
       top: 0;
       transform: translateY(calc(var(--tracker-y, 16px) - 50%));
       width: 0;
       height: 0;
-      border-top: 6px solid transparent;
-      border-bottom: 6px solid transparent;
-      border-right: 10px solid var(--color-primary);
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: clamp(10px, 1vw, 14px) solid var(--color-primary);
       will-change: transform;
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+      transition:
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.2s ease;
       opacity: var(--tracker-opacity, 1);
     }
 
     .grid-btn svg {
-      width: 32px;
-      height: 32px;
+      width: clamp(32px, 3vw, 44px);
+      height: clamp(32px, 3vw, 44px);
       fill: rgba(250, 114, 157, 0.3);
       transition: fill 0.2s ease;
     }
@@ -504,9 +561,9 @@ const { page } = Astro.props;
     .vertical-text {
       writing-mode: vertical-rl;
       transform: rotate(180deg);
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: 2px;
+      font-size: clamp(16px, 1.5vw, 22px);
+      font-weight: 900;
+      letter-spacing: 3px;
       color: #b0b0b0;
       text-transform: uppercase;
     }
@@ -528,7 +585,6 @@ const { page } = Astro.props;
 
   /* ==============================================
      GRID RESPONSIVE ARCHITECTURE
-     Ghi đè thuộc tính Grid và ra lệnh gập Tag cho Card
      ============================================== */
   @media (max-width: 1199px) {
     .grid-btn[data-cols="3"],
