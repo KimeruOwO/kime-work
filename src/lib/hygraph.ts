@@ -6,6 +6,7 @@
 interface Asset {
   url: string;
   fullUrl?: string;
+  heroUrl?: string;
 }
 
 interface Category {
@@ -81,6 +82,7 @@ export async function fetchArtworks(): Promise<Artwork[]> {
         image {
           url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 540, height: 540, fit: clip } } })
           fullUrl: url
+          heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
         }
         category { 
             name 
@@ -105,14 +107,18 @@ export async function fetchVideos(): Promise<Video[]> {
         imageEmbed { 
           url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1200, fit: clip } } })
           fullUrl: url
+          heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
         }
         descCredit
         descAbout
         thumbnail {
           url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 640, height: 360, fit: crop } } })
+          fullUrl: url
+          heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
         }
         imagePreview {
           url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 960, height: 540, fit: clip } } })
+          fullUrl: url
         }
         category { name visibility }
         isFeatured

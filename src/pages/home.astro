@@ -11,19 +11,48 @@ const [allVideos, allArtworks] = await Promise.all([
 ]);
 
 // Extract newest item per category (Zero bloat: only storing strings)
+const vMusic = allVideos.find((v) => v.category?.name?.includes("MusicVideos"));
+const vDebut = allVideos.find((v) => v.category?.name?.includes("Debut"));
+const aIllust = allArtworks.find((a) => a.category?.name === "Illustration");
+
 const heroSlides = [
-  allVideos.find((v) => v.category?.name?.includes("MusicVideos"))?.thumbnail
-    ?.url,
-  allVideos.find((v) => v.category?.name?.includes("Debut"))?.thumbnail?.url,
-  allArtworks.find((a) => a.category?.name === "Illustration")?.image?.url,
-].filter(Boolean) as string[];
+  vMusic
+    ? {
+        url:
+          vMusic.imageEmbed?.[0]?.heroUrl ||
+          vMusic.thumbnail?.heroUrl ||
+          vMusic.thumbnail?.fullUrl ||
+          vMusic.thumbnail?.url,
+        link: vMusic.linkOriginal || `/work/motions/${vMusic.slug}`,
+        target: "_blank",
+      }
+    : null,
+  vDebut
+    ? {
+        url:
+          vDebut.imageEmbed?.[0]?.heroUrl ||
+          vDebut.thumbnail?.heroUrl ||
+          vDebut.thumbnail?.fullUrl ||
+          vDebut.thumbnail?.url,
+        link: vDebut.linkOriginal || `/work/motions/${vDebut.slug}`,
+        target: "_blank",
+      }
+    : null,
+  aIllust
+    ? {
+        url: aIllust.image?.heroUrl || aIllust.image?.fullUrl || aIllust.image?.url,
+        link: `/work/illustrations/${aIllust.slug}`,
+        target: "_self",
+      }
+    : null,
+].filter((s): s is { url: string; link: string; target: string } => Boolean(s && s.url));
 
 // Extract FEATURED videos
 const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 ---
 
 <Layout
-  title="Kime Work - Contact"
+  title="Kime Work - Home"
   description="Get in touch with Kimeyu for motion graphics, music video, illustration, and design commissions."
 >
   <div class="contact-page-wrapper">
@@ -58,8 +87,49 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
         </div>
 
         <div class="hero-layer-over">
-          <div class="art-mask-grid" aria-label="Hero Artwork Focus" role="img">
-            <div class="art-mask-block art-mask-block--single"></div>
+          <div class="art-carousel-track">
+            {
+              heroSlides.map((slide: any, i: number) => (
+                <div class={`art-carousel-slide ${i === 0 ? "is-active" : ""}`}>
+                  <a
+                    href={slide.link}
+                    target={slide.target}
+                    class="slide-link"
+                    draggable="false"
+                  >
+                    <img
+                      src={slide.url}
+                      alt={`Kimeyu Hero Artwork ${i + 1}`}
+                      class="slide-img"
+                      decoding="async"
+                      draggable="false"
+                    />
+                  </a>
+                </div>
+              ))
+            }
+            {/* Ảo ảnh (Clone) để tạo Infinite Loop nối đuôi */}
+            {
+              heroSlides.length > 0 && (
+                <div class="art-carousel-slide slick-cloned" aria-hidden="true">
+                  <a
+                    href={heroSlides[0].link}
+                    target={heroSlides[0].target}
+                    class="slide-link"
+                    draggable="false"
+                    tabindex="-1"
+                  >
+                    <img
+                      src={heroSlides[0].url}
+                      alt="Kimeyu Hero Artwork Clone"
+                      class="slide-img"
+                      decoding="async"
+                      draggable="false"
+                    />
+                  </a>
+                </div>
+              )
+            }
           </div>
         </div>
 
@@ -84,21 +154,24 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
             aria-label="Next Track"></button>
         </div>
       </div>
-    </hero-slider>
 
-    <!-- INVERTED BANNER STRIP -->
-    <div class="contact-bottom-ribbon">
-      <nav class="ribbon-nav-dots" aria-label="Page Navigation">
-        <button class="nav-dot" aria-label="Section 1"></button>
-        <button class="nav-dot" aria-label="Section 2"></button>
-        <button class="nav-dot nav-dot--active" aria-label="Section 3"></button>
-        <button class="nav-dot" aria-label="Section 4"></button>
-        <button class="nav-dot" aria-label="Section 5"></button>
-      </nav>
-      <div class="film-strip-bg" aria-hidden="true">
-        <div class="banner-strip banner-strip--inverted"></div>
+      <!-- INVERTED BANNER STRIP -->
+      <div class="contact-bottom-ribbon">
+        <nav class="ribbon-nav-dots" aria-label="Page Navigation">
+          {
+            heroSlides.map((_, i) => (
+              <button
+                class={`nav-dot ${i === 0 ? "nav-dot--active" : ""}`}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))
+          }
+        </nav>
+        <div class="film-strip-bg" aria-hidden="true">
+          <div class="banner-strip banner-strip--inverted"></div>
+        </div>
       </div>
-    </div>
+    </hero-slider>
 
     <!-- Kimeyu Core Slogan -->
     <section class="contact-quote-block" aria-label="Kimeyu Slogan">
@@ -144,10 +217,10 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
             <article
               class={`featured-card ${index === 0 ? "featured-card--new" : ""}`}
             >
-              <a 
-                href={`/work/motions/${video.slug}`} 
-                class="card-thumb" 
-                style={`background-image: url('${video.thumbnail.url}'); background-size: cover; background-position: center; display: block;`} 
+              <a
+                href={`/work/motions/${video.slug}`}
+                class="card-thumb"
+                style={`background-image: url('${video.thumbnail.url}'); background-size: cover; background-position: center; display: block;`}
                 aria-label={`Watch ${video.title}`}
               >
                 {index === 0 && <span class="card-badge">NEW!</span>}
@@ -157,11 +230,21 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
                   <h3 class="card-title">{video.title}</h3>
                   <p class="card-sub">{video.nameArtist}</p>
                 </div>
-                <a href={`/work/motions/${video.slug}`} class="card-play-btn" aria-label={`Play ${video.title}`}></a>
+                <a
+                  href={`/work/motions/${video.slug}`}
+                  class="card-play-btn"
+                  aria-label={`Play ${video.title}`}
+                />
               </div>
               <div class="card-tags">
-                <span class="tag-cat">{video.category?.name?.toUpperCase() || "MOTION GRAPHICS"}</span>
-                <span class="tag-status">{video.category?.visibility === "Private" ? "Private" : "Public"}</span>
+                <span class="tag-cat">
+                  {video.category?.name?.toUpperCase() || "MOTION GRAPHICS"}
+                </span>
+                <span class="tag-status">
+                  {video.category?.visibility === "Private"
+                    ? "Private"
+                    : "Public"}
+                </span>
               </div>
             </article>
           ))
@@ -170,7 +253,8 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
       <div class="featured-footer-row">
         <div class="featured-pagination" aria-label="Featured Pagination">
-          <button class="featured-dot featured-dot--active" aria-label="1"></button>
+          <button class="featured-dot featured-dot--active" aria-label="1"
+          ></button>
         </div>
 
         <PageDecorBanner
@@ -378,16 +462,19 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   class HeroSlider extends HTMLElement {
     private slides: string[] = [];
     private currentIndex: number = 0;
+    private realCount: number = 0;
     private isPlaying: boolean = true;
     private intervalDuration: number = 5000;
     private timer: ReturnType<typeof setTimeout> | null = null;
-    
+
     private startTime: number = 0;
     private savedProgress: number = 0;
     private isDragging: boolean = false;
 
-    private grid: HTMLElement | null = null;
+    private carouselTrack: HTMLElement | null = null;
+    private slidesEl: NodeListOf<HTMLElement> | null = null;
     private track: HTMLElement | null = null;
+    private navDots: NodeListOf<HTMLElement> | null = null;
 
     connectedCallback() {
       this.slides = JSON.parse(this.dataset.slides || "[]");
@@ -398,8 +485,30 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       this.intervalDuration = 5000;
 
       // Cache DOM O(1)
-      this.grid = this.querySelector<HTMLElement>(".art-mask-grid");
+      this.carouselTrack = this.querySelector<HTMLElement>(
+        ".art-carousel-track",
+      );
+      this.slidesEl = this.querySelectorAll<HTMLElement>(".art-carousel-slide");
       this.track = this.querySelector<HTMLElement>(".kime-media-track");
+      this.navDots = this.querySelectorAll<HTMLElement>(".nav-dot");
+      this.realCount = this.navDots?.length || this.slides.length;
+
+      // Infinite Loop Teleportation Logic
+      this.carouselTrack?.addEventListener(
+        "transitionend",
+        (e: TransitionEvent) => {
+          if (e.propertyName !== "transform") return;
+          if (this.currentIndex >= this.realCount) {
+            // Tắt hiệu ứng, giật về 0 trong tàng hình
+            this.carouselTrack!.style.transition = "none";
+            this.currentIndex = 0;
+            this.carouselTrack!.style.setProperty("--idx", "0");
+            void this.carouselTrack!.offsetWidth; // Ép reflow chặn render
+            this.carouselTrack!.style.transition = ""; // Trả lại CSS cũ
+            this.updateSlide(false);
+          }
+        },
+      );
 
       this.setupDrag();
 
@@ -426,7 +535,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
       this.track.addEventListener("pointerdown", (e: any) => {
         this.isDragging = true;
-        this.clearTimer(true); 
+        this.clearTimer(true);
         scrub(e);
         this.track!.style.cursor = "grabbing";
         if (e.pointerId) this.track!.setPointerCapture(e.pointerId);
@@ -448,7 +557,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
           this.startTimer(this.savedProgress);
         }
       });
-      
+
       // Fallback
       window.addEventListener("pointercancel", () => {
         this.isDragging = false;
@@ -459,26 +568,39 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       if (e.type === "click") {
         const target = e.target as HTMLElement;
         const btn = target.closest<HTMLElement>(".kime-media-btn");
-        if (!btn) return;
+        const dot = target.closest<HTMLElement>(".nav-dot");
 
-        if (btn.classList.contains("kime-media-btn--prev")) {
-          this.prevSlide();
-        } else if (btn.classList.contains("kime-media-btn--next")) {
-          this.nextSlide();
-        } else if (btn.classList.contains("kime-media-btn--pause")) {
-          this.togglePlay(btn);
+        if (btn) {
+          if (btn.classList.contains("kime-media-btn--prev")) {
+            this.prevSlide();
+          } else if (btn.classList.contains("kime-media-btn--next")) {
+            this.nextSlide();
+          } else if (btn.classList.contains("kime-media-btn--pause")) {
+            this.togglePlay(btn);
+          }
+        } else if (dot && this.navDots) {
+          const idx = Array.from(this.navDots).indexOf(dot);
+          if (idx !== -1 && idx !== this.currentIndex) {
+            this.currentIndex = idx;
+            this.updateSlide();
+          }
         }
       }
     }
 
     nextSlide() {
-      this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+      if (this.currentIndex >= this.realCount) return; // Khoá double click khi đang lướt vào ảo ảnh
+      this.currentIndex = this.currentIndex + 1;
       this.updateSlide();
     }
 
     prevSlide() {
-      this.currentIndex =
-        (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+      // Lướt ngược thì do chưa có ảo ảnh đầu nên đơn giản là jump thẳng về cuối mộc mạc
+      if (this.currentIndex <= 0) {
+        this.currentIndex = this.realCount - 1;
+      } else {
+        this.currentIndex--;
+      }
       this.updateSlide();
     }
 
@@ -503,7 +625,10 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
         this.savedProgress += elapsed / this.intervalDuration;
         this.savedProgress = Math.max(0, Math.min(1, this.savedProgress));
         this.track.style.setProperty("--track-dur", "0ms");
-        this.track.style.setProperty("--progress", `${this.savedProgress * 100}%`);
+        this.track.style.setProperty(
+          "--progress",
+          `${this.savedProgress * 100}%`,
+        );
       }
     }
 
@@ -529,24 +654,28 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     }
 
     updateSlide(init: boolean = false) {
-      if (this.slides[this.currentIndex] && this.grid) {
-        if (!init) {
-          // Fade cut illusion (Zero DOM duplication)
-          this.grid.classList.add("fade-switch");
-          setTimeout(() => {
-            if (!this.grid) return;
-            this.grid.style.setProperty(
-              "--hero-thumb",
-              `url("${this.slides[this.currentIndex]}")`,
-            );
-            this.grid.classList.remove("fade-switch");
-          }, 200);
-        } else {
-          this.grid.style.setProperty(
-            "--hero-thumb",
-            `url("${this.slides[this.currentIndex]}")`,
+      const visualIndex = this.currentIndex % this.realCount;
+
+      if (this.navDots) {
+        this.navDots.forEach((dot, idx) => {
+          dot.classList.toggle("nav-dot--active", idx === visualIndex);
+        });
+      }
+
+      if (this.carouselTrack) {
+        this.carouselTrack.style.setProperty(
+          "--idx",
+          this.currentIndex.toString(),
+        );
+      }
+      if (this.slidesEl) {
+        this.slidesEl.forEach((el, idx) => {
+          // Ép cả ảo ảnh (Clone) và bản thể gốc cùng sáng lên để lúc giật Teleport màn hình đéo bị chớp (flash) đen
+          el.classList.toggle(
+            "is-active",
+            idx === this.currentIndex || idx === visualIndex,
           );
-        }
+        });
       }
 
       if (this.isPlaying) {
@@ -569,34 +698,35 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 <script>
   const initCopyEngine = () => {
     const copyBtns = document.querySelectorAll<HTMLButtonElement>(".btn-copy");
-    
-    if (!copyBtns.length) return; 
+
+    if (!copyBtns.length) return;
 
     copyBtns.forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         e.preventDefault();
-        
+
         const text = btn.dataset.copyText;
-        
+
         if (!text) {
           console.error("Clipboard Error: Missing data-copy-text");
-          return; 
+          return;
         }
 
         try {
           if (!navigator.clipboard) {
-            throw new Error("Clipboard API bị chặn. Phải chạy trên HTTPS hoặc Localhost.");
+            throw new Error(
+              "Clipboard API bị chặn. Phải chạy trên HTTPS hoặc Localhost.",
+            );
           }
 
           await navigator.clipboard.writeText(text);
-          
+
           const originalHtml = btn.innerHTML;
           btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
-          
+
           setTimeout(() => {
             btn.innerHTML = originalHtml;
           }, 1500);
-          
         } catch (err) {
           console.error("Failed to write to Memory/Clipboard:", err);
         }
@@ -606,14 +736,14 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
   initCopyEngine();
 
-  document.addEventListener('astro:page-load', initCopyEngine);
+  document.addEventListener("astro:page-load", initCopyEngine);
 </script>
 <style>
   /* ==============================================
      HERO SLIDER (Zero Layout Blueprint)
      ============================================== */
   hero-slider {
-    display: contents; 
+    display: contents;
   }
 
   .sr-only {
@@ -707,6 +837,13 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
         var(--h-thick) no-repeat,
       linear-gradient(var(--c), var(--c)) var(--x6) center / var(--w-b4)
         var(--h-thick) no-repeat;
+  }
+
+  /* Ẩn trên Tablet/Desktop vì tỷ lệ ảnh đang là 82% (2 ảnh). Chỉ bật lại trên Mobile (<768px) khi nó full Width 1 ảnh */
+  @media (min-width: 769px) {
+    .art-header {
+      display: none;
+    }
   }
 
   .art-header__logo {
@@ -953,8 +1090,10 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     --ribbon-thick: clamp(60px, 8vw, 100px);
     --ribbon-gap: clamp(16px, 2.5vw, 40px);
 
+    --active-w-ratio: 0.82;
+
     --hero-bg: #eaeff6;
-    --hero-h: clamp(500px, 70vw, 850px);
+    --hero-h: calc(100vw * var(--active-w-ratio) * 9/16);
     --diamond-size: clamp(300px, 45vw, 600px);
     --strip-w-border: clamp(8px, 1.2vw, 16px);
     --grid-banner-bg: #ffc0db;
@@ -968,22 +1107,14 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     overflow: hidden;
 
     --grid-c: var(--color-secondary-light);
-    --s: clamp(35px, 6vw, 90px);
-    --gap: 10px;
+    --decor-s: clamp(25px, 3.5vw, 50px);
 
-    background:
-      linear-gradient(var(--grid-c), var(--grid-c)) right var(--gap) bottom
-        calc(var(--s) * 3 + var(--gap)) / var(--s) var(--s) no-repeat,
-      linear-gradient(var(--grid-c), var(--grid-c)) right var(--gap) bottom
-        calc(var(--s) + var(--gap)) / calc(var(--s) * 3) calc(var(--s) * 2)
-        no-repeat,
-      linear-gradient(var(--grid-c), var(--grid-c)) right
-        calc(var(--s) + var(--gap)) bottom var(--gap) / var(--s) var(--s)
-        no-repeat,
-      linear-gradient(var(--grid-c), var(--grid-c)) right
-        calc(var(--s) * 3 + var(--gap)) bottom var(--gap) / var(--s) var(--s)
-        no-repeat,
-      var(--hero-bg);
+    --decor-gap-r: calc(
+      100vw * (1 - var(--active-w-ratio)) - (var(--decor-s) * 2)
+    );
+    --decor-gap-b: clamp(20px, 3vw, 50px);
+
+    background-color: var(--hero-bg);
   }
 
   .contact-hero-showcase::before {
@@ -1014,10 +1145,10 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   .contact-hero-showcase::after {
     content: "";
     position: absolute;
-    bottom: var(--gap);
-    right: var(--gap);
-    width: var(--s);
-    height: var(--s);
+    bottom: var(--decor-gap-b);
+    right: var(--decor-gap-r);
+    width: var(--decor-s);
+    height: var(--decor-s);
     background-color: var(--grid-c);
     --w: var(--base-white);
 
@@ -1025,80 +1156,114 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       linear-gradient(var(--w), var(--w)), linear-gradient(var(--w), var(--w)),
       linear-gradient(var(--w), var(--w));
     background-position:
-      right calc(var(--s) * 0.12) top calc(var(--s) * 0.5),
-      right calc(var(--s) * 0.12) top 0,
-      right calc(var(--s) * 0.44) top calc(var(--s) * 0.16);
+      right calc(var(--decor-s) * 0.12) top calc(var(--decor-s) * 0.5),
+      right calc(var(--decor-s) * 0.12) top 0,
+      right calc(var(--decor-s) * 0.44) top calc(var(--decor-s) * 0.16);
     background-size:
       80% 25%,
       24% 50%,
       24% 25%;
     background-repeat: no-repeat;
-    z-index: 5;
+    z-index: 15;
+    pointer-events: none;
   }
-
 
   .hero-layer-over {
     position: absolute;
     inset: 0;
-    z-index: 10;
+    z-index: 2;
     display: flex;
     align-items: center;
-    justify-content: center;
+    overflow: hidden;
+    container-type: inline-size;
+  }
+
+  .hero-layer-over::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 10;
     pointer-events: none;
+    background:
+      linear-gradient(var(--grid-c), var(--grid-c)) right var(--decor-gap-r)
+        bottom calc(var(--decor-s) * 3 + var(--decor-gap-b)) / var(--decor-s)
+        var(--decor-s) no-repeat,
+      linear-gradient(var(--grid-c), var(--grid-c)) right var(--decor-gap-r)
+        bottom calc(var(--decor-s) + var(--decor-gap-b)) /
+        calc(var(--decor-s) * 3) calc(var(--decor-s) * 2) no-repeat,
+      linear-gradient(var(--grid-c), var(--grid-c)) right
+        calc(var(--decor-s) + var(--decor-gap-r)) bottom var(--decor-gap-b) /
+        var(--decor-s) var(--decor-s) no-repeat,
+      linear-gradient(var(--grid-c), var(--grid-c)) right
+        calc(var(--decor-s) * 3 + var(--decor-gap-r)) bottom
+        var(--decor-gap-b) / var(--decor-s) var(--decor-s) no-repeat;
   }
 
   /* ==============================================
-     ART MASK GRID
+     ART CAROUSEL (Otoiro Left-Aligned Config)
      ============================================== */
-  .art-mask-grid {
-    position: relative;
-    left: var(--hero-offset-x);
-    --hero-thumb: linear-gradient(
-      135deg,
-      var(--color-primary-light) 0%,
-      var(--color-primary) 100%
-    );
+  .art-carousel-track {
     display: flex;
-    justify-content: center;
     align-items: center;
-    width: clamp(280px, 45vw, 640px);
-    aspect-ratio: 1 / 1;
-    z-index: 5;
-    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    height: 100%;
+    width: 100%;
+
+    --slide-w: calc(100cqw * var(--active-w-ratio));
+    gap: 0;
+
+    will-change: transform;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(calc(var(--idx, 0) * var(--slide-w) * -1));
   }
 
-  .art-mask-grid.fade-switch {
-    opacity: 0;
-    transform: scale(0.95);
+  .art-carousel-slide {
+    flex: 0 0 var(--slide-w);
+    height: 100%;
+    max-height: 100%;
+
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+
+    opacity: 1;
+    transform: none;
+    transition: filter 0.8s ease;
+  }
+
+  .slide-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    -webkit-user-drag: none;
+  }
+
+  .slide-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    -webkit-user-drag: none;
+  }
+
+  .art-carousel-slide:not(.is-active) {
+    filter: brightness(0.4) saturate(0.8);
+    pointer-events: none;
+  }
+
+  .art-carousel-slide.is-active {
+    z-index: 5;
   }
 
   @media (max-width: 768px) {
     .contact-hero-showcase {
-      --block-w: clamp(75px, 26vw, 160px);
-    }
+      --active-w-ratio: 1;
 
-    .art-mask-grid {
-      width: clamp(300px, 85vw, 420px);
-    }
-  }
+      --hero-h: calc(100vw * 4/5);
 
-  .art-mask-block--single {
-    width: 100%;
-    height: 100%;
-    border: clamp(4px, 1vw, 8px) solid var(--base-white);
-    background-color: var(--color-primary-light);
-    background-image: var(--hero-thumb);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    box-shadow: 
-      clamp(8px, 2vw, 16px) clamp(8px, 2vw, 16px) 0px var(--color-secondary-darker), 
-      clamp(12px, 3vw, 24px) clamp(12px, 3vw, 24px) 25px rgba(0, 0, 0, 0.25), 
-      inset 0px 6px 10px rgba(255, 255, 255, 0.3), 
-      inset 0px -6px 10px rgba(0, 0, 0, 0.15); 
-    border-radius: 4px;
-    will-change: transform;
-    transform: translateZ(0);
+      --decor-gap-r: clamp(10px, 4vw, 25px);
+    }
   }
 
   /* ==============================================
@@ -1113,6 +1278,12 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     align-items: center;
     gap: var(--spacing-10);
     padding: 0 var(--spacing-6);
+  }
+
+  @media (min-width: 769px) {
+    .kime-media-player {
+      display: none;
+    }
   }
 
   .kime-media-track {
