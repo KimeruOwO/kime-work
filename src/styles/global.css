@@ -223,6 +223,21 @@ a {
 }
 
 /* =========================================
+   FIX CHROME WINDOWS FONT RENDERING BUG 
+   (PREVENT WEIGHT THINNING ON HOVER/GPU ACCEL)
+   ========================================= */
+a,
+button,
+.filter-btn,
+.switch-btn,
+.artwork-card,
+.btn {
+  -webkit-font-smoothing: subpixel-antialiased;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* =========================================
    UTILITY CLASSES (GLOBAL STRUCTURE)
    ========================================= */
 
