@@ -237,7 +237,7 @@ const {
   ========================================================== */
   .section-header__title {
     font-size: clamp(1rem, 6vw, 2.6rem);
-    font-weight: 800;
+    font-weight: 899;
     color: var(--color-primary);
     display: flex;
     flex-direction: row;
@@ -256,14 +256,12 @@ const {
     align-items: center;
   }
 
-  /* Variant: Horizontal (About) - Canh giữa trên Mobile */
   .section-header__title--horizontal {
     flex-direction: column;
     align-items: center; 
     gap: var(--spacing-4);
   }
 
-  /* Variant: Stacked (Motions) - Ép trái, dính sát trên mọi màn hình */
   .section-header__title--stacked {
     flex-direction: column;
     align-items: flex-start;
@@ -271,12 +269,11 @@ const {
   }
 
   .section-header__subtitle {
-    font-weight: 800;
+    font-weight: 899;
     color: var(--color-primary);
     line-height: 1;
   }
 
-  /* Form Artwork (Dọc) */
   .section-header__subtitle--vertical {
     font-size: calc(0.9em / var(--char-count, 4));
     writing-mode: vertical-lr;
@@ -286,7 +283,6 @@ const {
     padding-bottom: 1px;
   }
 
-  /* Form nằm ngang dùng chung */
   .section-header__subtitle--horizontal,
   .section-header__subtitle--stacked {
     font-size: 0.35em;
@@ -295,7 +291,6 @@ const {
     padding-bottom: 0.05em;
   }
 
-  /* Motions Only: Màu Xanh Đen, Không viết hoa */
   .section-header__subtitle--stacked {
     color: var(--text-primary);
     text-transform: none;
@@ -478,7 +473,7 @@ const {
     transform: translateY(-50%);
     font-size: var(--text-7xl);
     font-family: Impact, "Arial Black", "Segoe UI Black", sans-serif;
-    font-weight: 900;
+    font-weight: 899;
     color: var(--bg-secondary);
     opacity: 0.4;
     white-space: nowrap;
@@ -512,6 +507,8 @@ const {
 
   .section-header--align-left .section-header__wrapper {
     justify-content: flex-start;
+    margin-left: max(0px, calc(var(--text-start) - var(--pad)));
+    margin-right: auto;
   }
 
   .section-header--align-left .section-header__title {
@@ -527,7 +524,7 @@ const {
       padding: var(--spacing-12) 0;
       --decor-cell: 60px;
       --text-overlap: 35px;
-      --safe-gap-left: 30px;
+      --safe-gap-left: 60px;
       --block-max-width: 250px;
       --border-cross: 10px;
       --cross-length: 38px;
@@ -547,27 +544,23 @@ const {
       align-items: flex-end;
     }
 
-    /* About: Dàn hàng ngang (Row) */
     .section-header__title--horizontal {
       flex-direction: row;
       align-items: flex-end;
       gap: var(--spacing-4);
     }
 
-    /* Motions: Rớt hàng dọc (Column) và ép sát lề trái */
     .section-header__title--stacked {
       flex-direction: column;
       align-items: flex-start;
       gap: var(--spacing-4);
     }
 
-    /* Subtitle chung */
     .section-header__subtitle {
       font-size: var(--text-2xl);
       margin-left: var(--spacing-4);
     }
 
-    /* Khử margin trái thừa kế trên Motions */
     .section-header__subtitle--stacked {
       margin-left: 0;
     }
@@ -646,11 +639,33 @@ const {
     }
 
     .section-header--align-responsive {
-      --text-start: var(--distance-to-sidebar);
+      --fluid-block: clamp(0px, calc(100vw - 1100px), 200px);
+      --block-max-width: var(--fluid-block);
+      --text-start: calc(var(--block-max-width) + var(--fixed-decor-width) + var(--safe-gap-left));
     }
 
     .section-header--align-responsive .section-header__wrapper {
       justify-content: flex-start;
+      margin-left: max(0px, calc(var(--text-start) - var(--pad)));
+      margin-right: auto;
     }
+  }
+
+  /* ==========================================================
+     LAPTOP SMALL
+  ========================================================== */
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .section-header {
+      --fixed-decor-width: calc(var(--decor-width) - var(--decor-overlap));
+    }
+    
+    .section-header__right-bottom {
+      grid-template-columns: var(--sq-width) auto;
+    }
+
+    .section-header__right-bottom::after {
+      display: none;
+    }
+
   }
 </style>

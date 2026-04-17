@@ -99,7 +99,6 @@
   --banner-height-mobile: 4.5rem;
   --banner-height-pc: 7.25rem;
 
-  /* Borders & Radius (ĐÃ PURGE: Chỉ giữ lại những thứ thực sự dùng) */
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
@@ -151,7 +150,6 @@ dd {
 }
 
 /* 1. Standard CSS cho Firefox (Fallback) */
-/* CẤM TUYỆT ĐỐI không khai báo scrollbar-width vào chung thẻ HTML vì Chrome >121 sẽ dựa vào đó mà ghi đè tịt luôn WebKit. Rất nhiều DEV không biết cái này. */
 @supports (-moz-appearance: none) {
   html {
     scrollbar-width: auto;
@@ -177,8 +175,7 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Bắt buộc thêm: Tối ưu hóa việc render font chữ trên Main Thread */
-  text-rendering: optimizeLegibility;
+  text-rendering: auto;
 }
 
 img,
@@ -210,7 +207,6 @@ h6 {
   overflow-wrap: break-word;
 }
 
-/* Gộp chung Reset List để tránh ghi đè thừa thãi */
 ul,
 ol {
   list-style: none;
@@ -225,16 +221,19 @@ a {
 /* =========================================
    FIX CHROME WINDOWS FONT RENDERING BUG 
    (PREVENT WEIGHT THINNING ON HOVER/GPU ACCEL)
+   Only target elements with CSS transitions/transforms on Desktop
    ========================================= */
-a,
-button,
-.filter-btn,
-.switch-btn,
-.artwork-card,
-.btn {
-  -webkit-font-smoothing: subpixel-antialiased;
-  backface-visibility: hidden;
-  transform: translateZ(0);
+@media (hover: hover) and (pointer: fine) {
+  .filter-btn,
+  .switch-btn,
+  .artwork-card,
+  .cyber-header__nav-btn,
+  .page-nav-btn,
+  .social-link {
+    -webkit-font-smoothing: subpixel-antialiased;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
 }
 
 /* =========================================

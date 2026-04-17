@@ -73,7 +73,7 @@ const isWorks = currentPath.startsWith("/work");
 
     // Update WORKS link to match saved preference (default: motions)
     const savedMode = localStorage.getItem("kime-works-mode");
-    link.href = savedMode === "artwork" ? "/work/artwork/illustration" : "/work/motions";
+    link.href = savedMode === "artwork" ? "/work/artwork/" : "/work/motions";
   });
 </script>
 
@@ -159,7 +159,7 @@ const isWorks = currentPath.startsWith("/work");
     background-color: var(--bg-secondary);
     color: var(--color-primary);
     font-size: var(--text-xs);
-    font-weight: 900;
+    font-weight: 899;
     letter-spacing: 0.15em;
     text-align: center;
     border-radius: var(--radius-pill);

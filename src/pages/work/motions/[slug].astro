@@ -32,7 +32,10 @@ const thumbUrl = ytId
   : null;
 ---
 
-<Layout title={`Kime Work - ${video.title}`} description={`${video.title} — Motion project by ${video.nameArtist || "Kimeyu"}. ${video.descAbout?.slice(0, 120) || "Watch the full video and explore project details."}`}>
+<Layout
+  title={`Kime Work - ${video.title}`}
+  description={`${video.title} — Motion project by ${video.nameArtist || "Kimeyu"}. ${video.descAbout?.slice(0, 120) || "Watch the full video and explore project details."}`}
+>
   <div class="motion-detail-page">
     <!-- 1. HERO RIBBON -->
     <div class="hero-ribbon">
@@ -223,8 +226,6 @@ const thumbUrl = ytId
   </div>
 </Layout>
 
-
-
 <style>
   .motion-detail-page {
     position: relative;
@@ -313,7 +314,8 @@ const thumbUrl = ytId
   .motion-title-bar {
     position: relative;
     width: 100%;
-    padding: clamp(var(--spacing-4), 3vw, var(--spacing-6)) clamp(var(--spacing-4), 8vw, var(--spacing-16));
+    padding: clamp(var(--spacing-4), 3vw, var(--spacing-6))
+      clamp(var(--spacing-4), 8vw, var(--spacing-16));
     margin-bottom: var(--spacing-12);
     margin-top: var(--spacing-12);
 
@@ -346,7 +348,7 @@ const thumbUrl = ytId
     -webkit-mask-size: calc(100% * 2 / 3) calc(100% * 2 / 3);
     -webkit-mask-repeat: repeat;
     -webkit-mask-position: top left;
-    
+
     transition: opacity 0.3s ease;
   }
 
@@ -374,11 +376,11 @@ const thumbUrl = ytId
     color: var(--base-white);
     letter-spacing: 2px;
     text-transform: uppercase;
-    text-shadow: 
+    text-shadow:
       -1.5px -1.5px 0 var(--color-primary),
-       1.5px -1.5px 0 var(--color-primary),
-      -1.5px  1.5px 0 var(--color-primary),
-       1.5px  1.5px 0 var(--color-primary),
+      1.5px -1.5px 0 var(--color-primary),
+      -1.5px 1.5px 0 var(--color-primary),
+      1.5px 1.5px 0 var(--color-primary),
       0px 4px 10px rgba(0, 0, 0, 0.15);
     word-break: break-word;
     overflow-wrap: break-word;
@@ -392,7 +394,7 @@ const thumbUrl = ytId
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-1);
-    font-weight: 800;
+    font-weight: 900;
     color: var(--color-primary);
     text-decoration: none;
     margin-bottom: var(--spacing-6);
@@ -449,7 +451,7 @@ const thumbUrl = ytId
   .artist-name {
     margin: 0;
     font-size: var(--text-base);
-    font-weight: 800;
+    font-weight: 900;
     color: var(--base-white);
     display: flex;
     align-items: center;
@@ -637,7 +639,7 @@ const thumbUrl = ytId
   }
   .credit-value {
     color: var(--color-primary);
-    font-weight: 800;
+    font-weight: 900;
     margin: 0;
   }
 
@@ -666,7 +668,7 @@ const thumbUrl = ytId
   .sidebar-header h3 {
     margin: 0;
     font-size: var(--text-sm);
-    font-weight: 800;
+    font-weight: 900;
     color: var(--base-white);
     display: flex;
     align-items: center;
@@ -768,8 +770,6 @@ const thumbUrl = ytId
     background-image: none;
     opacity: 0.85;
   }
-
-
 
   /* ==================================
      6. OPTIONAL DETAILS

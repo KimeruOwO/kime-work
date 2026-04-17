@@ -1,28 +1,22 @@
 ---
 import type { Page } from "astro";
-import type { Video } from "../../../lib/hygraph";
+import type { Artwork } from "../../../lib/hygraph";
 import SectionHeader from "../../../components/SectionHeader.astro";
 import FilterMenu from "../../../components/FilterMenu.astro";
-import MotionCard from "./MotionCard.astro";
 
 interface Props {
-  page: Page<Video>;
+  page: Page<Artwork>;
 }
 
 const { page } = Astro.props;
 ---
 
 <div class="works-content">
-  <motion-gallery-manager>
+  <artwork-gallery-manager>
     <section class="gallery-view" id="works-gallery">
-      <SectionHeader
-        title="MOTIONS"
-        subtitle="モーションプロジェクト"
-        subtitleOrientation="stacked"
-        align="responsive"
-      />
+      <SectionHeader title="ARTWORK" subtitle="作品" align="responsive" />
 
-      <div class="wrapper motions-wrapper">
+      <div class="wrapper artwork-wrapper">
         <div class="gallery-layout-split">
           <aside class="sidebar-desktop">
             <div class="sidebar-sticky-wrap">
@@ -34,7 +28,11 @@ const { page } = Astro.props;
                     ></rect></svg
                   >
                 </button>
-                <button class="s-btn grid-btn" data-cols="3" aria-label="3 Cột">
+                <button
+                  class="s-btn grid-btn active"
+                  data-cols="3"
+                  aria-label="3 Cột"
+                >
                   <svg viewBox="0 0 32 32"
                     ><rect x="1.5" y="7" width="8" height="8" rx="2"
                     ></rect><rect x="12" y="7" width="8" height="8" rx="2"
@@ -45,49 +43,31 @@ const { page } = Astro.props;
                     ></rect></svg
                   >
                 </button>
-                <button
-                  class="s-btn grid-btn active"
-                  data-cols="4"
-                  aria-label="4 Cột"
-                >
-                  <svg viewBox="0 0 42 42"
-                    ><rect x="2" y="12" width="8" height="8" rx="2"></rect><rect
-                      x="12"
-                      y="12"
-                      width="8"
-                      height="8"
-                      rx="2"></rect><rect
-                      x="22"
-                      y="12"
-                      width="8"
-                      height="8"
-                      rx="2"></rect><rect
-                      x="32"
-                      y="12"
-                      width="8"
-                      height="8"
-                      rx="2"></rect><rect
-                      x="2"
-                      y="22"
-                      width="8"
-                      height="8"
-                      rx="2"></rect><rect
-                      x="12"
-                      y="22"
-                      width="8"
-                      height="8"
-                      rx="2"></rect><rect
-                      x="22"
-                      y="22"
-                      width="8"
-                      height="8"
-                      rx="2"></rect><rect
-                      x="32"
-                      y="22"
-                      width="8"
-                      height="8"
-                      rx="2"></rect></svg
-                  >
+                <button class="s-btn grid-btn" data-cols="4" aria-label="4 Cột">
+                  <svg viewBox="0 0 42 42">
+                    <rect x="2" y="12" width="8" height="8" rx="2"></rect>
+                    <rect x="12" y="12" width="8" height="8" rx="2"></rect>
+                    <rect x="22" y="12" width="8" height="8" rx="2"></rect>
+                    <rect x="32" y="12" width="8" height="8" rx="2"></rect>
+                    <rect x="2" y="22" width="8" height="8" rx="2"></rect>
+                    <rect x="12" y="22" width="8" height="8" rx="2"></rect>
+                    <rect x="22" y="22" width="8" height="8" rx="2"></rect>
+                    <rect x="32" y="22" width="8" height="8" rx="2"></rect>
+                  </svg>
+                </button>
+                <button class="s-btn grid-btn" data-cols="5" aria-label="5 Cột">
+                  <svg viewBox="0 0 52 42">
+                    <rect x="2" y="12" width="8" height="8" rx="2"></rect>
+                    <rect x="12" y="12" width="8" height="8" rx="2"></rect>
+                    <rect x="22" y="12" width="8" height="8" rx="2"></rect>
+                    <rect x="32" y="12" width="8" height="8" rx="2"></rect>
+                    <rect x="42" y="12" width="8" height="8" rx="2"></rect>
+                    <rect x="2" y="22" width="8" height="8" rx="2"></rect>
+                    <rect x="12" y="22" width="8" height="8" rx="2"></rect>
+                    <rect x="22" y="22" width="8" height="8" rx="2"></rect>
+                    <rect x="32" y="22" width="8" height="8" rx="2"></rect>
+                    <rect x="42" y="22" width="8" height="8" rx="2"></rect>
+                  </svg>
                 </button>
               </div>
 
@@ -103,66 +83,99 @@ const { page } = Astro.props;
               </div>
             </div>
           </aside>
+
           <div class="gallery-main">
             <FilterMenu
-              groupName="motions-filter"
+              groupName="artwork-filter"
               options={[
-                { label: "ALL MOTIONS", value: "all" },
-                { label: "MUSIC VIDEOS // MVs", value: "musicvideos//mvs" },
-                { label: "DEBUT // TRAILER", value: "debut//trailer" },
+                { label: "ALL LABELS", value: "all" },
+                { label: "ILLUSTRATION", value: "illustration" },
+                { label: "GRAPHICS DESIGN", value: "graphics-design" },
               ]}
             />
 
             <div
-              class="motions-grid"
-              id="motions-grid-container"
+              class="artwork-masonry"
+              id="artwork-grid-container"
               data-grid-cols="default"
             >
               {
-                page.data.map((vid, index) => {
-                  const catMatch =
-                    vid.category?.name?.toLowerCase().replace(/\s+/g, "") ||
-                    "all";
-                  const visMatch = vid.isFeatured ? "featured" : "all";
+                page.data.map((art, index) => {
+                  const catMatch = art.category?.slug || "all";
+                  const visMatch = art.isFeatured ? "featured" : "all";
 
                   return (
-                    <MotionCard
-                      vid={vid}
-                      index={index}
-                      catMatch={catMatch}
-                      visMatch={visMatch}
-                    />
+                    <div
+                      class="artwork-card"
+                      role="button"
+                      tabindex="0"
+                      data-category={catMatch}
+                      data-visibility={visMatch}
+                      data-full-src={art.image.fullUrl || art.image.url}
+                    >
+                      <img
+                        src={art.image.url}
+                        loading={index < 3 ? "eager" : "lazy"}
+                        fetchpriority={index < 3 ? "high" : "auto"}
+                        decoding={index < 3 ? "sync" : "async"}
+                        alt={art.title}
+                      />
+                    </div>
                   );
                 })
               }
             </div>
+
+            <hr class="artwork-loader-decor" />
+
+            <!-- Client-side pagination container -->
+            <nav id="artwork-pagination" aria-label="Artwork pagination"></nav>
           </div>
         </div>
-
-        <!-- Client-Side Pagination (rendered dynamically by JS) -->
-        <nav
-          class="kime-pagination"
-          role="navigation"
-          aria-label="Pagination"
-          id="motion-pagination"
-        ></nav>
       </div>
+
+      <dialog class="lightbox-modal">
+        <header class="lightbox-header">
+          <div class="lightbox-title-group">
+            <h2 class="lightbox-title">PREVIEW</h2>
+          </div>
+          <button class="lightbox-close" aria-label="Close preview">✕</button>
+        </header>
+        <div class="lightbox-body">
+          <img src="" alt="" class="lightbox-img" decoding="async" />
+        </div>
+      </dialog>
     </section>
-  </motion-gallery-manager>
+  </artwork-gallery-manager>
 </div>
 
 <script>
-  class MotionGalleryManager
+  const _preloadCache = new Set<HTMLImageElement>();
+
+  class ArtworkGalleryManager
     extends HTMLElement
     implements EventListenerObject
   {
+    private _dialog: HTMLDialogElement | null = null;
+    private _closeBtn: HTMLButtonElement | null = null;
+    private _galleryContainer: HTMLElement | null = null;
+
     private get _cards() {
-      return this.querySelectorAll<HTMLElement>(".motion-card");
+      return this.querySelectorAll<HTMLElement>(".artwork-card");
     }
+
     private _currentCat = "all";
     private _currentVis = "all";
     private _currentPage = 1;
-    private readonly _pageSize = 12;
+    private readonly _pageSize = 20;
+
+    constructor() {
+      super();
+      this.handleCardClick = this.handleCardClick.bind(this);
+      this.handleCardHover = this.handleCardHover.bind(this);
+      this.closeDialog = this.closeDialog.bind(this);
+      this.handleBackdropClick = this.handleBackdropClick.bind(this);
+    }
 
     private _resizeHandler = () => {
       requestAnimationFrame(() => {
@@ -242,32 +255,10 @@ const { page } = Astro.props;
       });
     }
 
-    private updateCardThemes() {
-      requestAnimationFrame(() => {
-        if (this._cards.length === 0) return;
-        const grid = this.querySelector<HTMLElement>("#motions-grid-container");
-        let cols = parseInt(grid?.dataset.gridCols || "4", 10);
-        if (isNaN(cols)) cols = 4;
-
-        let visibleIndex = 0;
-        this._cards.forEach((card) => {
-          if (!card.hidden) {
-            const isPink = Math.floor(visibleIndex / cols) % 2 === 0;
-            const newTheme = isPink ? "pink" : "blue";
-            if (card.dataset.theme !== newTheme) {
-              card.dataset.theme = newTheme;
-            }
-            visibleIndex++;
-          }
-        });
-      });
-    }
-
     // =============================================
     //  CLIENT-SIDE PAGINATION ENGINE
     // =============================================
 
-    /** Returns only cards that pass both category + visibility filters */
     private _getFilteredCards(): HTMLElement[] {
       return Array.from(this._cards).filter((card) => {
         const matchCat =
@@ -280,7 +271,6 @@ const { page } = Astro.props;
       });
     }
 
-    /** Core render: apply filter + pagination, then update themes */
     private _applyVisibility() {
       const allCards = Array.from(this._cards);
       const filtered = this._getFilteredCards();
@@ -298,20 +288,14 @@ const { page } = Astro.props;
       });
 
       this._renderPagination(totalPages);
-      this.updateCardThemes();
     }
 
-    /** Dynamically generates pagination UI matching Pagination.astro design */
     private _renderPagination(totalPages: number) {
-      const container = this.querySelector<HTMLElement>("#motion-pagination");
+      const container = this.querySelector<HTMLElement>("#artwork-pagination");
       if (!container) return;
 
-      // Sliding window algorithm (mirrors Pagination.astro)
       const MAX_VISIBLE = 5;
-      let ws = Math.max(
-        1,
-        this._currentPage - Math.floor(MAX_VISIBLE / 2),
-      );
+      let ws = Math.max(1, this._currentPage - Math.floor(MAX_VISIBLE / 2));
       let we = ws + MAX_VISIBLE - 1;
       if (we > totalPages) {
         we = totalPages;
@@ -335,7 +319,6 @@ const { page } = Astro.props;
       container.innerHTML = html;
     }
 
-    /** Handle page button clicks with FLIP + smooth scroll */
     private _handlePaginationClick(btn: HTMLElement) {
       const page = parseInt(btn.dataset.page || "1", 10);
       if (page === this._currentPage || isNaN(page)) return;
@@ -353,11 +336,30 @@ const { page } = Astro.props;
     // =============================================
 
     connectedCallback() {
-      const grid = this.querySelector<HTMLElement>("#motions-grid-container");
+      this._dialog = this.querySelector<HTMLDialogElement>(".lightbox-modal");
+      this._closeBtn = this.querySelector<HTMLButtonElement>(".lightbox-close");
+      this._galleryContainer = this.querySelector<HTMLElement>(
+        "#artwork-grid-container",
+      );
+
+      if (this._galleryContainer !== null) {
+        this._galleryContainer.addEventListener("click", this.handleCardClick);
+        this._galleryContainer.addEventListener(
+          "mouseover",
+          this.handleCardHover,
+        );
+      }
+      if (this._closeBtn !== null) {
+        this._closeBtn.addEventListener("click", this.closeDialog);
+      }
+      if (this._dialog !== null) {
+        this._dialog.addEventListener("click", this.handleBackdropClick);
+      }
+
+      const grid = this.querySelector<HTMLElement>("#artwork-grid-container");
       const sidebarBtns = this.querySelectorAll<HTMLButtonElement>(".s-btn");
 
-      // Restore grid column preference
-      const savedCols = localStorage.getItem("kime-motions-cols");
+      const savedCols = localStorage.getItem("kime-artwork-cols");
       if (savedCols && grid) {
         grid.dataset.gridCols = savedCols;
         sidebarBtns.forEach((b) => {
@@ -368,7 +370,6 @@ const { page } = Astro.props;
         });
       }
 
-      // Initial render: apply pagination to show first page
       this._applyVisibility();
 
       window.addEventListener("resize", this._resizeHandler);
@@ -377,11 +378,11 @@ const { page } = Astro.props;
       this.addEventListener("filter-changed", this);
       this.addEventListener("click", this);
 
-      // Restore pending sidebar filter state from cross-page navigation
-      const pendingSidebar = localStorage.getItem("kime-sidebar-pending");
+      const pendingSidebar = localStorage.getItem(
+        "kime-sidebar-artwork-pending",
+      );
       if (pendingSidebar) {
-        localStorage.removeItem("kime-sidebar-pending");
-
+        localStorage.removeItem("kime-sidebar-artwork-pending");
         const targetBtn = this.querySelector<HTMLButtonElement>(
           `.sidebar-desktop .filter-btn[data-value="${CSS.escape(pendingSidebar)}"]`,
         );
@@ -392,7 +393,6 @@ const { page } = Astro.props;
           targetBtn.classList.add("active");
           this._updateSidebarTracker(targetBtn);
         }
-
         requestAnimationFrame(() => {
           this.dispatchEvent(
             new CustomEvent("filter-changed", {
@@ -412,6 +412,23 @@ const { page } = Astro.props;
       window.removeEventListener("resize", this._resizeHandler);
       this.removeEventListener("filter-changed", this);
       this.removeEventListener("click", this);
+
+      if (this._galleryContainer !== null) {
+        this._galleryContainer.removeEventListener(
+          "click",
+          this.handleCardClick,
+        );
+        this._galleryContainer.removeEventListener(
+          "mouseover",
+          this.handleCardHover,
+        );
+      }
+      if (this._closeBtn !== null) {
+        this._closeBtn.removeEventListener("click", this.closeDialog);
+      }
+      if (this._dialog !== null) {
+        this._dialog.removeEventListener("click", this.handleBackdropClick);
+      }
     }
 
     handleEvent(e: Event) {
@@ -424,15 +441,10 @@ const { page } = Astro.props;
           this._handleSidebarClick(sidebarBtn);
           return;
         }
-        // Pagination button delegation
         const pageBtn = target.closest<HTMLElement>("[data-page]");
         if (pageBtn) this._handlePaginationClick(pageBtn);
       }
     }
-
-    // =============================================
-    //  SIDEBAR
-    // =============================================
 
     private _updateSidebarTracker(btn: HTMLElement) {
       const group = btn.closest(".sidebar-group") as HTMLElement;
@@ -449,7 +461,7 @@ const { page } = Astro.props;
 
     private _handleSidebarClick(btn: HTMLButtonElement) {
       this._updateSidebarTracker(btn);
-      const grid = this.querySelector<HTMLElement>("#motions-grid-container");
+      const grid = this.querySelector<HTMLElement>("#artwork-grid-container");
 
       if (btn.classList.contains("grid-btn")) {
         this.querySelectorAll(".grid-btn").forEach((b) =>
@@ -464,8 +476,7 @@ const { page } = Astro.props;
         ) {
           this.performFLIP(() => {
             grid.dataset.gridCols = btn.dataset.cols!;
-            localStorage.setItem("kime-motions-cols", btn.dataset.cols!);
-            this.updateCardThemes();
+            localStorage.setItem("kime-artwork-cols", btn.dataset.cols!);
           });
         }
       }
@@ -487,49 +498,92 @@ const { page } = Astro.props;
       }
     }
 
-    // =============================================
-    //  FILTER
-    // =============================================
-
     private _handleFilterChange(e: CustomEvent) {
       if (this._cards.length === 0) return;
-
       const filterGroup = e.detail.group;
       const filterValue = e.detail.value.toLowerCase();
-
       if (filterGroup === "sidebar") {
         this._currentVis = filterValue;
       } else {
         this._currentCat = filterValue;
       }
-
-      // Reset to page 1 on any filter change
       this._currentPage = 1;
-
       this.performFLIP(() => this._applyVisibility());
+    }
+
+    // =============================================
+    //  LIGHTBOX
+    // =============================================
+
+    private closeDialog() {
+      if (this._dialog !== null) this._dialog.close();
+    }
+
+    private handleBackdropClick(e: MouseEvent) {
+      if (e.target === this._dialog && this._dialog !== null) {
+        this._dialog.close();
+      }
+    }
+
+    private handleCardHover(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      const card = target.closest<HTMLElement>(".artwork-card");
+      if (card === null) return;
+      const fullSrc = card.dataset.fullSrc;
+      if (fullSrc !== undefined && card.dataset.preloaded !== "true") {
+        card.dataset.preloaded = "true";
+        const preloadImg = new Image();
+        _preloadCache.add(preloadImg);
+        preloadImg.onload = preloadImg.onerror = () =>
+          _preloadCache.delete(preloadImg);
+        preloadImg.src = fullSrc;
+      }
+    }
+
+    private handleCardClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      const card = target.closest<HTMLElement>(".artwork-card");
+      if (card === null || this._dialog === null) return;
+      const fullSrc = card.dataset.fullSrc;
+      const img = card.querySelector("img");
+      if (fullSrc === undefined || img === null) return;
+      const dialogImg =
+        this._dialog.querySelector<HTMLImageElement>(".lightbox-img");
+      if (dialogImg !== null) {
+        dialogImg.src = img.src;
+        dialogImg.alt = img.alt || "Expanded artwork preview";
+        this._dialog.showModal();
+        if (fullSrc !== img.src) {
+          const highResLoader = new Image();
+          highResLoader.onload = () => {
+            if (dialogImg.src === img.src) dialogImg.src = fullSrc;
+          };
+          highResLoader.src = fullSrc;
+        }
+      }
     }
   }
 
-  if (!customElements.get("motion-gallery-manager")) {
-    customElements.define("motion-gallery-manager", MotionGalleryManager);
+  if (customElements.get("artwork-gallery-manager") === undefined) {
+    customElements.define("artwork-gallery-manager", ArtworkGalleryManager);
   }
 </script>
 
 <style>
+  /* Base styles */
   .works-content {
     padding-top: var(--spacing-8);
   }
-
-  motion-gallery-manager {
+  artwork-gallery-manager {
     display: block;
     width: 100%;
     min-height: 50vh;
   }
-
-  :global(.motion-card[hidden]) {
+  :global(.artwork-card[hidden]) {
     display: none;
   }
 
+  /* Layout Split */
   .gallery-layout-split {
     display: flex;
     flex-direction: column;
@@ -551,6 +605,7 @@ const { page } = Astro.props;
       width: 100%;
       min-width: 0;
     }
+
     .sidebar-desktop {
       display: block;
       margin-top: calc(48px + var(--spacing-8));
@@ -635,105 +690,279 @@ const { page } = Astro.props;
     }
   }
 
-  .motions-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--spacing-8);
+  /* Masonry Base */
+  .artwork-masonry {
+    column-count: 1;
+    column-gap: var(--spacing-4);
     padding-top: var(--spacing-4);
-    padding-bottom: var(--spacing-12);
+
+    /* VŨ KHÍ 1: Tăng padding đáy để tạo khoảng thở (Breathing Room) 
+       Cách ly sự so le của ảnh khỏi các thành phần thẳng nếp bên dưới */
+    padding-bottom: clamp(var(--spacing-8), 8vw, var(--spacing-16));
+
+    /* VŨ KHÍ 2: CSS Optical Masking 
+       Làm mờ tiệm cận 10% đáy của lưới Masonry để hòa tan sự chênh lệch */
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) 90%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) 90%,
+      rgba(0, 0, 0, 0) 100%
+    );
   }
 
-  /* ==============================================
-     GRID RESPONSIVE ARCHITECTURE
-     ============================================== */
-  @media (max-width: 1199px) {
-    .grid-btn[data-cols="3"],
-    .grid-btn[data-cols="4"] {
-      display: none;
+  /* Cưỡng chế 1 cột trên Mobile để chống vỡ vụn khi load localStorage từ PC */
+  @media (max-width: 639.98px) {
+    .artwork-masonry,
+    .artwork-masonry[data-grid-cols] {
+      column-count: 1 !important;
     }
   }
 
-  @media (min-width: 768px) {
-    .motions-grid[data-grid-cols="default"],
-    .motions-grid[data-grid-cols="2"] {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--spacing-10);
+  /* Masonry Grid Control via data-attribute */
+  .artwork-masonry[data-grid-cols="2"] {
+    column-count: 2;
+  }
+  .artwork-masonry[data-grid-cols="3"] {
+    column-count: 3;
+  }
+  .artwork-masonry[data-grid-cols="4"] {
+    column-count: 4;
+  }
+  .artwork-masonry[data-grid-cols="5"] {
+    column-count: 5;
+  }
+
+  /* Ẩn nút 4, 5 cột trên màn hình dưới 1536px (PC bé/Tablet) */
+  @media (max-width: 1535.98px) {
+    .grid-btn[data-cols="4"],
+    .grid-btn[data-cols="5"] {
+      display: none !important;
     }
-    .motions-grid[data-grid-cols="default"] :global(.card-footer),
-    .motions-grid[data-grid-cols="2"] :global(.card-footer) {
-      flex-direction: row;
-      height: 34px;
-      align-items: center;
-      gap: var(--spacing-3);
+
+    /* Fallback an toàn nếu lỡ dính localStorage 4/5 cột ở màn bé */
+    .artwork-masonry[data-grid-cols="4"],
+    .artwork-masonry[data-grid-cols="5"] {
+      column-count: 3;
     }
   }
 
+  @media (min-width: 640px) {
+    .artwork-masonry[data-grid-cols="default"] {
+      column-count: 2;
+      column-gap: var(--spacing-6);
+    }
+    .artwork-card {
+      margin-bottom: var(--spacing-6);
+    }
+  }
   @media (min-width: 1024px) {
-    .motions-grid[data-grid-cols="default"] {
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--spacing-12);
+    .artwork-masonry[data-grid-cols="default"] {
+      column-count: 3;
+      column-gap: clamp(var(--spacing-6), 2vw, var(--spacing-8));
     }
-  }
-
-  @media (min-width: 1200px) {
-    .motions-grid[data-grid-cols="3"] {
-      grid-template-columns: repeat(3, 1fr);
+    .artwork-card {
+      margin-bottom: clamp(var(--spacing-6), 2vw, var(--spacing-8));
     }
-    .motions-grid[data-grid-cols="3"] :global(.card-footer) {
-      flex-direction: row;
-      height: 34px;
-      align-items: center;
-      gap: var(--spacing-3);
-    }
-
-    .motions-grid[data-grid-cols="4"] {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    .motions-grid[data-grid-cols="4"] :global(.card-footer) {
-      flex-direction: column;
-      height: auto;
-      align-items: flex-start;
-      gap: var(--spacing-2);
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .motions-grid[data-grid-cols="default"] {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    .motions-grid[data-grid-cols="default"] :global(.card-footer) {
-      flex-direction: column;
-      height: auto;
-      align-items: flex-start;
-      gap: var(--spacing-2);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .motions-wrapper {
+    .artwork-wrapper {
       max-width: 90%;
     }
   }
 
-  @media (min-width: 1536px) {
-    .motions-grid[data-grid-cols="default"],
-    .motions-grid[data-grid-cols="4"] {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    .motions-grid[data-grid-cols="default"] :global(.card-footer),
-    .motions-grid[data-grid-cols="4"] :global(.card-footer) {
-      flex-direction: row;
-      height: 34px;
-      align-items: center;
-      gap: var(--spacing-3);
-    }
+  /* Artwork Card */
+  .artwork-card {
+    break-inside: avoid;
+    /* Dùng margin-bottom to hơn một chút để các thẻ không dính chùm */
+    margin-bottom: clamp(16px, 2vw, 32px);
+    border-radius: var(--radius-lg);
+    background-color: color-mix(in srgb, var(--color-primary) 50%, transparent);
+    padding: clamp(6px, 1.5vw, 12px) clamp(6px, 1.5vw, 12px)
+      clamp(16px, 3vw, 24px);
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+
+    /* Gỡ 'contain: layout paint;' ra khỏi thẻ con nếu dùng mask ở thẻ cha để tránh giật hình trên Safari */
+  }
+  .artwork-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+  .artwork-card:hover {
+    transform: translateY(-4px);
+    background-color: rgba(255, 205, 221, 0.5);
+  }
+  .artwork-card:hover::before {
+    opacity: 1;
+  }
+  .artwork-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    content-visibility: auto;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Lightbox */
+  .lightbox-modal {
+    padding: 0;
+    margin: auto;
+    background-color: var(--win-bg-body);
+    border: var(--border-width-sm) solid var(--win-border);
+    border-radius: var(--win-radius);
+    width: fit-content;
+    min-width: min(300px, 90vw);
+    max-width: 95vw;
+    max-height: 95vh;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  }
+  .lightbox-modal[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  .lightbox-modal::backdrop {
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    cursor: zoom-out;
+  }
+  .lightbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--win-bg-header);
+    border-bottom: var(--border-width-sm) solid var(--win-border);
+    padding: var(--spacing-3) var(--spacing-6);
+    flex-shrink: 0;
+  }
+  .lightbox-title-group {
+    display: flex;
+    align-items: center;
+  }
+  .lightbox-title {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 899;
+    color: var(--win-text-dark);
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+  }
+  .lightbox-title::before {
+    content: "";
+    display: inline-block;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    background-color: var(--win-accent-pink);
+    border: var(--border-width-sm) solid var(--win-border);
+    border-radius: 50%;
+    margin-right: var(--spacing-4);
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+  .lightbox-close {
+    background: transparent;
+    border: none;
+    color: var(--win-text-dark);
+    font-size: var(--text-2xl);
+    font-weight: 899;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      transform 0.2s ease;
+    padding: 0 0 0 var(--spacing-4);
+  }
+  .lightbox-close:hover {
+    color: var(--color-primary);
+    transform: scale(1.1);
+  }
+  .lightbox-body {
+    padding: var(--spacing-4);
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: radial-gradient(var(--color-tertiary) 1px, transparent 0);
+    background-size: 20px 20px;
+  }
+  .lightbox-img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: calc(95vh - 100px);
+    border: var(--border-width-sm) solid var(--win-border);
+    border-radius: var(--radius-sm);
+  }
+  :global(body:has(dialog[open])) {
+    overflow: hidden;
+  }
+
+  /* Decor */
+  .artwork-loader-decor {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border: none;
+    --cell: clamp(10px, 1.2vw, 16px);
+    height: calc(var(--cell) * 3);
+    background-color: var(--color-primary);
+    margin: clamp(var(--spacing-8), 6vw, var(--spacing-12)) 0 0 0;
+    --gap: calc(var(--cell) * 2);
+    background-image:
+      radial-gradient(circle closest-side, #ffffff 98%, transparent 100%),
+      radial-gradient(circle closest-side, #ffffff 98%, transparent 100%),
+      radial-gradient(circle closest-side, #ffffff 98%, transparent 100%);
+    background-size: var(--cell) var(--cell);
+    background-repeat: no-repeat;
+    background-position:
+      calc(50% - var(--gap)) 50%,
+      50% 50%,
+      calc(50% + var(--gap)) 50%;
+  }
+  .artwork-loader-decor::before,
+  .artwork-loader-decor::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: calc(var(--cell) * 5);
+    height: 100%;
+    background-image: repeating-conic-gradient(
+      #ffffff 0 90deg,
+      transparent 0 180deg
+    );
+    background-size: 40% calc(100% / 1.5);
+  }
+  .artwork-loader-decor::before {
+    left: 0;
+  }
+  .artwork-loader-decor::after {
+    right: 0;
   }
 
   /* ==============================================
-     CLIENT-SIDE PAGINATION (DYNAMIC)
-     Mirrors Pagination.astro visual design
+     CLIENT-SIDE PAGINATION (kime-pagination design)
+     Mirrors MotionGallery pagination exactly
      ============================================== */
-  :global(#motion-pagination) {
+  :global(#artwork-pagination) {
     --cell: 30px;
     --checker-w: calc(var(--cell) * 1.5);
     display: grid;
@@ -742,10 +971,10 @@ const { page } = Astro.props;
     margin-top: clamp(var(--spacing-8), 6vw, var(--spacing-12));
     width: 100%;
   }
-  :global(#motion-pagination:empty) {
+  :global(#artwork-pagination:empty) {
     display: none;
   }
-  :global(#motion-pagination .page-nav-btn) {
+  :global(#artwork-pagination .page-nav-btn) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -773,25 +1002,21 @@ const { page } = Astro.props;
       var(--cell) var(--cell);
     background-repeat: no-repeat, repeat;
   }
-  :global(#motion-pagination .page-nav-btn:hover) {
+  :global(#artwork-pagination .page-nav-btn:hover) {
     transform: translateY(-2px);
   }
-  :global(#motion-pagination .prev-btn) {
+  :global(#artwork-pagination .prev-btn) {
     padding: 0
-      calc(
-        clamp(var(--spacing-3), 2vw, var(--spacing-36)) + var(--checker-w)
-      )
-      0 clamp(var(--spacing-3), 2vw, var(--spacing-6));
+      calc(clamp(var(--spacing-3), 2vw, var(--spacing-36)) + var(--checker-w)) 0
+      clamp(var(--spacing-3), 2vw, var(--spacing-6));
     background-position:
       left top,
       right top;
     justify-self: start;
   }
-  :global(#motion-pagination .next-btn) {
+  :global(#artwork-pagination .next-btn) {
     padding: 0 clamp(var(--spacing-3), 2vw, var(--spacing-6)) 0
-      calc(
-        clamp(var(--spacing-3), 2vw, var(--spacing-36)) + var(--checker-w)
-      );
+      calc(clamp(var(--spacing-3), 2vw, var(--spacing-36)) + var(--checker-w));
     background-position:
       right top,
       left top;
@@ -803,14 +1028,14 @@ const { page } = Astro.props;
         var(--color-primary) 0 180deg
       );
   }
-  :global(#motion-pagination .page-numbers) {
+  :global(#artwork-pagination .page-numbers) {
     display: flex;
     gap: clamp(var(--spacing-2), 2vw, var(--spacing-4));
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  :global(#motion-pagination .page-link) {
+  :global(#artwork-pagination .page-link) {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -830,12 +1055,12 @@ const { page } = Astro.props;
       color 0.2s ease,
       border-color 0.2s ease;
   }
-  :global(#motion-pagination .page-link:hover) {
+  :global(#artwork-pagination .page-link:hover) {
     background-color: var(--color-primary-light);
     color: var(--text-inverse);
     border-color: var(--color-primary-light);
   }
-  :global(#motion-pagination .page-link.is-active) {
+  :global(#artwork-pagination .page-link.is-active) {
     background-color: var(--color-primary);
     color: var(--text-inverse);
     cursor: default;
@@ -843,22 +1068,22 @@ const { page } = Astro.props;
 
   /* Responsive mobile pagination */
   @media (max-width: 639px) {
-    :global(#motion-pagination) {
+    :global(#artwork-pagination) {
       display: flex;
       --cell: 24px;
       flex-wrap: wrap;
       row-gap: clamp(var(--spacing-6), 6vw, var(--spacing-8));
       justify-content: space-between;
     }
-    :global(#motion-pagination .page-numbers) {
+    :global(#artwork-pagination .page-numbers) {
       order: -1;
       width: 100%;
       justify-content: center;
     }
-    :global(#motion-pagination .page-nav-btn) {
+    :global(#artwork-pagination .page-nav-btn) {
       font-size: var(--text-sm);
     }
-    :global(#motion-pagination .page-link) {
+    :global(#artwork-pagination .page-link) {
       width: 32px;
       height: 32px;
       font-size: var(--text-sm);

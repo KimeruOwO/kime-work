@@ -11,8 +11,7 @@ interface Props {
 
 const { activeMode } = Astro.props;
 
-// Logic cho nút đảo chiều ở giữa (Click vào thì tự nghịch đảo URL)
-const toggleUrl = activeMode === "motions" ? "/work/artwork/illustration" : "/work/motions";
+const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
 ---
 
 <div class="mode-switch-section">
@@ -41,7 +40,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork/illustration" : "/wo
     </a>
 
     <a
-      href="/work/artwork/illustration"
+      href="/work/artwork"
       class:list={["switch-btn", activeMode === "artwork" && "is-active"]}
       aria-pressed={activeMode === "artwork" ? "true" : "false"}
       data-astro-prefetch="hover"
@@ -52,8 +51,6 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork/illustration" : "/wo
   </div>
 </div>
 
-<!-- KHÔNG CÓ THẺ <SCRIPT> NÀO Ở ĐÂY CẢ. ZERO JS BLOAT. -->
-
 <style>
   /* ==========================================================
        1. KIẾN TRÚC CSS GRID (MOBILE FIRST)
@@ -61,11 +58,9 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork/illustration" : "/wo
   .mode-switch-section {
     --banner-h-raw: clamp(var(--spacing-12), 8vw, var(--spacing-16));
 
-    /* [THUẬT TOÁN GRID 1:1] Bước 1: Tính toán Cell, ép tròn về số nguyên chẵn để Chrome KHÔNG THỂ kích hoạt nội suy Sub-pixel (Răng cưa) */
     --cell: calc(var(--banner-h-raw) / 1.5); /* Fallback chạy ngầm */
     --cell: round(nearest, calc(var(--banner-h-raw) / 1.5), 2px);
 
-    /* Bước 2: Bắt buộc Layout Height giãn nở thuận ngược lại theo Cell đã làm tròn, triệt tiêu 100% khe hở rác */
     --banner-h: calc(var(--cell) * 1.5);
     --checker-w: calc(var(--cell) * 1.5);
 
@@ -93,7 +88,6 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork/illustration" : "/wo
     height: var(--banner-h);
     background-color: var(--color-secondary-medium);
 
-    /* Kỹ thuật SVG Geometric Mask siêu việt: Giết đứt dứt điểm điểm mù nội suy đồ họa của Chromium */
     mask-image:
       linear-gradient(#000, #000),
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Cpath d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E");
@@ -120,7 +114,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork/illustration" : "/wo
     -webkit-mask-position:
       right top,
       left top;
-    transform: scaleX(-1); /* Lật gương GPU */
+    transform: scaleX(-1);
   }
 
   .mode-switch-section::after {
@@ -152,7 +146,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork/illustration" : "/wo
     padding: 0 clamp(1rem, 4vw, 3rem);
     color: var(--color-secondary-darker);
     font-size: clamp(1.25rem, 4vw, 2.5rem);
-    font-weight: 900;
+    font-weight: 899;
     letter-spacing: 0.05em;
     white-space: nowrap;
   }
@@ -199,7 +193,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork/illustration" : "/wo
     border-radius: var(--radius-pill);
     padding: var(--spacing-2) clamp(var(--spacing-4), 4vw, var(--spacing-8));
     font-size: clamp(var(--text-sm), 2.5vw, var(--text-base));
-    font-weight: 900;
+    font-weight: 899;
     color: var(--color-secondary-darker);
     text-decoration: none;
     transition:

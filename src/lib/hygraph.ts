@@ -36,6 +36,7 @@ export interface Artwork {
   linkPixiv?: string;
   image: Asset;
   category: Category;
+  isFeatured?: boolean;
 }
 
 const HYGRAPH_ENDPOINT = import.meta.env.HYGRAPH_ENDPOINT;
@@ -78,6 +79,7 @@ export async function fetchArtworks(): Promise<Artwork[]> {
             name 
             slug 
         }
+        isFeatured
       }
     }
   `);

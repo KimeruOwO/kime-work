@@ -41,7 +41,7 @@ const heroSlides = [
   aIllust
     ? {
         url: aIllust.image?.heroUrl || aIllust.image?.fullUrl || aIllust.image?.url,
-        link: aIllust.linkPixiv || `/work/artwork/illustration`,
+        link: aIllust.linkPixiv || `/work/artwork/`,
         target: "_blank",
       }
     : null,
@@ -924,7 +924,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   .art-header__text li {
     font-family: var(--font-mono, monospace);
     font-size: clamp(0.5rem, 1.5vw, 0.65rem);
-    font-weight: 800;
+    font-weight: 900;
     line-height: 1;
     color: var(--color-secondary-dark, #008080);
     letter-spacing: 0.5px;
@@ -1608,7 +1608,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
   .pickup-jp {
     font-size: clamp(0.45rem, 1.2vw, 0.8rem);
-    font-weight: 800;
+    font-weight: 900;
     color: var(--color-secondary-darker);
   }
 
@@ -1895,7 +1895,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     background-color: var(--tag-color);
     color: var(--base-white);
     font-size: 14px;
-    font-weight: 800;
+    font-weight: 900;
     padding: 0 16px;
     height: 34px;
     display: inline-flex;
@@ -1930,7 +1930,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     color: var(--color-secondary-darker);
     border: 2px solid var(--color-secondary-darker);
     font-size: 14px;
-    font-weight: 800;
+    font-weight: 900;
     padding: 0 16px;
     display: inline-flex;
     align-items: center;

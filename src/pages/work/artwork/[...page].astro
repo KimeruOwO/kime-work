@@ -2,24 +2,27 @@
 import Layout from "../../../layouts/Layout.astro";
 import SectionHeader from "../../../components/SectionHeader.astro";
 import ModeSwitch from "../../../components/ModeSwitch.astro";
-import MotionGallery from "../../../features/motions/components/MotionGallery.astro";
-import { fetchVideos } from "../../../lib/hygraph";
-import type { Video } from "../../../lib/hygraph";
+import ArtworkGallery from "../../../features/artwork/components/ArtworkGallery.astro";
+import { fetchArtworks } from "../../../lib/hygraph";
+import type { Artwork } from "../../../lib/hygraph";
 import type { GetStaticPaths, Page } from "astro";
 
 export const getStaticPaths = (async ({ paginate }) => {
-  const videos = await fetchVideos();
-  return paginate(videos, { pageSize: 100 });
+  const artworks = await fetchArtworks();
+  return paginate(artworks, { pageSize: 100 });
 }) satisfies GetStaticPaths;
 
 interface Props {
-  page: Page<Video>;
+  page: Page<Artwork>;
 }
 
 const { page } = Astro.props;
 ---
 
-<Layout title={`Kime Work - Motions Page ${page.currentPage}`} description="Browse Kimeyu's motion graphics portfolio — music videos, debut trailers, and animated visuals.">
+<Layout
+  title={`Kime Work - Artwork Page ${page.currentPage}`}
+  description="Explore Kimeyu's illustration and graphic design gallery — character art, landscapes, and editorial work."
+>
   <Fragment slot="banner">
     <div class="works-hero-group">
       <SectionHeader
@@ -29,12 +32,12 @@ const { page } = Astro.props;
         align="responsive"
       />
       <div class="switch-overlap">
-        <ModeSwitch activeMode="motions" />
+        <ModeSwitch activeMode="artwork" />
       </div>
     </div>
   </Fragment>
 
-  <MotionGallery page={page} />
+  <ArtworkGallery page={page} />
 </Layout>
 
 <style>

@@ -15,7 +15,6 @@ const iconMap: Record<string, any> = {
 
 <retro-window class="retro-window">
     <header class="retro-window__header">
-        <!-- decor-dot dùng ::before của title (Tối ưu DOM thành công) -->
         <h2 class="retro-window__title">INFORMATION</h2>
 
         <div class="retro-window__socials-wrapper">
@@ -142,7 +141,6 @@ const iconMap: Record<string, any> = {
 
             document.addEventListener("click", handleOutsideClick);
 
-            // Gắn cờ dọn dẹp để tránh Memory Leak khi Component bị gỡ khỏi DOM
             this._cleanup = () =>
                 document.removeEventListener("click", handleOutsideClick);
         }
@@ -187,7 +185,7 @@ const iconMap: Record<string, any> = {
     .retro-window__title {
         margin: 0;
         font-size: var(--text-base);
-        font-weight: 900;
+        font-weight: 899;
         color: var(--win-text-dark);
         letter-spacing: 0.05em;
         display: flex;
@@ -229,7 +227,7 @@ const iconMap: Record<string, any> = {
     .social-link {
         color: var(--win-text-dark);
         text-decoration: none;
-        font-weight: 900;
+        font-weight: 899;
         transition: opacity 0.2s ease;
         display: flex;
         align-items: center;
@@ -318,7 +316,7 @@ const iconMap: Record<string, any> = {
         margin: 0;
         color: var(--win-accent-pink);
         font-size: var(--text-base);
-        font-weight: 900;
+        font-weight: 899;
         letter-spacing: 0.02em;
         text-align: center;
         text-align-last: auto;
@@ -356,44 +354,38 @@ const iconMap: Record<string, any> = {
 
     @media (min-width: 1024px) {
         .retro-window {
-            /* Mở position relative để làm hệ tọa độ gốc cho layer trang trí */
             position: relative;
-            /* Thu nhỏ kích cỡ hạt Caro cơ sở xuống cho thanh lịch */
             --decor-cell: clamp(6px, 0.8vw, 6px);
         }
 
-        /* 1) Layer trên cùng: Khối hộp hồng đặc (Solid Banner) */
         .retro-window::before {
             content: "";
             position: absolute;
             top: 0;
             right: calc(
                 100% + var(--spacing-4)
-            ); /* Dịch dời ra khỏi màn hình bên trái 16px */
+            ); 
 
-            --blocks-x: 3; /* Cố định 3 ô ngang */
-            --blocks-y: 3.5; /* Cố định chiều dọc nhỉnh hơn lưới caro 1 chút */
+            --blocks-x: 3; 
+            --blocks-y: 3.5; 
 
             width: calc(var(--decor-cell) * var(--blocks-x));
             height: calc(var(--decor-cell) * var(--blocks-y));
             background-color: var(--win-accent-pink);
         }
 
-        /* 2) Layer bên dưới: Lưới Caro (Checkerboard grid) */
         .retro-window::after {
             content: "";
             position: absolute;
-            /* Y-offset: Solid block + gap = 4.0 */
             top: calc(var(--decor-cell) * 4);
             right: calc(100% + var(--spacing-4));
 
-            --blocks-x: 3; /* Chính xác 3 ô theo chiều ngang */
-            --blocks-y: 5; /* Chính xác 3 ô theo chiều dọc */
+            --blocks-x: 3;
+            --blocks-y: 5;
 
             width: calc(var(--decor-cell) * var(--blocks-x));
             aspect-ratio: var(--blocks-x) / var(--blocks-y);
 
-            /* Gradient góc 1/4 lặp lại bằng % nội tại, loại trừ hoàn toàn rủi ro tính nhầm Pixel */
             background: repeating-conic-gradient(
                     transparent 0 90deg,
                     var(--win-accent-pink) 0 180deg

@@ -55,7 +55,6 @@ const {
         private _buttons: NodeListOf<HTMLElement> | null = null;
         private _groupName: string = "";
 
-        // DRY: Helper gom nhóm thay đổi UI DOM tránh trùng lặp code
         private _activateBtn(buttons: NodeListOf<HTMLElement>, targetBtn: HTMLElement) {
             buttons.forEach((b) => {
                 b.classList.remove("is-active");
@@ -70,16 +69,13 @@ const {
             this._groupName = this.dataset.group || "";
             if (!this._groupName) return;
 
-            // Khôi phục state Filter từ LocalStorage khi chuyển trang
             const savedFilter = localStorage.getItem(`kime-filter-${this._groupName}`);
             
-            // Truy xuất trực tiếp bằng Query thay vì chạy vòng lặp tìm kiếm O(N)
             if (savedFilter) {
                 const initialTargetBtn = this.querySelector<HTMLElement>(`.filter-btn[data-value="${CSS.escape(savedFilter)}"]`);
                 if (initialTargetBtn && !initialTargetBtn.classList.contains("is-active")) {
                     this._activateBtn(this._buttons, initialTargetBtn);
                     
-                    // Đẩy vào next frame để đảm bảo Gallery Manager đã kết nối
                     requestAnimationFrame(() => {
                         this.dispatchEvent(
                             new CustomEvent("filter-changed", {
@@ -159,7 +155,7 @@ const {
         align-items: center;
         justify-content: center;
         color: var(--text-inverse);
-        font-weight: 900;
+        font-weight: 899;
         font-size: clamp(var(--text-sm), 3vw, var(--text-base));
         letter-spacing: 0.05em;
         padding: 0 var(--spacing-4);
@@ -189,7 +185,7 @@ const {
         border: var(--border-width-xs) solid var(--color-secondary-darker);
         border-radius: 0; /* Vuông chằn chặn */
         color: var(--color-secondary-darker);
-        font-weight: 900;
+        font-weight: 899;
         /* Giảm nhẹ hệ số chữ trên Tablet để tránh chiếm diện tích ngang */
         font-size: clamp(11px, 1.5vw, var(--text-base));
         text-transform: uppercase;
