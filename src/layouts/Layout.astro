@@ -12,17 +12,16 @@ interface Props {
 }
 
 const SITE_URL = "https://kimeyu.vercel.app";
-
 const DEFAULT_DESC =
   "Beyond shapes, a hidden frequency. Every frame, a destination. Every rhythm, a heartbeat. Flawless harmony between graphics and sound. Catch it if you can. — Hi! I'm KIMEYU!";
 
-const DEFAULT_OG = "/og-image.png";
+const {
+  title,
+  description = DEFAULT_DESC,
+  ogImage = `${SITE_URL}/og-image.png`,
+} = Astro.props;
 
-const { title, description = DEFAULT_DESC, ogImage = DEFAULT_OG } = Astro.props;
-
-const canonicalURL = new URL(Astro.url.pathname, SITE_URL).href;
-const resolvedOgImage = new URL(ogImage, SITE_URL).href;
-const siteDomain = new URL(SITE_URL).hostname;
+const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
 ---
 
 <!doctype html>
@@ -47,21 +46,22 @@ const siteDomain = new URL(SITE_URL).hostname;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
-    <!-- Open Graph (Facebook, Discord, LinkedIn) -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:image" content={ogImage} />
     <meta property="og:site_name" content="Kime Work" />
 
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:domain" content={siteDomain} />
-    <meta name="twitter:url" content={canonicalURL} />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={resolvedOgImage} />
+    <meta name="twitter:url" property="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" property="twitter:title" content={title} />
+    <meta
+      name="twitter:description"
+      property="twitter:description"
+      content={description}
+    />
+    <meta name="twitter:image" property="twitter:image" content={ogImage} />
 
     <ClientRouter />
 
