@@ -1,7 +1,6 @@
 ---
 import type { Page } from "astro";
 
-// 1. Ép kiểu Props. Dùng Page<any> để nó nhận cả Artwork lẫn Motions sau này.
 export interface Props {
     page: Page<any>;
     baseUrl?: string;
@@ -11,7 +10,6 @@ export interface Props {
 
 const { page, baseUrl = "/work", suffix = "", targetId = "works-gallery" } = Astro.props;
 
-// 2. Thuật toán Cửa sổ trượt (Sliding Window)
 const MAX_VISIBLE = 5;
 let windowStart = Math.max(1, page.currentPage - Math.floor(MAX_VISIBLE / 2));
 let windowEnd = windowStart + MAX_VISIBLE - 1;
@@ -26,13 +24,11 @@ const pages = Array.from(
     (_, i) => windowStart + i,
 );
 
-// 3. Hàm Builder URL chuẩn: Chặn lỗi /work/1 và tự động móc suffix
 const getPageUrl = (p: number) => {
     const base = p === 1 ? baseUrl : `${baseUrl}/${p}`;
     return suffix ? `${base}/${suffix}` : base;
 };
 
-// 4. Infinite Looping bằng Toán học (Nhanh & An toàn hơn gọi page.url)
 const prevPageNum = page.currentPage > 1 ? page.currentPage - 1 : page.lastPage;
 const nextPageNum = page.currentPage < page.lastPage ? page.currentPage + 1 : 1;
 
@@ -98,7 +94,6 @@ const nextUrl = getPageUrl(nextPageNum);
         width: 100%;
     }
 
-    /* NÚT ĐIỀU HƯỚNG CHUNG */
     .page-nav-btn {
         display: inline-flex;
         align-items: center;
@@ -118,7 +113,6 @@ const nextUrl = getPageUrl(nextPageNum);
             opacity 0.2s ease,
             transform 0.2s ease;
 
-        /* KIẾN TRÚC MẶT NẠ SẠCH: Solid lót dưới, Caro đè lên */
         background-image:
             linear-gradient(var(--color-primary), var(--color-primary)),
             repeating-conic-gradient(
@@ -143,7 +137,6 @@ const nextUrl = getPageUrl(nextPageNum);
         pointer-events: none;
     }
 
-    /* NÚT PREVIOUS (CARO BÊN PHẢI) */
     .prev-btn {
         padding: 0
             calc(
@@ -157,7 +150,6 @@ const nextUrl = getPageUrl(nextPageNum);
         justify-self: start;
     }
 
-    /* NÚT NEXT (CARO BÊN TRÁI) */
     .next-btn {
         padding: 0 clamp(var(--spacing-3), 2vw, var(--spacing-6)) 0
             calc(
@@ -177,7 +169,6 @@ const nextUrl = getPageUrl(nextPageNum);
             );
     }
 
-    /* CỤM VÒNG TRÒN SỐ (Đã lột bỏ :global rác rưởi) */
     .page-numbers {
         display: flex;
         gap: clamp(var(--spacing-2), 2vw, var(--spacing-4));
@@ -216,7 +207,6 @@ const nextUrl = getPageUrl(nextPageNum);
         color: var(--text-inverse);
     }
 
-    /* RESPONSIVE ĐIỆN THOẠI BÉ */
     @media (max-width: 639px) {
         .kime-pagination {
             display: flex;

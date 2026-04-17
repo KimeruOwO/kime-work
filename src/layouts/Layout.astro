@@ -5,19 +5,22 @@ import Footer from "../components/Footer.astro";
 import SvgDefs from "../components/SvgDefs.astro";
 import { ClientRouter } from "astro:transitions";
 
-
 interface Props {
   title: string;
   description?: string;
   ogImage?: string;
 }
 
-const SITE_URL = "https://kime.work";
-const DEFAULT_DESC = "Beyond shapes, a hidden frequency. Every frame, a destination. Every rhythm, a heartbeat. Flawless harmony between graphics and sound. Catch it if you can. — Hi! I'm KIMEYU!";
-const DEFAULT_OG = `${SITE_URL}/EMBEDED.png`;
+const SITE_URL = "https://kimeyu.vercel.app";
+const DEFAULT_DESC =
+  "Beyond shapes, a hidden frequency. Every frame, a destination. Every rhythm, a heartbeat. Flawless harmony between graphics and sound. Catch it if you can. — Hi! I'm KIMEYU!";
+
+const DEFAULT_OG = "/og-image.png";
 
 const { title, description = DEFAULT_DESC, ogImage = DEFAULT_OG } = Astro.props;
-const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
+
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL).href;
+const resolvedOgImage = new URL(ogImage, SITE_URL).href;
 ---
 
 <!doctype html>
@@ -28,7 +31,11 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
-    <link rel="canonical" href={canonicalURL.href} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Tối ưu Render: Khai báo màu viền cho Discord và Safari -->
+    <meta name="theme-color" content="#FA729D" />
+
     <link
       rel="preload"
       href="/fonts/Murecho-Variable.woff2"
@@ -39,19 +46,21 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
-    <!-- Open Graph -->
+    <!-- Open Graph (Facebook, Discord, LinkedIn) -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content={resolvedOgImage} />
     <meta property="og:site_name" content="Kime Work" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:domain" content="kime.work" />
+    <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image" content={resolvedOgImage} />
 
     <ClientRouter />
 

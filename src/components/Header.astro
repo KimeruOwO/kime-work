@@ -9,7 +9,6 @@ const currentPath =
 const isAbout = currentPath === "/about";
 const isHome = currentPath === "/home";
 
-// Nhận diện active state cực mượt bằng độ phức tạp O(1)
 const isWorks = currentPath.startsWith("/work");
 ---
 
@@ -117,31 +116,26 @@ const isWorks = currentPath.startsWith("/work");
     gap: var(--spacing-2);
   }
 
-  /* TOÁN HỌC ĐỘNG CHO CARO DƯỚI NAV (SCALE KHÔNG GIỚI HẠN) */
   .cyber-header__nav::before,
   .cyber-header__nav::after {
     content: "";
-    --blocks-x: 3; /* Giảm số ô ngang xuống 2 để tiết kiệm 1 khoảng trống khổng lồ cho màn hình nhỏ */
-    --blocks-y: 3; /* Cố định 2 ô chiều dọc để form cân đối với chiều cao Nav */
+    --blocks-x: 3; 
+    --blocks-y: 3; 
 
-    /* Xếp chồng lên phần padding của Nav bằng Margin âm để chiếm trọn vẹn chiều cao */
     margin-top: calc(-1 * var(--spacing-2));
     margin-bottom: calc(-1 * var(--spacing-2));
 
-    /* Giao phó hoàn toàn tỷ lệ cho aspect-ratio để width tự động nở ra dựa trên height */
     aspect-ratio: var(--blocks-x) / var(--blocks-y);
 
     background-color: var(
       --color-primary
-    ); /* Đảm bảo nền cơ sở là màu chính để che khe nứt vi điểm */
+    ); 
     background-image: repeating-conic-gradient(
       var(--color-primary) 0 90deg,
       var(--bg-secondary) 0 180deg
     );
-    /* Tăng Scale nhẹ 0.5px để bù trừ sai số dấu phẩy động của Firefox (Subpixel Anti-aliasing) */
     background-size: calc((100% + 0.5px) / var(--blocks-x) * 2)
       calc((100% + 0.5px) / var(--blocks-y) * 2);
-    /* Set explicitly to avoid subpixel overlap errors */
     background-position: 0 0;
   }
 
@@ -154,7 +148,6 @@ const isWorks = currentPath.startsWith("/work");
 
   .cyber-header__nav-btn {
     align-self: center;
-    /* Tự động co bóp lề ngang trên các máy siêu nhỏ (như iPhone SE 375px), nở ra trên máy lớn */
     padding: var(--spacing-2) clamp(var(--spacing-2), 3vw, var(--spacing-4));
     background-color: var(--bg-secondary);
     color: var(--color-primary);
@@ -186,29 +179,25 @@ const isWorks = currentPath.startsWith("/work");
     min-height: var(--spacing-12);
   }
 
-  /* TOÁN HỌC ĐỘNG CHO CARO BÊN PHẢI (KỸ SƯ HỆ THỐNG) */
   .cyber-header__right::before {
     content: "";
-    --blocks-x: 6; /* Số ô caro theo chiều ngang */
-    --blocks-y: 3; /* Số ô caro theo chiều dọc */
+    --blocks-x: 6; 
+    --blocks-y: 3; 
 
-    /* Trả lại kiến trúc Aspect-Ratio gốc (Chrome Flexbox Friendly) */
     height: var(--spacing-12);
     aspect-ratio: var(--blocks-x) / var(--blocks-y);
-    flex-shrink: 0; /* Khoá tử không cho Flexbox bóp nghẹt khung hình (Nguyên nhân lỗi Chrome) */
+    flex-shrink: 0; 
 
-    background-color: var(--color-primary); /* Đổi màu lót thành Pink để Firefox có rò rỉ pixel cũng không lộ */
+    background-color: var(--color-primary); 
     background-image: repeating-conic-gradient(
       var(--bg-secondary) 0 90deg,
       var(--color-primary) 0 180deg
     );
-    /* Tăng Scale nhẹ 0.5px để triệt tiêu lỗi hở khe trắng do Firefox (Subpixel Tiling Bug) */
     background-size: calc((100% + 0.5px) / var(--blocks-x) * 2)
       calc((100% + 0.5px) / var(--blocks-y) * 2);
     background-position: 0 0;
   }
 
-  /* Ghi đè trực tiếp lên SVG, cần dùng :global để xuyên qua component Astro */
   .cyber-header__right :global(.cyber-header__brand-icon) {
     height: var(--spacing-4);
     width: auto;
@@ -243,10 +232,10 @@ const isWorks = currentPath.startsWith("/work");
 
     .cyber-header__nav {
       order: 2;
-      flex: 1; /* Hấp thụ linh hoạt khối không gian thừa */
-      justify-content: flex-start; /* Thỏa đam mê bám trái theo ý chủ nhân */
+      flex: 1; 
+      justify-content: flex-start; 
       padding: 0 var(--spacing-4) 0
-        clamp(var(--spacing-4), 3vw, var(--spacing-12)); /* Trả lại khoảng cách thẩm mỹ với Logo */
+        clamp(var(--spacing-4), 3vw, var(--spacing-12)); 
       gap: clamp(var(--spacing-2), 2vw, var(--spacing-8));
     }
 
@@ -290,8 +279,6 @@ const isWorks = currentPath.startsWith("/work");
     .cyber-header__logo-link :global(svg) {
       height: var(--spacing-10);
     }
-
-    /* cyber-header__nav tự động mượt mà thừa kế padding và flex-start từ 768px */
 
     .cyber-header__right {
       gap: clamp(var(--spacing-2), 2vw, var(--spacing-8));

@@ -696,12 +696,8 @@ const { page } = Astro.props;
     column-gap: var(--spacing-4);
     padding-top: var(--spacing-4);
 
-    /* VŨ KHÍ 1: Tăng padding đáy để tạo khoảng thở (Breathing Room) 
-       Cách ly sự so le của ảnh khỏi các thành phần thẳng nếp bên dưới */
     padding-bottom: clamp(var(--spacing-8), 8vw, var(--spacing-16));
 
-    /* VŨ KHÍ 2: CSS Optical Masking 
-       Làm mờ tiệm cận 10% đáy của lưới Masonry để hòa tan sự chênh lệch */
     -webkit-mask-image: linear-gradient(
       to bottom,
       rgba(0, 0, 0, 1) 0%,
@@ -716,7 +712,6 @@ const { page } = Astro.props;
     );
   }
 
-  /* Cưỡng chế 1 cột trên Mobile để chống vỡ vụn khi load localStorage từ PC */
   @media (max-width: 639.98px) {
     .artwork-masonry,
     .artwork-masonry[data-grid-cols] {
@@ -738,14 +733,12 @@ const { page } = Astro.props;
     column-count: 5;
   }
 
-  /* Ẩn nút 4, 5 cột trên màn hình dưới 1536px (PC bé/Tablet) */
   @media (max-width: 1535.98px) {
     .grid-btn[data-cols="4"],
     .grid-btn[data-cols="5"] {
       display: none !important;
     }
 
-    /* Fallback an toàn nếu lỡ dính localStorage 4/5 cột ở màn bé */
     .artwork-masonry[data-grid-cols="4"],
     .artwork-masonry[data-grid-cols="5"] {
       column-count: 3;
@@ -777,7 +770,6 @@ const { page } = Astro.props;
   /* Artwork Card */
   .artwork-card {
     break-inside: avoid;
-    /* Dùng margin-bottom to hơn một chút để các thẻ không dính chùm */
     margin-bottom: clamp(16px, 2vw, 32px);
     border-radius: var(--radius-lg);
     background-color: color-mix(in srgb, var(--color-primary) 50%, transparent);
@@ -789,8 +781,6 @@ const { page } = Astro.props;
     cursor: pointer;
     position: relative;
     z-index: 1;
-
-    /* Gỡ 'contain: layout paint;' ra khỏi thẻ con nếu dùng mask ở thẻ cha để tránh giật hình trên Safari */
   }
   .artwork-card::before {
     content: "";

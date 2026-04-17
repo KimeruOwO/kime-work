@@ -4,7 +4,6 @@ import SwitchIcon from "./icons/SwitchIcon.astro";
 import VideoIcon from "./icons/VideoIcon.astro";
 import ArtworkIcon from "./icons/ArtworkIcon.astro";
 
-// Kỹ sư hệ thống giao tiếp bằng Props, không bằng DOM Query
 interface Props {
   activeMode: "motions" | "artwork";
 }
@@ -53,7 +52,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
 
 <style>
   /* ==========================================================
-       1. KIẾN TRÚC CSS GRID (MOBILE FIRST)
+       1. CSS GRID
     ========================================================== */
   .mode-switch-section {
     --banner-h-raw: clamp(var(--spacing-12), 8vw, var(--spacing-16));
@@ -80,7 +79,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
   }
 
   /* ==========================================================
-       2. MẶT NẠ CSS: ĐÃ QUÉT SẠCH RÁC SUB-PIXEL
+       2. CSS MASK
     ========================================================== */
   .mode-switch-section::before,
   .mode-switch-section::after {
@@ -167,7 +166,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
   }
 
   /* ==========================================================
-       4. CONTAINER NÚT BẤM (LINKS)
+       4. CONTAINER  (LINKS)
     ========================================================== */
   .mode-switch-container {
     grid-column: 1 / -1;
@@ -243,7 +242,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
   }
 
   /* ==========================================================
-       5. BẢN LỀ RESPONSIVE CHO PC (>= 1024px)
+        RESPONSIVE CHO PC (>= 1024px)
     ========================================================== */
   @media (min-width: 1024px) {
     .mode-switch-section {
