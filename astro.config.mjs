@@ -1,11 +1,9 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
+    site: 'https://kimeyu.vercel.app',
     output: 'static',
     scopedStyleStrategy: 'class',
-    redirects: {
-        '/': '/home'
-    },
     devToolbar: {
         enabled: false,
     },
