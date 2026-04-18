@@ -1,7 +1,5 @@
 ---
 import type { Video } from "../../../lib/hygraph";
-import PlayIcon from "../../../components/icons/PlayIcon.astro";
-
 interface Props {
   vid: Video;
   index: number;
@@ -30,13 +28,10 @@ const { vid, index, catMatch, visMatch } = Astro.props;
       />
     </div>
     <div class="motion-info">
-      <div class="motion-text">
-        <h3 class="motion-title">{vid.title}</h3>
-        <p class="motion-subtitle">
-          {vid.nameArtist || "Kimeyu"}
-        </p>
-      </div>
-      <PlayIcon class="icon-play" />
+      <h3 class="motion-title">{vid.title}</h3>
+      <p class="motion-subtitle">
+        {vid.nameArtist || "Kimeyu"}
+      </p>
     </div>
   </div>
   <footer class="card-footer">
@@ -181,24 +176,22 @@ const { vid, index, catMatch, visMatch } = Astro.props;
   }
 
   .motion-info {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "title icon"
+      "sub icon";
     align-items: center;
+    column-gap: var(--spacing-4);
+    row-gap: 2px;
     min-width: 0;
     padding: var(--spacing-2)
       max(var(--spacing-4), calc((100% - var(--thumb-width)) / 2))
       var(--spacing-4)
       max(var(--spacing-4), calc((100% - var(--thumb-width)) / 2));
   }
-  .motion-text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    min-width: 0;
-    padding-right: var(--spacing-4);
-  }
   .motion-title {
+    grid-area: title;
     margin: 0;
     font-size: clamp(18px, 3vw, 18px);
     font-weight: 899;
@@ -209,6 +202,7 @@ const { vid, index, catMatch, visMatch } = Astro.props;
     text-overflow: ellipsis;
   }
   .motion-subtitle {
+    grid-area: sub;
     margin: 0;
     font-size: clamp(13px, 2vw, 16px);
     font-weight: 600;
@@ -217,10 +211,14 @@ const { vid, index, catMatch, visMatch } = Astro.props;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .motion-card :global(.icon-play) {
+  .motion-info::after {
+    content: "";
+    grid-area: icon;
     width: clamp(24px, 4vw, 36px);
     height: clamp(24px, 4vw, 36px);
-    color: var(--card-text);
+    background-color: var(--card-text);
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M8 5v14l11-7z'/></svg>") center / contain no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M8 5v14l11-7z'/></svg>") center / contain no-repeat;
     flex-shrink: 0;
   }
 
