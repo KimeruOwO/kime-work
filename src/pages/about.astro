@@ -57,9 +57,7 @@ const avifSrcset = (
   .join(", ");
 ---
 
-<Layout
-  title="Kimeyu Work - About"
->
+<Layout title="Kimeyu Work - About">
   <Fragment slot="head">
     <link
       rel="preload"
@@ -98,6 +96,13 @@ const avifSrcset = (
         compact
         checkerPosition="end"
       />
+      <PageDecorBanner
+        text="EXPERIENCES"
+        href="#experiences"
+        variant="secondary"
+        compact
+        checkerPosition="end"
+      />
     </nav>
 
     <div class="page-content">
@@ -127,29 +132,40 @@ const avifSrcset = (
             <PlayIcon class="icon-play" />
           </div>
         </div>
-
-        <div class="info-badge">MOTION GRAPHICS DESIGNER</div>
       </header>
 
       <!-- ================= SECTION: TOOLS ================= -->
       <section class="tools-section">
-        <div class="tools-section__head">
-          <PageDecorBanner
-            text="TOOLS FOCUS"
-            compact
-            checkerPosition="both"
-            checkerPositionPc="end"
-          />
-        </div>
+        <div class="tools-section__inner">
+          <div class="tools-section__head">
+            <PageDecorBanner
+              text="TOOLS FOCUS"
+              compact
+              checkerPosition="both"
+            />
+          </div>
 
-        <div class="tools-grid">
-          {
-            toolsFocus.map((tool) => (
-              <div class={`tool-card tool-card--${tool.variant}`}>
-                <span class="tool-name">{tool.name}</span>
-              </div>
-            ))
-          }
+          <div class="tools-grid">
+            {
+              toolsFocus.map((tool) => (
+                <div class={`tool-card tool-card--${tool.variant}`}>
+                  <span class="tool-name">{tool.name}</span>
+                </div>
+              ))
+            }
+            <div class="tool-card tool-card--custom">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 50 50"
+                fill="currentColor"
+                style="width: 55%; height: 55%;"
+              >
+                <path
+                  d="M37,4H13c-4.962,0-9,4.037-9,9v24c0,4.963,4.038,9,9,9h24c4.962,0,9-4.037,9-9V13C46,8.037,41.962,4,37,4z M34.772,29.527c-0.95,0.745-1.795,1.109-2.082,1.218l-5.35,2.204c-0.064,0.027-0.091,0.105-0.055,0.168l0.75,1.15c0.268,0.427,0.373,0.832,0.373,1.309c0,1.736-1.523,2.15-2.313,2.15c-1.305,0-1.827-0.891-2.259-1.577l-2.786-4.4c-0.295-0.468-0.095-1.086,0.414-1.295l9.577-3.941c0.609-0.241,2.595-1.268,2.595-4.354c0-2.613-2.273-5.568-6.136-5.568c-1.477,0-3.409,0.795-3.409,0.795l-5.954,2.441c-1.773,0.732-1.773,1.404-1.773,1.764c0,0.018,0.086,1.591,2.045,1.591c0.2,0,0.805-0.091,1.636-0.432l5.909-2.445c1.227-0.505,3.136,0.15,3.136,2.023c0,1.027-0.595,1.395-1.495,1.763l-3.677,1.518l-2.145,0.886c-1.214,0.5-2.636,0.777-3.591,0.777c-3.863,0-6.363-2.663-6.363-5.681c0-1.859,0.795-4.404,4.591-5.963c0,0,0,0,2.059-0.845c0.859-0.359,2.077-0.859,3.804-1.573c0.559-0.232,1.123-0.464,1.859-0.641c0.745-0.177,1.659-0.295,2.913-0.295c7.272,0,11.136,5.454,11.136,9.886C38.181,26.023,36.34,28.291,34.772,29.527z"
+                ></path>
+              </svg>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -163,6 +179,10 @@ const avifSrcset = (
         <p class="bio-quote">
           <strong>Curiosity in motion, stories in rhythm.</strong>
         </p>
+        <div class="bio-badges">
+          <div class="info-badge">DIRECTION</div>
+          <div class="info-badge">MOTION GRAPHICS DESIGNER</div>
+        </div>
       </section>
 
       <section class="bio-section grid-area-window">
@@ -171,16 +191,13 @@ const avifSrcset = (
 
       <!-- ================= SECTION: VALUE ================= -->
       <div id="value" class="bottom-banners">
-        <PageDecorBanner text="VALUE" variant="secondary" noMargin />
-
-        <div class="banner-empty-filler" aria-hidden="true"></div>
-
-        <p class="value-desc">
-          As a 2D-focused creative, I bring together illustration, animation,
-          editing, and design into one cohesive production line. From concept
-          development to final visuals, every stage is crafted with precision
-          and intention.
-        </p>
+        <div class="value-header-row">
+          <PageDecorBanner text="VALUE" variant="secondary" noMargin />
+          <div class="banner-empty-filler" aria-hidden="true">
+            <div class="symbol-circle"></div>
+            <div class="symbol-cross"></div>
+          </div>
+        </div>
 
         <div class="value-cards-layout">
           {
@@ -200,13 +217,77 @@ const avifSrcset = (
         </div>
 
         <div class="value-conclusion">
-          <div class="v-concl-graphic" aria-hidden="true"></div>
-          <p class="v-concl-text">
-            Music videos, animated visuals, illustrations, and graphic design
-            are not separate disciplines, they are connected expressions working
-            toward a single goal: delivering the client's message with clarity,
-            emotion, and impact.
-          </p>
+          <div class="value-header-row">
+            <PageDecorBanner
+              id="experiences"
+              text="Experiences and Collaboration"
+              variant="secondary"
+              noMargin
+            />
+            <div class="banner-empty-filler" aria-hidden="true">
+              <div class="symbol-circle"></div>
+              <div class="symbol-cross"></div>
+            </div>
+          </div>
+          <div class="collab-dropdown-list">
+            <details class="collab-dropdown" open>
+              <summary class="collab-cta">
+                <span class="collab-cta__text">Professional Collaborations</span
+                >
+                <PlayIcon class="collab-cta__icon collab-dropdown__icon" />
+              </summary>
+              <div class="collab-dropdown__content">
+                <div class="collab-item">
+                  <span class="collab-item__year">2026</span>
+                  <p class="collab-item__desc">
+                    "Declaring The New Era" - Official Trailer | Garena - Đấu
+                    Trường Danh Vọng (AOG) Spring 2026 | Collaborator Motion
+                    Designer (via Antiantiart).
+                  </p>
+                </div>
+                <div class="collab-item">
+                  <span class="collab-item__year">2024</span>
+                  <p class="collab-item__desc">
+                    VNG Corporation | Collaborator Video Editor Edited
+                    promotional video content
+                  </p>
+                </div>
+              </div>
+            </details>
+
+            <details class="collab-dropdown" open>
+              <summary class="collab-cta">
+                <span class="collab-cta__text">Community & Charity</span>
+                <PlayIcon class="collab-cta__icon collab-dropdown__icon" />
+              </summary>
+              <div class="collab-dropdown__content">
+                <div class="collab-item">
+                  <span class="collab-item__year">2025</span>
+                  <p class="collab-item__desc">
+                    INFLORESCENCE - HATSUNE MIKU UNOFFICIAL CONCEPT ARTBOOK BY
+                    SORAMOYO-YA | Created floral-themed illustrations for a
+                    charity artbook; all proceeds were donated to support social
+                    welfare.
+                  </p>
+                </div>
+              </div>
+            </details>
+
+            <details class="collab-dropdown" open>
+              <summary class="collab-cta">
+                <span class="collab-cta__text">Independent Projects</span>
+                <PlayIcon class="collab-cta__icon collab-dropdown__icon" />
+              </summary>
+              <div class="collab-dropdown__content">
+                <div class="collab-item">
+                  <p class="collab-item__desc">
+                    Working on upcoming personal motion and illustration
+                    projects.
+                  </p>
+                </div>
+              </div>
+            </details>
+          </div>
         </div>
       </div>
     </div>
@@ -271,72 +352,146 @@ const avifSrcset = (
   .bottom-banners {
     --filler-h: 50px;
     display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: var(--filler-h) auto auto auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(var(--filler-h), auto) auto auto auto;
     width: 100%;
-    column-gap: var(--spacing-4);
+    margin-top: var(--spacing-10);
   }
-  .bottom-banners > :global(.page-decor-banner) {
-    grid-column: 1;
-    grid-row: 1;
-    align-self: flex-end;
+
+  .value-header-row {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: stretch;
+    gap: var(--spacing-4);
+    width: 100%;
+    min-height: var(--filler-h);
+    height: auto;
+  }
+
+  .value-header-row > :global(.page-decor-banner) {
+    flex: 1 1 0%;
+    width: 0;
+    min-width: 0;
+    height: auto;
+    min-height: 100%;
+  }
+
+  @media (max-width: 767px) {
+    .value-header-row
+      > :global(.page-decor-banner)
+      :global(.page-decor-banner__text) {
+      justify-content: flex-start;
+      white-space: normal;
+      text-align: left;
+      padding-top: var(--spacing-4);
+      padding-bottom: var(--spacing-4);
+      line-height: 1.4;
+    }
   }
 
   .banner-empty-filler {
-    --checker-cell: 34px;
-    grid-column: 2;
-    grid-row: 1;
-    display: flex;
+    flex: 0 0 auto;
+
+    --symbol-size: 48px;
+    --cross-length: 44px;
+    --symbol-thickness: 12px;
+    --border-cross: 8px;
+    --checker-h: var(--symbol-size);
+    --checker-cell: calc(var(--checker-h) / 1.5);
+    --checker-w: calc(var(--checker-cell) * 1.5);
+    --top-gap: 6px;
+    --block-ratio: 1.8;
+
+    display: none;
+    flex-direction: row;
     align-items: center;
-    height: var(--filler-h);
-    margin-bottom: var(--spacing-6);
-  }
-  .banner-empty-filler::before {
-    content: "";
-    height: 100%;
-    aspect-ratio: 1 / 1;
-    flex-shrink: 0;
-    background-color: var(--bg-primary);
-    background-image: repeating-conic-gradient(
-      var(--color-secondary-light) 0 90deg,
-      transparent 0 180deg
-    );
-    background-size: var(--checker-cell) var(--checker-cell);
-    background-position: calc(var(--checker-cell) / 2) 0;
-  }
-  .banner-empty-filler::after {
-    content: "";
-    flex: 1;
-    height: 100%;
-    background-color: var(--color-secondary-light);
+    gap: var(--top-gap);
+    padding-left: var(--top-gap);
   }
 
-  .value-desc {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    position: relative;
-    margin: var(--spacing-10) 0 0;
-    padding-left: var(--spacing-4);
-    color: var(--color-secondary-dark);
-    font-size: var(--text-base);
-    font-weight: 500;
-    line-height: 1.6;
-    text-align: justify;
-    hyphens: auto;
-    -webkit-hyphens: auto;
+  .banner-empty-filler > .symbol-circle {
+    order: 1;
+    width: var(--symbol-size);
+    height: var(--symbol-size);
+    border: var(--symbol-thickness) solid var(--color-primary);
+    border-radius: var(--radius-pill);
+    flex-shrink: 0;
   }
-  .value-desc::before {
-    content: "•";
+
+  .banner-empty-filler > .symbol-cross {
+    order: 2;
+    width: var(--symbol-size);
+    height: var(--symbol-size);
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .banner-empty-filler > .symbol-cross::before,
+  .banner-empty-filler > .symbol-cross::after {
+    content: "";
     position: absolute;
-    left: 0;
-    top: 0;
-    color: var(--color-secondary-dark);
+    width: var(--cross-length);
+    height: var(--symbol-thickness);
+    background-color: var(--color-primary);
+    border: var(--border-cross) solid var(--color-primary);
+    top: 50%;
+    left: 50%;
+  }
+
+  .banner-empty-filler > .symbol-cross::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .banner-empty-filler > .symbol-cross::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  .banner-empty-filler::before {
+    content: "";
+    order: 3;
+    flex: 0 0 auto;
+    width: clamp(30px, 8vw, 80px);
+    min-width: calc(var(--checker-h) * var(--block-ratio));
+    height: var(--checker-h);
+    background-color: var(--color-primary);
+  }
+
+  .banner-empty-filler::after {
+    content: "";
+    order: 4;
+    width: var(--checker-w);
+    height: var(--checker-h);
+    background-color: var(--bg-primary);
+
+    --c: var(--color-primary);
+    background-image:
+      linear-gradient(
+        45deg,
+        var(--c) calc(25% + 0.5px),
+        transparent calc(25% + 0.5px),
+        transparent calc(75% - 0.5px),
+        var(--c) calc(75% - 0.5px)
+      ),
+      linear-gradient(
+        45deg,
+        var(--c) calc(25% + 0.5px),
+        transparent calc(25% + 0.5px),
+        transparent calc(75% - 0.5px),
+        var(--c) calc(75% - 0.5px)
+      );
+    background-size: calc(100% / 1.5) calc(100% / 1.5);
+    background-repeat: repeat;
+    background-position:
+      calc(var(--checker-cell) / 2) 0,
+      var(--checker-cell) calc(var(--checker-cell) / 2);
+    margin-left: calc((var(--checker-cell) / -2) - var(--top-gap));
+    flex-shrink: 0;
   }
 
   /* VALUE CARDS */
   .value-cards-layout {
     grid-column: 1 / -1;
-    grid-row: 3;
+    grid-row: 2;
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-8);
@@ -439,44 +594,138 @@ const avifSrcset = (
     ========================================================= */
   .value-conclusion {
     grid-column: 1 / -1;
-    grid-row: 4;
+    grid-row: 3;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-6);
     margin-top: var(--spacing-8);
     padding: var(--spacing-6) var(--spacing-4);
-    background-color: var(--bg-secondary);
     border-radius: var(--spacing-2);
   }
 
-  .v-concl-graphic {
-    --checker-cell: 30px;
-    --c-pink: var(--color-primary, #ff6b9e);
+  .collab-dropdown-list {
+    grid-column: 1 / -1;
+    grid-row: 4;
     display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+    margin-top: var(--spacing-8);
     width: 100%;
-    height: calc(var(--checker-cell) * 1.5);
-    max-width: 100%;
+    max-width: var(--content-max-width, 75rem);
+  }
+
+  .collab-dropdown {
+    justify-self: start;
+    width: 100%;
+  }
+
+  .collab-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-4);
+    width: min(100%, max(300px, 50%));
+    padding: var(--spacing-2) var(--spacing-4);
+
+    background: var(--color-primary);
+    border: 4px solid var(--color-secondary-dark);
+    box-shadow: 5px 8px 0px #7ee6fa;
+    border-radius: 20px;
+
+    text-decoration: none;
+    transition:
+      box-shadow 0.15s ease,
+      transform 0.15s ease;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .collab-cta::-webkit-details-marker {
+    display: none;
+  }
+
+  .collab-cta:active {
+    transform: translate(2px, 3px);
+    box-shadow: 3px 5px 0px #7ee6fa;
+  }
+
+  .collab-cta:hover {
+    opacity: 0.85;
+  }
+
+  .collab-cta__text {
+    color: var(--bg-secondary);
+    font-size: clamp(var(--text-base), 3vw, var(--text-xl));
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    line-height: 1;
+    transform: translateY(-2px);
+  }
+
+  .collab-cta :global(.collab-cta__icon) {
+    width: clamp(20px, 3vw, 28px);
+    height: clamp(20px, 3vw, 28px);
+    color: var(--bg-secondary);
     flex-shrink: 0;
   }
-  .v-concl-graphic::before {
-    content: "";
-    height: 100%;
-    width: calc(var(--checker-cell) * 1.5);
-    flex-shrink: 0;
-    aspect-ratio: 1 / 1;
-    background-color: var(--bg-primary);
-    background-image: repeating-conic-gradient(
-      var(--c-pink) 0 90deg,
-      var(--bg-secondary) 0 180deg
-    );
-    background-size: calc(100% / 1.5) calc(100% / 1.5);
-    background-position: 100% 0;
+
+  .collab-dropdown__icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .v-concl-graphic::after {
-    content: "";
-    flex: 1;
-    height: 100%;
-    background-color: var(--c-pink);
+
+  .collab-dropdown[open] .collab-dropdown__icon {
+    transform: rotate(90deg);
+  }
+
+  .collab-dropdown__content {
+    margin-top: var(--spacing-6);
+    animation: DropdownSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    transform-origin: top;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  @keyframes DropdownSlideIn {
+    from {
+      opacity: 0;
+      transform: scaleY(0.95) translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: scaleY(1) translateY(0);
+    }
+  }
+
+  .collab-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  @media (min-width: 768px) {
+    .collab-item {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--spacing-6);
+    }
+  }
+
+  .collab-item__year {
+    font-size: clamp(var(--text-lg), 2.5vw, var(--text-2xl));
+    font-weight: 900;
+    color: var(--color-primary);
+    line-height: 1.2;
+    flex-shrink: 0;
+  }
+
+  .collab-item__desc {
+    font-size: clamp(var(--text-base), 1.5vw, var(--text-lg));
+    font-weight: 600;
+    color: var(--color-secondary-darker);
+    line-height: 1.5;
+    margin: 0;
   }
 
   .v-concl-text {
@@ -535,9 +784,8 @@ const avifSrcset = (
     z-index: 1;
     align-items: center;
     gap: var(--spacing-4);
-    border-radius: 0 clamp(var(--spacing-10), 10vw, var(--spacing-2))
-      clamp(var(--spacing-10), 10vw, var(--spacing-2)) 0;
-    margin-bottom: clamp(var(--spacing-4), 3vw, var(--spacing-6));
+    border-radius: 0 clamp(var(--spacing-5), 10vw, var(--spacing-2))
+      clamp(var(--spacing-5), 10vw, var(--spacing-2)) 0;
     padding: clamp(var(--spacing-9), 5vw, var(--spacing-10))
       clamp(var(--spacing-4), 3vw, var(--spacing-6))
       clamp(var(--spacing-6), 4vw, var(--spacing-8));
@@ -576,18 +824,28 @@ const avifSrcset = (
     margin: 0;
     line-height: 1;
   }
+  .bio-badges {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    align-self: center;
+    margin-top: var(--spacing-4);
+  }
+
   .info-badge {
     position: relative;
     z-index: 3;
-    align-self: center;
-    margin-top: calc(-1 * var(--spacing-8));
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: var(--color-accent-badge);
     color: var(--text-inverse);
     font-weight: 900;
+    text-align: center;
     font-size: clamp(var(--text-sm), 3vw, var(--text-base));
-    padding: clamp(var(--spacing-1), 1vw, var(--spacing-2))
+    padding: clamp(var(--spacing-3), 1vw, var(--spacing-2))
       clamp(var(--spacing-3), 2.5vw, var(--spacing-5));
-    border-radius: var(--radius-3xl);
+    border-radius: var(--radius-2xl);
     border: var(--border-width-sm) solid var(--color-secondary-darker);
     white-space: nowrap;
     max-width: 90vw;
@@ -595,15 +853,95 @@ const avifSrcset = (
   }
 
   .tools-section {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
-    margin: var(--spacing-10) 0 var(--spacing-2);
+    margin: var(--spacing-16) 0 var(--spacing-2);
     gap: var(--spacing-6);
   }
+
+  @media (min-width: 768px) {
+    .banner-empty-filler {
+      display: flex; /* Bật lại ở mốc Tablet trở lên */
+    }
+
+    .tools-section::before,
+    .tools-section::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      z-index: -1;
+      pointer-events: none;
+      /* Trừ đi khoảng 15rem (đủ rộng cho 4 icon + một gap nhỏ) để mảng nền không bị đè lên icon */
+      width: calc(50% - clamp(13rem, 16vw, 15rem));
+      background-color: var(--color-secondary-light);
+
+      /* Multi-layer XOR mask pipeline */
+      mask-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 3 3' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='1' y='0' width='1' height='1' fill='white'/%3E%3Crect x='0' y='1' width='1' height='1' fill='white'/%3E%3Crect x='2' y='1' width='1' height='1' fill='white'/%3E%3Crect x='1' y='2' width='1' height='1' fill='white'/%3E%3C/svg%3E"),
+        linear-gradient(#fff, #fff);
+      -webkit-mask-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 3 3' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='1' y='0' width='1' height='1' fill='white'/%3E%3Crect x='0' y='1' width='1' height='1' fill='white'/%3E%3Crect x='2' y='1' width='1' height='1' fill='white'/%3E%3Crect x='1' y='2' width='1' height='1' fill='white'/%3E%3C/svg%3E"),
+        linear-gradient(#fff, #fff);
+
+      mask-size:
+        auto 100%,
+        100% 100%;
+      -webkit-mask-size:
+        auto 100%,
+        100% 100%;
+      mask-repeat: no-repeat, no-repeat;
+      -webkit-mask-repeat: no-repeat, no-repeat;
+
+      /* Subtract SVG holes from solid base */
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+    }
+
+    .tools-section::before {
+      left: 0;
+      mask-position:
+        right center,
+        0 0;
+      -webkit-mask-position:
+        right center,
+        0 0;
+    }
+
+    .tools-section::after {
+      right: 0;
+      mask-position:
+        left center,
+        0 0;
+      -webkit-mask-position:
+        left center,
+        0 0;
+    }
+  }
+
+  .tools-section__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: fit-content;
+    gap: var(--spacing-6);
+    max-width: 100%;
+  }
+
   .tools-section__head {
+    display: flex;
+    justify-content: stretch;
+  }
+
+  .tools-section__head > :global(.page-decor-banner) {
     width: 100%;
   }
+
   .tools-grid {
     display: flex;
     flex-wrap: wrap;
@@ -639,7 +977,7 @@ const avifSrcset = (
     color: var(--color-secondary-dark);
     font-size: clamp(1rem, 2.5vw, var(--text-base));
     line-height: 1.6;
-    margin: 0;
+    margin: var(--spacing-8) 0 0 0;
   }
   .bio-quote {
     color: var(--color-secondary-dark);
@@ -647,12 +985,7 @@ const avifSrcset = (
     margin: 0;
   }
 
-  @media (max-width: 1023px) {
-    .tools-section__head {
-      display: flex;
-      justify-content: center;
-    }
-  }
+  /* Mobile-only tools-section__head removed (now global) */
 
   /* ==========================================================
         RESPONSIVE TABLET & SMALL PC (>= 1024px)
@@ -661,8 +994,39 @@ const avifSrcset = (
     .page-layout {
       display: grid;
       grid-template-columns: auto 1fr;
-      gap: var(--spacing-8);
+      gap: clamp(var(--spacing-8), 4vw, var(--spacing-24));
       align-items: start;
+
+      /* --- ALIGNMENT SYNC VARIABLES --- */
+      --c-max-wrapper: var(--content-max-width, 75rem);
+      --pad-wrapper: var(--spacing-4, 1rem);
+
+      --decor-cell: clamp(35px, 3.5vw, 60px);
+      --decor-overlap: calc(var(--decor-cell) / 2);
+      --decor-width: calc(var(--decor-cell) * 2);
+      --sym-margin: var(--spacing-2, 0.5rem);
+      --symbol-size: calc(((var(--decor-cell) * 1.5) - var(--sym-margin)) / 2);
+      --fixed-decor-width: calc(
+        var(--decor-width) - var(--decor-overlap) + var(--sym-margin) +
+          var(--symbol-size)
+      );
+      --safe-gap-left: clamp(30px, 3.5vw, 60px);
+
+      --fluid-block: clamp(0px, calc(100vw - 1100px), 200px);
+      --wrapper-left: max(
+        var(--pad-wrapper),
+        calc(50vw - (var(--c-max-wrapper) / 2) + var(--pad-wrapper))
+      );
+
+      --computed-text-start: calc(
+        var(--fluid-block) + var(--fixed-decor-width) + var(--safe-gap-left)
+      );
+      --limit-text-start: calc(var(--wrapper-left) + var(--spacing-4));
+      --text-start: min(var(--computed-text-start), var(--limit-text-start));
+
+      --sidebar-offset: calc(
+        max(var(--pad-wrapper), var(--text-start)) - var(--wrapper-left)
+      );
     }
 
     .sidebar-nav {
@@ -672,6 +1036,7 @@ const avifSrcset = (
       position: sticky;
       top: calc(var(--header-height-pc) + var(--spacing-4));
       align-self: start;
+      transform: translateX(var(--sidebar-offset));
     }
 
     .sidebar-nav :global(.page-decor-banner) {
@@ -693,7 +1058,7 @@ const avifSrcset = (
         "banner      banner"
         "hero        window"
         "bio         window"
-        "tools       window"
+        "tools       tools"
         "valueArea   valueArea";
       gap: var(--spacing-8) var(--spacing-10);
       grid-template-rows: auto max-content max-content 1fr auto;
@@ -707,32 +1072,16 @@ const avifSrcset = (
     .bottom-banners {
       grid-area: valueArea;
       display: grid;
-      grid-template-columns: subgrid;
-      grid-template-rows: var(--filler-h) auto auto auto;
-    }
-
-    .bottom-banners > :global(.page-decor-banner) {
-      grid-column: 1;
-      grid-row: 1 / span 2;
-      align-self: flex-end;
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(var(--filler-h), auto) auto auto auto;
     }
 
     .banner-empty-filler {
-      grid-column: 2;
-      grid-row: 1;
-      align-self: center;
-    }
-
-    .value-desc {
-      grid-column: 2;
-      grid-row: 2;
-      margin: 0;
-      text-align: left;
     }
 
     .value-cards-layout {
       grid-column: 1 / -1;
-      grid-row: 3;
+      grid-row: 2;
       grid-template-columns: repeat(3, 1fr);
       gap: var(--spacing-6);
       align-items: stretch;
@@ -740,38 +1089,19 @@ const avifSrcset = (
 
     .value-conclusion {
       grid-column: 1 / -1;
-      grid-row: 4;
-      display: grid;
-      grid-template-columns: subgrid;
-      align-items: center;
+      grid-row: 3;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-6);
       background-color: transparent;
       padding: var(--spacing-10) 0 0 0;
       border-radius: 0;
-      margin-top: 0;
-    }
-
-    .v-concl-graphic {
-      grid-column: 1;
-      justify-self: start;
-      max-width: 100%;
-    }
-
-    .v-concl-text {
-      grid-column: 2;
-      text-align: left;
+      margin-top: 120px; /* Tăng khoảng cách trên PC */
     }
 
     .tools-section {
       grid-area: tools;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      padding-left: calc(var(--avatar-size) + var(--spacing-6));
-      margin-top: 0;
-    }
-
-    .tools-grid {
-      justify-content: flex-start;
+      margin-top: var(--spacing-8);
     }
 
     .profile-hero-header {
@@ -791,18 +1121,21 @@ const avifSrcset = (
       width: 0;
     }
 
+    .bio-badges {
+      align-self: flex-start;
+    }
+
     .info-badge {
       position: static;
       z-index: auto;
-      align-self: flex-start;
-      margin-top: 0;
+      align-self: stretch;
     }
 
     .grid-area-bio {
       grid-area: bio;
       padding-left: calc(var(--avatar-size) + var(--spacing-6));
       text-align-last: left;
-      margin: 0;
+      margin: calc(-1 * var(--spacing-60)) 0 0 0;
       max-width: calc(var(--avatar-size) + 12.5rem);
     }
 
@@ -812,3 +1145,48 @@ const avifSrcset = (
     }
   }
 </style>
+
+<script>
+  // Script xử lý hiệu ứng cuộn mượt (smooth scroll) cho thanh điều hướng bên (sidebar)
+  document.addEventListener("astro:page-load", () => {
+    // Lấy tất cả các thẻ a có href bắt đầu bằng # bên trong sidebar-nav
+    const sidebarLinks = document.querySelectorAll<HTMLAnchorElement>('.sidebar-nav a[href^="#"]');
+    
+    sidebarLinks.forEach(link => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        
+        const targetId = link.getAttribute("href");
+        if (!targetId || targetId === "#") return;
+        
+        const targetSection = document.querySelector(targetId);
+        if (!targetSection) return;
+
+        // Bù trừ 120px (chiều cao header + padding) để phần tử không bị dính sát mép trên
+        const headerOffset = 120; 
+        const targetPosition = targetSection.getBoundingClientRect().top + window.scrollY - headerOffset;
+        const startPosition = window.scrollY;
+        const distance = targetPosition - startPosition;
+        const duration = 1200; // 1.2s cho độ lướt mượt
+        let start: number | null = null;
+
+        // Custom easing (easeOutQuart) - Đồng bộ phong cách lướt êm ái với splash
+        const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
+
+        const animation = (currentTime: number) => {
+          if (start === null) start = currentTime;
+          const timeElapsed = currentTime - start;
+          const progress = Math.min(timeElapsed / duration, 1);
+          
+          window.scrollTo(0, startPosition + distance * easeOutQuart(progress));
+
+          if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+          }
+        };
+
+        requestAnimationFrame(animation);
+      });
+    });
+  });
+</script>

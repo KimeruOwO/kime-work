@@ -19,6 +19,7 @@ const { vid, index, catMatch, visMatch } = Astro.props;
 >
   <div class="card-hero">
     <div class="motion-thumb-container">
+      <div class="motion-loader" aria-hidden="true"></div>
       <img
         src={vid.thumbnail.url}
         loading={index < 4 ? "eager" : "lazy"}
@@ -143,27 +144,12 @@ const { vid, index, catMatch, visMatch } = Astro.props;
     flex-shrink: 0;
   }
 
-  .motion-thumb-container::before {
-    content: "";
+  .motion-loader {
     position: absolute;
     inset: 0;
-    mask: url("../../../assets/kimeyu-loader.svg") center / 40% no-repeat;
-    -webkit-mask: url("../../../assets/kimeyu-loader.svg") center / 40%
-      no-repeat;
-    background-color: var(--theme-color-pink);
-    background-image: linear-gradient(
-      120deg,
-      rgba(255, 255, 255, 0) 30%,
-      rgba(255, 255, 255, 0.8) 50%,
-      rgba(255, 255, 255, 0) 70%
-    );
-    background-size: 200% 100%;
-    background-repeat: no-repeat;
-    animation: shimmer 2s infinite linear;
-    opacity: 1;
-    z-index: 1;
+    z-index: 5;
+    pointer-events: none;
   }
-
 
 
   .motion-thumb-container img {
@@ -307,3 +293,95 @@ const { vid, index, catMatch, visMatch } = Astro.props;
     white-space: nowrap;
   }
 </style>
+
+<script>
+  const activeAnims = new Map<HTMLElement, any>();
+  let observer: IntersectionObserver | null = null;
+
+  const destroyAnim = (el: HTMLElement): void => {
+    const anim = activeAnims.get(el);
+    if (!anim) return;
+    anim.destroy();
+    activeAnims.delete(el);
+    el.style.display = 'none';
+    observer?.unobserve(el);
+  };
+
+  const cleanup = (): void => {
+    activeAnims.forEach((anim) => anim.destroy());
+    activeAnims.clear();
+    observer?.disconnect();
+    observer = null;
+  };
+
+  const initLoaders = async (): Promise<void> => {
+    try {
+      cleanup();
+      const containers = document.querySelectorAll<HTMLElement>('.motion-loader');
+      if (!containers.length) return;
+
+      const lottieModule = await import('lottie-web/build/player/lottie_light');
+      const lottie = lottieModule.default || lottieModule;
+      console.log('[Lottie] module loaded, containers:', containers.length);
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            const el = entry.target as HTMLElement;
+
+            if (entry.isIntersecting) {
+              if (activeAnims.has(el)) {
+                activeAnims.get(el)!.play();
+                continue;
+              }
+
+              const anim = lottie.loadAnimation({
+                container: el,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: '/lottie/webloading.json',
+              });
+              activeAnims.set(el, anim);
+
+              let loopDone = false;
+              let imgLoaded = false;
+
+              const tryDestroy = (): void => {
+                if (loopDone && imgLoaded) destroyAnim(el);
+              };
+
+              anim.addEventListener('loopComplete', () => {
+                loopDone = true;
+                tryDestroy();
+              });
+
+              const img = el.parentElement?.querySelector('img');
+              if (img) {
+                if (img.complete && img.naturalWidth > 0) {
+                  imgLoaded = true;
+                  tryDestroy();
+                } else {
+                  img.addEventListener('load', () => {
+                    imgLoaded = true;
+                    tryDestroy();
+                  }, { once: true });
+                }
+              }
+            } else if (activeAnims.has(el)) {
+              activeAnims.get(el)!.pause();
+            }
+          }
+        },
+        { rootMargin: '200px' }
+      );
+
+      containers.forEach((el) => observer!.observe(el));
+    } catch (err) {
+      console.error('[MotionCard] initLoaders error:', err);
+    }
+  };
+
+  document.addEventListener('astro:page-load', initLoaders);
+  document.addEventListener('astro:before-swap', cleanup);
+</script>

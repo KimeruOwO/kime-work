@@ -44,7 +44,7 @@ const Tag = href ? "a" : "div";
 
 <style>
   .page-decor-banner {
-    --banner-h: 48px; 
+    --banner-h: 48px;
     --checker-cell: calc(var(--banner-h) / 1.5);
     background-color: var(--color-primary);
     display: flex;
@@ -60,13 +60,17 @@ const Tag = href ? "a" : "div";
     content: none;
     aspect-ratio: 1 / 1;
     flex-shrink: 0;
-    background-color: inherit;
-    background-image: repeating-conic-gradient(
-      var(--bg-primary) 0 90deg,
-      transparent 0 180deg
-    );
-    background-size: var(--checker-cell) calc(100% / 1.5);
-    background-position: 0 0;
+    background-color: var(--bg-primary);
+    /* 3x3 offset checker: SVG draws the ENTIRE pattern — zero CSS tiling */
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Crect x='1' y='0' width='1' height='1' fill='black'/%3E%3Crect x='0' y='1' width='1' height='1' fill='black'/%3E%3Crect x='2' y='1' width='1' height='1' fill='black'/%3E%3Crect x='1' y='2' width='1' height='1' fill='black'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Crect x='1' y='0' width='1' height='1' fill='black'/%3E%3Crect x='0' y='1' width='1' height='1' fill='black'/%3E%3Crect x='2' y='1' width='1' height='1' fill='black'/%3E%3Crect x='1' y='2' width='1' height='1' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .page-decor-banner--checker-start::before {
@@ -93,6 +97,7 @@ const Tag = href ? "a" : "div";
     letter-spacing: 0.05em;
     margin: 0;
     line-height: 1;
+    white-space: nowrap;
   }
 
   .page-decor-banner--secondary {
@@ -104,7 +109,7 @@ const Tag = href ? "a" : "div";
   }
 
   .page-decor-banner--compact {
-    --banner-h: 42px; 
+    --banner-h: 42px;
     margin: 0;
   }
 
@@ -175,7 +180,8 @@ const Tag = href ? "a" : "div";
     .page-decor-banner[data-pc-checker="end"].page-decor-banner--compact {
       margin-inline: 0;
     }
-    .page-decor-banner[data-pc-checker="end"].page-decor-banner--compact .page-decor-banner__text {
+    .page-decor-banner[data-pc-checker="end"].page-decor-banner--compact
+      .page-decor-banner__text {
       justify-content: flex-start;
     }
   }

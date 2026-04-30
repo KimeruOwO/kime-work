@@ -175,6 +175,7 @@ const { page } = Astro.props;
       this.handleCardHover = this.handleCardHover.bind(this);
       this.closeDialog = this.closeDialog.bind(this);
       this.handleBackdropClick = this.handleBackdropClick.bind(this);
+      this._handleKeydown = this._handleKeydown.bind(this);
     }
 
     private _resizeHandler = () => {
@@ -354,6 +355,10 @@ const { page } = Astro.props;
       }
       if (this._dialog !== null) {
         this._dialog.addEventListener("click", this.handleBackdropClick);
+        this._dialog.addEventListener("cancel", (e) => {
+          e.preventDefault();
+          this.closeDialog();
+        });
       }
 
       const grid = this.querySelector<HTMLElement>("#artwork-grid-container");
@@ -377,6 +382,9 @@ const { page } = Astro.props;
 
       this.addEventListener("filter-changed", this);
       this.addEventListener("click", this);
+
+      // Keyboard shortcuts: phím 2-5 chuyển cột grid tương ứng
+      window.addEventListener("keydown", this._handleKeydown);
 
       const pendingSidebar = localStorage.getItem(
         "kime-sidebar-artwork-pending",
@@ -410,6 +418,7 @@ const { page } = Astro.props;
 
     disconnectedCallback() {
       window.removeEventListener("resize", this._resizeHandler);
+      window.removeEventListener("keydown", this._handleKeydown);
       this.removeEventListener("filter-changed", this);
       this.removeEventListener("click", this);
 
@@ -443,6 +452,23 @@ const { page } = Astro.props;
         }
         const pageBtn = target.closest<HTMLElement>("[data-page]");
         if (pageBtn) this._handlePaginationClick(pageBtn);
+      }
+    }
+
+    // Keyboard shortcut handler: phím 2/3/4/5 -> chuyển cột grid
+    private _handleKeydown(e: KeyboardEvent) {
+      // Bỏ qua nếu user đang gõ text hoặc popup đang mở
+      if (this._dialog?.open) return;
+      const active = document.activeElement;
+      if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || (active as HTMLElement).isContentEditable)) return;
+
+      const colMap: Record<string, string> = { "2": "2", "3": "3", "4": "4", "5": "5" };
+      const cols = colMap[e.key];
+      if (!cols) return;
+
+      const targetBtn = this.querySelector<HTMLButtonElement>(`.grid-btn[data-cols="${cols}"]`);
+      if (targetBtn && !targetBtn.classList.contains("active")) {
+        this._handleSidebarClick(targetBtn);
       }
     }
 
@@ -516,12 +542,22 @@ const { page } = Astro.props;
     // =============================================
 
     private closeDialog() {
-      if (this._dialog !== null) this._dialog.close();
+      if (this._dialog !== null) {
+        this._dialog.classList.add("is-closing");
+        this._dialog.addEventListener(
+          "animationend",
+          () => {
+            this._dialog?.classList.remove("is-closing");
+            this._dialog?.close();
+          },
+          { once: true }
+        );
+      }
     }
 
     private handleBackdropClick(e: MouseEvent) {
       if (e.target === this._dialog && this._dialog !== null) {
-        this._dialog.close();
+        this.closeDialog();
       }
     }
 
@@ -550,6 +586,20 @@ const { page } = Astro.props;
       const dialogImg =
         this._dialog.querySelector<HTMLImageElement>(".lightbox-img");
       if (dialogImg !== null) {
+        const padding = 32; // Padding of body
+        const headerOffset = 60; // Header height
+        const maxW = window.innerWidth * 0.95 - padding;
+        const maxH = window.innerHeight * 0.95 - headerOffset - padding;
+        
+        // Use the original size of the thumbnail to get the ratio
+        const natW = img.naturalWidth || 800;
+        const natH = img.naturalHeight || 800;
+        const scale = Math.min(maxW / natW, maxH / natH);
+        
+        // Gán cứng kích thước đích trước khi show popup
+        dialogImg.style.width = `${Math.floor(natW * scale)}px`;
+        dialogImg.style.height = `${Math.floor(natH * scale)}px`;
+
         dialogImg.src = img.src;
         dialogImg.alt = img.alt || "Expanded artwork preview";
         this._dialog.showModal();
@@ -822,14 +872,67 @@ const { page } = Astro.props;
     overflow: hidden;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   }
+  @keyframes modal-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.85) translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes backdrop-fade {
+    0% {
+      background-color: rgba(0, 0, 0, 0);
+      backdrop-filter: blur(0px);
+    }
+    100% {
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+    }
+  }
+
+  @keyframes modal-close {
+    0% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.9) translateY(20px);
+    }
+  }
+
+  @keyframes backdrop-fade-out {
+    0% {
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+    }
+    100% {
+      background-color: rgba(0, 0, 0, 0);
+      backdrop-filter: blur(0px);
+    }
+  }
+
   .lightbox-modal[open] {
     display: flex;
     flex-direction: column;
+    animation: modal-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
+  .lightbox-modal.is-closing {
+    animation: modal-close 0.25s cubic-bezier(0.175, 0.885, 0.32, 1) forwards;
+  }
+
   .lightbox-modal::backdrop {
     background-color: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(5px);
     cursor: zoom-out;
+    animation: backdrop-fade 0.3s ease-out forwards;
+  }
+  .lightbox-modal.is-closing::backdrop {
+    animation: backdrop-fade-out 0.2s ease-out forwards;
   }
   .lightbox-header {
     display: flex;
@@ -954,7 +1057,7 @@ const { page } = Astro.props;
      ============================================== */
   :global(#artwork-pagination) {
     --cell: 30px;
-    --checker-w: calc(var(--cell) * 1.5);
+    --checker-w: round(nearest, calc(var(--cell) * 1.5), 1px);
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -968,29 +1071,35 @@ const { page } = Astro.props;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: calc(var(--cell) * 1.5);
+    height: round(nearest, calc(var(--cell) * 1.5), 1px);
     color: var(--text-inverse);
     font-weight: 899;
     font-size: clamp(var(--text-base), 2vw, var(--text-lg));
     font-family: inherit;
     line-height: 1;
     text-decoration: none;
-    background-color: transparent;
+    background-color: var(--color-primary);
     border: none;
     cursor: pointer;
     transition:
       opacity 0.2s ease,
       transform 0.2s ease;
-    background-image:
-      linear-gradient(var(--color-primary), var(--color-primary)),
-      repeating-conic-gradient(
-        var(--color-primary) 0 90deg,
-        transparent 0 180deg
-      );
-    background-size:
+    -webkit-mask-image:
+      linear-gradient(black, black),
+      var(--checker-mask-uri);
+    mask-image:
+      linear-gradient(black, black),
+      var(--checker-mask-uri);
+    -webkit-mask-size:
       calc(100% - var(--checker-w) + 1px) 100%,
-      var(--cell) var(--cell);
-    background-repeat: no-repeat, repeat;
+      round(nearest, var(--cell), 1px) round(nearest, var(--cell), 1px);
+    mask-size:
+      calc(100% - var(--checker-w) + 1px) 100%,
+      round(nearest, var(--cell), 1px) round(nearest, var(--cell), 1px);
+    -webkit-mask-repeat: no-repeat, repeat;
+    mask-repeat: no-repeat, repeat;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
   }
   :global(#artwork-pagination .page-nav-btn:hover) {
     transform: translateY(-2px);
@@ -999,24 +1108,16 @@ const { page } = Astro.props;
     padding: 0
       calc(clamp(var(--spacing-3), 2vw, var(--spacing-36)) + var(--checker-w)) 0
       clamp(var(--spacing-3), 2vw, var(--spacing-6));
-    background-position:
-      left top,
-      right top;
+    -webkit-mask-position: left top, right calc(var(--cell) / 2);
+    mask-position: left top, right calc(var(--cell) / 2);
     justify-self: start;
   }
   :global(#artwork-pagination .next-btn) {
     padding: 0 clamp(var(--spacing-3), 2vw, var(--spacing-6)) 0
       calc(clamp(var(--spacing-3), 2vw, var(--spacing-36)) + var(--checker-w));
-    background-position:
-      right top,
-      left top;
+    -webkit-mask-position: right top, 0 0;
+    mask-position: right top, 0 0;
     justify-self: end;
-    background-image:
-      linear-gradient(var(--color-primary), var(--color-primary)),
-      repeating-conic-gradient(
-        transparent 0 90deg,
-        var(--color-primary) 0 180deg
-      );
   }
   :global(#artwork-pagination .page-numbers) {
     display: flex;

@@ -1,17 +1,4 @@
 /* =========================================
-   TYPOGRAPHY (LOCAL VARIABLE FONT)
-   ========================================= */
-@font-face {
-  font-family: "Murecho";
-  font-style: normal;
-  font-weight: 100 900;
-  /* Khai báo trục weight động */
-  font-display: swap;
-  /* Chống mù chữ (Anti-FOIT) */
-  src: url("/fonts/Murecho-Variable.woff2") format("woff2-variations");
-}
-
-/* =========================================
    GLOBAL VARIABLES (FLATTENED & PURGED)
    ========================================= */
 :root {
@@ -41,6 +28,9 @@
   /* cyan-500 */
   --color-secondary-bright: #29d0f6;
   /* cyan-400 */
+  --checker-mask-uri: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEUlEQVR4nGNgYGD4z4AE/gMADwMB/5OV1yAAAAAASUVORK5CYII=");
+  --checker-cell: 4px;
+
   --color-secondary-dark: #046277;
   /* cyan-700 */
   --color-secondary-darker: #005b6e;
@@ -91,9 +81,11 @@
   --spacing-20: 5rem;
   --spacing-24: 6rem;
   --spacing-36: 9rem;
+  --spacing-48: 12rem;
+  --spacing-60: 15rem;
 
   /* Layout Structure */
-  --content-max-width: 80rem;
+  --content-max-width: 90rem;
   --header-height-mobile: 4.5rem;
   --header-height-pc: 5rem;
   --banner-height-mobile: 4.5rem;
@@ -162,6 +154,7 @@ html {
   color: var(--text-primary);
   background-color: var(--bg-primary);
   scroll-padding-top: calc(var(--header-height-mobile) + var(--spacing-4));
+  overflow-x: clip;
 }
 
 @media (min-width: 768px) {
@@ -173,9 +166,14 @@ html {
 body {
   min-height: 100vh;
   line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: auto;
+  /* Restore ClearType Subpixel rendering for Windows Variable Font interpolation */
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: optimizeLegibility;
+
+  font-synthesis: none;
+  font-optical-sizing: auto;
+  overflow-x: clip;
 }
 
 img,

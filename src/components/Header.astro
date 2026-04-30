@@ -7,55 +7,59 @@ const currentPath =
   rawPath.length > 1 && rawPath.endsWith("/") ? rawPath.slice(0, -1) : rawPath;
 
 const isAbout = currentPath === "/about";
-const isHome = currentPath === "/home";
+const isHome = currentPath === "/home" || currentPath === "/";
 
 const isWorks = currentPath.startsWith("/work");
 ---
 
-<header class="cyber-header">
-  <a
-    href="/home"
-    class="cyber-header__logo-link"
-    aria-label="Home"
-    data-astro-prefetch="hover"
-  >
-    <KimeLogo />
-  </a>
+{
+  !isHome && (
+    <header class="cyber-header">
+      <a
+        href="/home"
+        class="cyber-header__logo-link"
+        aria-label="Home"
+        data-astro-prefetch="hover"
+      >
+        <KimeLogo />
+      </a>
 
-  <div class="cyber-header__right">
-    <KimeyuIcon class="cyber-header__brand-icon" />
-  </div>
+      <div class="cyber-header__right">
+        <KimeyuIcon class="cyber-header__brand-icon" />
+      </div>
 
-  <nav class="cyber-header__nav">
-    <a
-      href="/about"
-      class="cyber-header__nav-btn"
-      aria-current={isAbout ? "page" : undefined}
-      data-astro-prefetch="hover"
-    >
-      ABOUT
-    </a>
+      <nav class="cyber-header__nav">
+        <a
+          href="/home"
+          class="cyber-header__nav-btn"
+          aria-current={isHome ? "page" : undefined}
+          data-astro-prefetch="hover"
+        >
+          HOME
+        </a>
 
-    <a
-      href="/work/motions"
-      class="cyber-header__nav-btn"
-      aria-current={isWorks ? "page" : undefined}
-      data-astro-prefetch="hover"
-      data-works-link
-    >
-      WORKS
-    </a>
+        <a
+          href="/work/motions"
+          class="cyber-header__nav-btn"
+          aria-current={isWorks ? "page" : undefined}
+          data-astro-prefetch="hover"
+          data-works-link
+        >
+          WORKS
+        </a>
 
-    <a
-      href="/home"
-      class="cyber-header__nav-btn"
-      aria-current={isHome ? "page" : undefined}
-      data-astro-prefetch="hover"
-    >
-      HOME
-    </a>
-  </nav>
-</header>
+        <a
+          href="/about"
+          class="cyber-header__nav-btn"
+          aria-current={isAbout ? "page" : undefined}
+          data-astro-prefetch="hover"
+        >
+          ABOUT
+        </a>
+      </nav>
+    </header>
+  )
+}
 
 <script>
   document.addEventListener("astro:page-load", () => {
@@ -86,6 +90,8 @@ const isWorks = currentPath.startsWith("/work");
     width: 100%;
     background-color: var(--color-primary);
     font-family: var(--font-sans);
+    overflow-x: clip;
+    overflow-y: visible;
     box-shadow:
       0 var(--border-width-sm) 0 0 var(--bg-secondary),
       0 calc(var(--border-width-md) + 4px) 0 0 var(--color-secondary-light);
@@ -112,6 +118,7 @@ const isWorks = currentPath.startsWith("/work");
     align-items: stretch;
     order: 3;
     width: 100%;
+    min-width: 0;
     padding: var(--spacing-2) 0;
     gap: var(--spacing-2);
   }
@@ -119,24 +126,24 @@ const isWorks = currentPath.startsWith("/work");
   .cyber-header__nav::before,
   .cyber-header__nav::after {
     content: "";
-    --blocks-x: 3; 
-    --blocks-y: 3; 
+    --blocks-x: 3;
+    --blocks-y: 3;
 
     margin-top: calc(-1 * var(--spacing-2));
     margin-bottom: calc(-1 * var(--spacing-2));
 
     aspect-ratio: var(--blocks-x) / var(--blocks-y);
 
-    background-color: var(
-      --color-primary
-    ); 
-    background-image: repeating-conic-gradient(
-      var(--color-primary) 0 90deg,
-      var(--bg-secondary) 0 180deg
-    );
-    background-size: calc((100% + 0.5px) / var(--blocks-x) * 2)
-      calc((100% + 0.5px) / var(--blocks-y) * 2);
-    background-position: 0 0;
+    background-color: var(--bg-secondary);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cpattern id='c' width='2' height='2' patternUnits='userSpaceOnUse'%3E%3Crect width='1' height='1' fill='black'/%3E%3Crect x='1' y='1' width='1' height='1' fill='black'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='3' height='3' fill='url(%23c)'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cpattern id='c' width='2' height='2' patternUnits='userSpaceOnUse'%3E%3Crect width='1' height='1' fill='black'/%3E%3Crect x='1' y='1' width='1' height='1' fill='black'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='3' height='3' fill='url(%23c)'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .cyber-header__nav::before {
@@ -181,21 +188,23 @@ const isWorks = currentPath.startsWith("/work");
 
   .cyber-header__right::before {
     content: "";
-    --blocks-x: 6; 
-    --blocks-y: 3; 
+    --blocks-x: 6;
+    --blocks-y: 3;
 
     height: var(--spacing-12);
     aspect-ratio: var(--blocks-x) / var(--blocks-y);
-    flex-shrink: 0; 
+    flex-shrink: 0;
 
-    background-color: var(--color-primary); 
-    background-image: repeating-conic-gradient(
-      var(--bg-secondary) 0 90deg,
-      var(--color-primary) 0 180deg
-    );
-    background-size: calc((100% + 0.5px) / var(--blocks-x) * 2)
-      calc((100% + 0.5px) / var(--blocks-y) * 2);
-    background-position: 0 0;
+    background-color: var(--color-primary);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cpattern id='c' width='2' height='2' patternUnits='userSpaceOnUse'%3E%3Crect width='1' height='1' fill='black'/%3E%3Crect x='1' y='1' width='1' height='1' fill='black'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='6' height='3' fill='url(%23c)'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cpattern id='c' width='2' height='2' patternUnits='userSpaceOnUse'%3E%3Crect width='1' height='1' fill='black'/%3E%3Crect x='1' y='1' width='1' height='1' fill='black'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='6' height='3' fill='url(%23c)'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .cyber-header__right :global(.cyber-header__brand-icon) {
@@ -212,6 +221,8 @@ const isWorks = currentPath.startsWith("/work");
     .cyber-header__nav::before,
     .cyber-header__nav::after {
       --blocks-x: 5;
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cpattern id='c' width='2' height='2' patternUnits='userSpaceOnUse'%3E%3Crect width='1' height='1' fill='black'/%3E%3Crect x='1' y='1' width='1' height='1' fill='black'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='5' height='3' fill='url(%23c)'/%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cpattern id='c' width='2' height='2' patternUnits='userSpaceOnUse'%3E%3Crect width='1' height='1' fill='black'/%3E%3Crect x='1' y='1' width='1' height='1' fill='black'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='5' height='3' fill='url(%23c)'/%3E%3C/svg%3E");
     }
   }
 
@@ -232,10 +243,10 @@ const isWorks = currentPath.startsWith("/work");
 
     .cyber-header__nav {
       order: 2;
-      flex: 1; 
-      justify-content: flex-start; 
+      flex: 1;
+      justify-content: flex-start;
       padding: 0 var(--spacing-4) 0
-        clamp(var(--spacing-4), 3vw, var(--spacing-12)); 
+        clamp(var(--spacing-4), 3vw, var(--spacing-12));
       gap: clamp(var(--spacing-2), 2vw, var(--spacing-8));
     }
 
@@ -255,6 +266,8 @@ const isWorks = currentPath.startsWith("/work");
       --blocks-x: 5;
       --blocks-y: 3;
       height: var(--header-height-pc);
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cpattern id='c' width='2' height='2' patternUnits='userSpaceOnUse'%3E%3Crect width='1' height='1' fill='black'/%3E%3Crect x='1' y='1' width='1' height='1' fill='black'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='5' height='3' fill='url(%23c)'/%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cpattern id='c' width='2' height='2' patternUnits='userSpaceOnUse'%3E%3Crect width='1' height='1' fill='black'/%3E%3Crect x='1' y='1' width='1' height='1' fill='black'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='5' height='3' fill='url(%23c)'/%3E%3C/svg%3E");
     }
 
     .cyber-header__right :global(.cyber-header__brand-icon) {
@@ -285,11 +298,9 @@ const isWorks = currentPath.startsWith("/work");
       padding-right: clamp(var(--spacing-4), 4vw, var(--spacing-12));
     }
 
-
-
     .cyber-header__nav-btn {
       font-size: clamp(var(--text-base), 1.5vw, var(--text-lg));
-      padding: var(--spacing-2) clamp(var(--spacing-3), 1.5vw, var(--spacing-8));
+      padding: var(--spacing-2) clamp(var(--spacing-4), 3vw, var(--spacing-10));
     }
   }
 </style>

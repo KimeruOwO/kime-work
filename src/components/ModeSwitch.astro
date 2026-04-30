@@ -18,10 +18,14 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
     <h2 class="mode-switch-title">MODE SWITCH</h2>
   </header>
 
-  <div class="mode-switch-container">
+  <div class="mode-switch-container" data-active-mode={activeMode}>
     <a
       href="/work/motions"
-      class:list={["switch-btn", activeMode === "motions" && "is-active"]}
+      class:list={[
+        "switch-btn",
+        "switch-btn--motions",
+        activeMode === "motions" && "is-active",
+      ]}
       aria-pressed={activeMode === "motions" ? "true" : "false"}
       data-astro-prefetch="hover"
     >
@@ -40,7 +44,11 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
 
     <a
       href="/work/artwork"
-      class:list={["switch-btn", activeMode === "artwork" && "is-active"]}
+      class:list={[
+        "switch-btn",
+        "switch-btn--artwork",
+        activeMode === "artwork" && "is-active",
+      ]}
       aria-pressed={activeMode === "artwork" ? "true" : "false"}
       data-astro-prefetch="hover"
     >
@@ -144,7 +152,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
     margin: 0;
     padding: 0 clamp(1rem, 4vw, 3rem);
     color: var(--color-secondary-darker);
-    font-size: clamp(1.25rem, 4vw, 2.5rem);
+    font-size: clamp(1rem, 3vw, 1.65rem); 
     font-weight: 899;
     letter-spacing: 0.05em;
     white-space: nowrap;
@@ -179,27 +187,64 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
     justify-content: space-between;
     width: fit-content;
     border: var(--border-width-xs) solid var(--color-secondary-darker);
-    border-radius: var(--radius-3xl);
+    border-radius: var(--radius-2xl);
     padding: var(--spacing-1) var(--spacing-2);
     background-color: var(--bg-secondary);
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* ---- SLIDING PILL (iPhone-style) ---- */
+  .mode-switch-container::before {
+    content: "";
+    position: absolute;
+    top: var(--spacing-1);
+    bottom: var(--spacing-1);
+    left: var(--spacing-2);
+    border-radius: var(--radius-2xl);
+    border: var(--border-width-xs) solid var(--color-secondary-darker);
+    transition:
+      transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 0.35s ease,
+      box-shadow 0.35s ease;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Motions active — pill stays left */
+  .mode-switch-container[data-active-mode="motions"]::before {
+    width: var(--pill-w-motions, 45%);
+    background-color: var(--color-primary);
+    box-shadow: 3px 3px 0 var(--color-secondary-bright);
+    transform: translateX(0);
+  }
+
+  /* Artwork active — pill slides right */
+  .mode-switch-container[data-active-mode="artwork"]::before {
+    width: var(--pill-w-artwork, 45%);
+    background-color: #7ae6fa;
+    box-shadow: 3px 3px 0 #fa729d;
+    transform: translateX(var(--pill-offset-artwork, 120%));
   }
 
   .switch-btn {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: var(--spacing-2);
     border: var(--border-width-xs) solid transparent;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-2xl);
     padding: var(--spacing-2) clamp(var(--spacing-4), 4vw, var(--spacing-8));
     font-size: clamp(var(--text-sm), 2.5vw, var(--text-base));
     font-weight: 899;
     color: var(--color-secondary-darker);
     text-decoration: none;
+    background: transparent;
     transition:
-      background-color 0.2s ease,
-      color 0.2s ease,
-      border-color 0.2s ease,
-      box-shadow 0.2s ease,
+      color 0.3s ease,
       opacity 0.2s ease;
   }
 
@@ -207,12 +252,19 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
     opacity: 0.7;
   }
 
+  /* Active state — only text color change, bg handled by pill */
   .switch-btn.is-active {
-    background-color: var(--color-primary);
     color: var(--text-inverse);
-    border-color: var(--color-secondary-darker);
-    box-shadow: 3px 3px 0 var(--color-secondary-bright);
     pointer-events: none;
+  }
+
+  /* COLOR OVERRIDES (THEO LỆNH RIÊNG BIỆT) */
+  .switch-btn--artwork.is-active {
+    color: var(--color-secondary-darker);
+  }
+
+  .switch-btn--motions:not(.is-active) {
+    color: #fa729d;
   }
 
   .switch-btn :global(svg) {
@@ -265,3 +317,40 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
     }
   }
 </style>
+
+<script>
+  function initPillMetrics() {
+    const container = document.querySelector<HTMLElement>(
+      ".mode-switch-container",
+    );
+    if (!container) return;
+
+    const motionsBtn = container.querySelector<HTMLElement>(
+      ".switch-btn--motions",
+    );
+    const artworkBtn = container.querySelector<HTMLElement>(
+      ".switch-btn--artwork",
+    );
+    if (!motionsBtn || !artworkBtn) return;
+
+    const update = () => {
+      const padLeft = parseFloat(getComputedStyle(container).paddingLeft);
+      const cRect = container.getBoundingClientRect();
+      const mRect = motionsBtn.getBoundingClientRect();
+      const aRect = artworkBtn.getBoundingClientRect();
+
+      container.style.setProperty("--pill-w-motions", `${mRect.width}px`);
+      container.style.setProperty("--pill-w-artwork", `${aRect.width}px`);
+      container.style.setProperty(
+        "--pill-offset-artwork",
+        `${aRect.left - cRect.left - padLeft}px`,
+      );
+    };
+
+    update();
+    new ResizeObserver(update).observe(container);
+  }
+
+  initPillMetrics();
+  document.addEventListener("astro:after-swap", initPillMetrics);
+</script>

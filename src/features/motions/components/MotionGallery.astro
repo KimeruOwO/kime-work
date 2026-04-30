@@ -90,7 +90,7 @@ const { page } = Astro.props;
           </div>
         </div>
 
-        <!-- Client-Side Pagination (rendered dynamically by JS) -->
+        <!-- Client-Side Pagination -->
         <nav
           class="kime-pagination"
           role="navigation"
@@ -218,7 +218,6 @@ const { page } = Astro.props;
     //  CLIENT-SIDE PAGINATION ENGINE
     // =============================================
 
-    /** Returns only cards that pass both category + visibility filters */
     private _getFilteredCards(): HTMLElement[] {
       return Array.from(this._cards).filter((card) => {
         const matchCat =
@@ -231,7 +230,6 @@ const { page } = Astro.props;
       });
     }
 
-    /** Core render: apply filter + pagination, then update themes */
     private _applyVisibility() {
       const allCards = Array.from(this._cards);
       const filtered = this._getFilteredCards();
@@ -252,12 +250,10 @@ const { page } = Astro.props;
       this.updateCardThemes();
     }
 
-    /** Dynamically generates pagination UI matching Pagination.astro design */
     private _renderPagination(totalPages: number) {
       const container = this.querySelector<HTMLElement>("#motion-pagination");
       if (!container) return;
 
-      // Sliding window algorithm (mirrors Pagination.astro)
       const MAX_VISIBLE = 5;
       let ws = Math.max(
         1,
@@ -319,7 +315,6 @@ const { page } = Astro.props;
         });
       }
 
-      // Initial render: apply pagination to show first page
       this._applyVisibility();
 
       window.addEventListener("resize", this._resizeHandler);
@@ -328,7 +323,9 @@ const { page } = Astro.props;
       this.addEventListener("filter-changed", this);
       this.addEventListener("click", this);
 
-      // Restore pending sidebar filter state from cross-page navigation
+      // Keyboard shortcuts: phím 2-4 chuyển cột grid tương ứng
+      window.addEventListener("keydown", this._handleKeydown);
+
       const pendingSidebar = localStorage.getItem("kime-sidebar-pending");
       if (pendingSidebar) {
         localStorage.removeItem("kime-sidebar-pending");
@@ -361,6 +358,7 @@ const { page } = Astro.props;
 
     disconnectedCallback() {
       window.removeEventListener("resize", this._resizeHandler);
+      window.removeEventListener("keydown", this._handleKeydown);
       this.removeEventListener("filter-changed", this);
       this.removeEventListener("click", this);
     }
@@ -380,6 +378,21 @@ const { page } = Astro.props;
         if (pageBtn) this._handlePaginationClick(pageBtn);
       }
     }
+
+    // Keyboard shortcut handler: phím 2/3/4 -> chuyển cột grid
+    private _handleKeydown = (e: KeyboardEvent) => {
+      const active = document.activeElement;
+      if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || (active as HTMLElement).isContentEditable)) return;
+
+      const colMap: Record<string, string> = { "2": "2", "3": "3", "4": "4" };
+      const cols = colMap[e.key];
+      if (!cols) return;
+
+      const targetBtn = this.querySelector<HTMLButtonElement>(`.grid-btn[data-cols="${cols}"]`);
+      if (targetBtn && !targetBtn.classList.contains("active")) {
+        this._handleSidebarClick(targetBtn);
+      }
+    };
 
     // =============================================
     //  SIDEBAR
@@ -686,7 +699,7 @@ const { page } = Astro.props;
      ============================================== */
   :global(#motion-pagination) {
     --cell: 30px;
-    --checker-w: calc(var(--cell) * 1.5);
+    --checker-w: round(nearest, calc(var(--cell) * 1.5), 1px);
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -700,29 +713,36 @@ const { page } = Astro.props;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: calc(var(--cell) * 1.5);
+    height: round(nearest, calc(var(--cell) * 1.5), 1px);
     color: var(--text-inverse);
     font-weight: 899;
     font-size: clamp(var(--text-base), 2vw, var(--text-lg));
     font-family: inherit;
     line-height: 1;
     text-decoration: none;
-    background-color: transparent;
+    background-color: var(--color-primary);
     border: none;
     cursor: pointer;
     transition:
       opacity 0.2s ease,
       transform 0.2s ease;
-    background-image:
-      linear-gradient(var(--color-primary), var(--color-primary)),
-      repeating-conic-gradient(
-        var(--color-primary) 0 90deg,
-        transparent 0 180deg
-      );
-    background-size:
+    /* PNG mask: solid layer (text area) + checker layer (pattern area) */
+    -webkit-mask-image:
+      linear-gradient(black, black),
+      var(--checker-mask-uri);
+    mask-image:
+      linear-gradient(black, black),
+      var(--checker-mask-uri);
+    -webkit-mask-size:
       calc(100% - var(--checker-w) + 1px) 100%,
-      var(--cell) var(--cell);
-    background-repeat: no-repeat, repeat;
+      round(nearest, var(--cell), 1px) round(nearest, var(--cell), 1px);
+    mask-size:
+      calc(100% - var(--checker-w) + 1px) 100%,
+      round(nearest, var(--cell), 1px) round(nearest, var(--cell), 1px);
+    -webkit-mask-repeat: no-repeat, repeat;
+    mask-repeat: no-repeat, repeat;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
   }
   :global(#motion-pagination .page-nav-btn:hover) {
     transform: translateY(-2px);
@@ -733,9 +753,8 @@ const { page } = Astro.props;
         clamp(var(--spacing-3), 2vw, var(--spacing-36)) + var(--checker-w)
       )
       0 clamp(var(--spacing-3), 2vw, var(--spacing-6));
-    background-position:
-      left top,
-      right top;
+    -webkit-mask-position: left top, right calc(var(--cell) / 2);
+    mask-position: left top, right calc(var(--cell) / 2);
     justify-self: start;
   }
   :global(#motion-pagination .next-btn) {
@@ -743,16 +762,9 @@ const { page } = Astro.props;
       calc(
         clamp(var(--spacing-3), 2vw, var(--spacing-36)) + var(--checker-w)
       );
-    background-position:
-      right top,
-      left top;
+    -webkit-mask-position: right top, 0 0;
+    mask-position: right top, 0 0;
     justify-self: end;
-    background-image:
-      linear-gradient(var(--color-primary), var(--color-primary)),
-      repeating-conic-gradient(
-        transparent 0 90deg,
-        var(--color-primary) 0 180deg
-      );
   }
   :global(#motion-pagination .page-numbers) {
     display: flex;

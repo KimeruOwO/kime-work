@@ -13,7 +13,7 @@ interface Props {
 
 const SITE_URL = "https://kimeyu.vercel.app";
 const DEFAULT_DESC =
-  "Beyond shapes, a hidden frequency. Every frame, a destination. Every rhythm, a heartbeat. Flawless harmony between graphics and sound. Catch it if you can. — Hi! I'm KIMEYU!";
+  "Beyond shapes, a hidden frequency. Every frame, a destination. Every rhythm, a heartbeat. Flawless harmony between graphics and sound. Catch it if you can. â€” Hi! I'm KIMEYU!";
 
 const {
   title,
@@ -36,12 +36,11 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
 
     <meta name="theme-color" content="#FA729D" />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="preload"
-      href="/fonts/Murecho-Variable.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin="anonymous"
+      href="https://fonts.googleapis.com/css2?family=Murecho:wght@100..900&display=swap"
+      rel="stylesheet"
     />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
@@ -68,6 +67,9 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
     <slot name="head" />
   </head>
   <body>
+    <div id="splash-screen" aria-hidden="true">
+      <div id="splash-lottie"></div>
+    </div>
     <SvgDefs />
     <Header />
     <main>
@@ -82,4 +84,268 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
   main {
     min-height: calc(100vh - var(--header-height-pc));
   }
+
+  #splash-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+  }
+
+  #splash-screen.gone {
+    display: none;
+  }
+
+  #splash-lottie {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: block;
+    transform: translate3d(0, 0, 0);
+    text-align: center;
+  }
+
+  @keyframes twxd-wave-in {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  @keyframes twxd-wave-out {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(100vw);
+    }
+  }
 </style>
+
+<script>
+  const ROWS = 5; // Khối to vãi nồi theo ý mày
+  // Đẩy ga lên Max Speed - Cự ly kiếm lướt (Flash Wipe)
+  const EVENT_DUR = 450; // Quẹt vèo cái màn hình luôn
+  const ROW_DELAYS = [120, 0, 240, 60, 180]; // Scale bóp cực chặt để gợn sóng bám đuôi sát nút
+
+  // Tỷ lệ vàng mổ được từ TWXD:
+  const EASING = "cubic-bezier(0.77, 0, 0.175, 1)";
+  const STAGGER_DUR = 40; // 2 màng lướt đè nhau chênh lệch siêu nhỏ (40ms)
+
+  // Build a panel grid. Panels start off-screen left, no transition yet.
+  // Always call activateEnter() AFTER (appendChild + void offsetHeight).
+  const buildGrid = (zIndex: string): HTMLElement => {
+    const grid = document.createElement("div");
+    grid.style.cssText = [
+      "position:fixed",
+      "inset:0",
+      "display:flex",
+      "flex-direction:column",
+      "pointer-events:none",
+      `z-index:${zIndex}`,
+    ].join(";");
+    for (let i = 0; i < ROWS; i++) {
+      const panel = document.createElement("div");
+
+      const delay = ROW_DELAYS[i % 5];
+      panel.dataset.delay = delay.toString();
+
+      panel.style.cssText = [
+        "position:relative",
+        "flex:1",
+        "width:105%",
+        "margin-top:-1px", // Eliminate sub-pixel flex rounding gaps
+      ].join(";");
+
+      const band2 = document.createElement("div");
+      band2.className = "nav-band-2";
+      band2.style.cssText = `position:absolute; inset:0; background:${i % 2 === 0 ? "#7ae6fa" : "#fa729d"}; transform:translateX(-100%); will-change:transform; backface-visibility:hidden; -webkit-backface-visibility:hidden;`;
+
+      const band3 = document.createElement("div");
+      band3.className = "nav-band-3";
+      band3.style.cssText = `position:absolute; inset:0; background:${i % 2 === 0 ? "#fa729d" : "#7ae6fa"}; transform:translateX(-100%); will-change:transform; backface-visibility:hidden; -webkit-backface-visibility:hidden;`;
+
+      panel.appendChild(band2);
+      panel.appendChild(band3);
+      grid.appendChild(panel);
+    }
+    return grid;
+  };
+
+  // --- CORE ANIMATION ENGINE ---
+  const playWaveIn = (grid: HTMLElement): number => {
+    const maxDelay = Math.max(...ROW_DELAYS);
+    Array.from(grid.children).forEach((child) => {
+      const el = child as HTMLElement;
+      const delay = Number(el.dataset.delay);
+      const b2 = el.querySelector(".nav-band-2") as HTMLElement;
+      const b3 = el.querySelector(".nav-band-3") as HTMLElement;
+
+      b2.style.animation = `${EVENT_DUR}ms ${EASING} ${delay}ms 1 normal both running twxd-wave-in`;
+      b3.style.animation = `${EVENT_DUR}ms ${EASING} ${delay + STAGGER_DUR}ms 1 normal both running twxd-wave-in`;
+    });
+    return maxDelay + STAGGER_DUR + EVENT_DUR;
+  };
+
+  const playWaveOut = (grid: HTMLElement): number => {
+    let maxEndTime = 0;
+    Array.from(grid.children).forEach((child) => {
+      const el = child as HTMLElement;
+      const delay = Number(el.dataset.delay);
+      const b2 = el.querySelector(".nav-band-2") as HTMLElement;
+      const b3 = el.querySelector(".nav-band-3") as HTMLElement;
+
+      b2.style.animation = `${EVENT_DUR}ms ${EASING} ${delay + STAGGER_DUR}ms 1 normal both running twxd-wave-out`;
+      b3.style.animation = `${EVENT_DUR}ms ${EASING} ${delay}ms 1 normal both running twxd-wave-out`;
+
+      const totalTime = delay + STAGGER_DUR + EVENT_DUR;
+      if (totalTime > maxEndTime) {
+        maxEndTime = totalTime;
+      }
+    });
+    return maxEndTime;
+  };
+
+  // --- SPLASH ---
+  // plays on every hard load / reload
+  let hasNavigated = false;
+
+  const initSplash = async (): Promise<void> => {
+    const splash = document.getElementById(
+      "splash-screen",
+    ) as HTMLElement | null;
+    if (!splash) return;
+
+    splash.classList.remove("gone");
+    splash.style.cssText = "";
+
+    const lottieContainer = document.getElementById(
+      "splash-lottie",
+    ) as HTMLElement | null;
+    if (!lottieContainer) return;
+    lottieContainer.style.display = "";
+
+    try {
+      const lottieModule = await import("lottie-web");
+      const lottie = lottieModule.default || lottieModule;
+      document.documentElement.style.overflow = "hidden";
+      lottie.destroy();
+
+      const anim = lottie.loadAnimation({
+        container: lottieContainer,
+        renderer: "svg",
+        loop: false,
+        autoplay: true,
+        path: "/lottie/webloading.json",
+      });
+
+      anim.addEventListener("complete", () => {
+        const grid = buildGrid("999999");
+        document.body.appendChild(grid);
+        void grid.offsetHeight;
+
+        const fullyCoveredTime = playWaveIn(grid);
+
+        // Hide splash layer precisely when the SLOWEST panel has completely covered the screen!
+        setTimeout(() => {
+          splash.classList.add("gone");
+          anim.destroy();
+          lottieContainer.style.display = "none";
+
+          const exitTime = playWaveOut(grid);
+
+          // Clean up
+          setTimeout(() => {
+            grid.remove();
+            document.documentElement.style.overflow = "";
+          }, exitTime + 50);
+        }, fullyCoveredTime + 20);
+      });
+    } catch (err) {
+      splash.classList.add("gone");
+      document.documentElement.style.overflow = "";
+      console.error("[Splash]", err);
+    }
+  };
+
+  // --- PAGE TRANSITION ---
+  let navGrid: HTMLElement | null = null;
+  let isModeSwitchNav = false;
+  let pendingNavGrid: HTMLElement | null = null;
+
+  // Intercept View Transitions Navigation
+  document.addEventListener("astro:before-preparation", (e: any) => {
+    hasNavigated = true;
+
+    const fromPath = e.from?.pathname ?? "";
+    const toPath = e.to?.pathname ?? "";
+    isModeSwitchNav =
+      fromPath.startsWith("/work/") && toPath.startsWith("/work/");
+    if (isModeSwitchNav) return;
+
+    navGrid?.remove();
+
+    navGrid = buildGrid("999999");
+    pendingNavGrid = navGrid;
+    document.documentElement.style.overflow = "hidden";
+    document.documentElement.appendChild(navGrid);
+    void navGrid.offsetHeight;
+
+    // START WIPE IN PHASE
+    const fullyCoveredTime = playWaveIn(navGrid);
+
+    // Let the network fetch proceed, but DELAY the actual DOM Swap until the wave reaches its peak
+    const originalLoader = e.loader;
+    e.loader = async () => {
+      const waitPromise = new Promise((resolve) =>
+        setTimeout(resolve, fullyCoveredTime + 20),
+      );
+      await Promise.all([originalLoader(), waitPromise]);
+    };
+  });
+
+  // Execute WIPE OUT PHASE post-swap securely
+  document.addEventListener("astro:after-swap", () => {
+    if (pendingNavGrid) {
+      const exitTime = playWaveOut(pendingNavGrid);
+      const activeGrid = pendingNavGrid;
+      pendingNavGrid = null;
+
+      setTimeout(() => {
+        activeGrid.remove();
+        if (activeGrid === navGrid) navGrid = null;
+        if (
+          document.getElementById("splash-screen")?.classList.contains("gone")
+        ) {
+          document.documentElement.style.overflow = "";
+        }
+      }, exitTime + 50);
+    }
+  });
+
+  // Pre-hide New Splash immediately on DOM swap
+  document.addEventListener("astro:before-swap", (e: any) => {
+    e.newDocument.getElementById("splash-screen")?.classList.add("gone");
+  });
+
+  // Navigation Complete Hook
+  document.addEventListener("astro:page-load", () => {
+    if (!hasNavigated) {
+      initSplash();
+      return;
+    }
+
+    hasNavigated = false;
+    document.getElementById("splash-screen")?.classList.add("gone");
+
+    if (isModeSwitchNav) {
+      isModeSwitchNav = false;
+      document.documentElement.style.overflow = "";
+    }
+  });
+</script>

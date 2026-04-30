@@ -1,0 +1,130 @@
+---
+// CyberRibbon.astro
+// Bulletproof Scalable Vector Graphics implementation matched purely to the reference photo.
+// Uses Vanilla CSS for clamps to completely bypass Tailwind JIT arbitrary value compilation failures.
+---
+
+<div
+  style="display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: center; width: 100%; margin-top: 3rem; margin-bottom: 1.5rem; min-height: clamp(30px, 4.65vw, 60px);"
+  class="relative z-[100] overflow-hidden bg-transparent"
+  aria-hidden="true"
+>
+  <!-- Outer Left Infinite Tail -->
+  <div
+    style="background-color: var(--color-primary); min-width: 5px; flex-grow: 1; flex-shrink: 1; height: clamp(22px, 3.5vw, 45px);"
+  >
+  </div>
+
+  <!-- 1. LEFT WING -->
+  <svg
+    width="160"
+    height="40"
+    viewBox="0 0 160 40"
+    style="height: clamp(30px, 4.65vw, 60px); width: clamp(120px, 18.6vw, 240px); flex-shrink: 0;"
+    preserveAspectRatio="xMidYMid meet"
+    class="relative z-10 mx-1 md:mx-4 xl:mx-6"
+  >
+    <rect x="0" y="5" width="10" height="10" class="pink-fill"></rect>
+    <rect x="20" y="5" width="10" height="10" class="pink-fill"></rect>
+    <rect x="40" y="5" width="10" height="10" class="pink-fill"></rect>
+    <rect x="10" y="15" width="10" height="10" class="pink-fill"></rect>
+    <rect x="30" y="15" width="10" height="10" class="pink-fill"></rect>
+    <rect x="0" y="25" width="10" height="10" class="pink-fill"></rect>
+    <rect x="20" y="25" width="10" height="10" class="pink-fill"></rect>
+    <rect x="40" y="25" width="10" height="10" class="pink-fill"></rect>
+    <polygon points="65,20  80,5  90,5  75,20  90,35  80,35" class="pink-fill"
+    ></polygon>
+    <polygon points="80,20  100,0  120,20  100,40" class="pink-fill"></polygon>
+    <polygon points="105,12  105,28  89,20" class="white-fill"></polygon>
+    <polygon
+      points="120,10  125,10  135,20  125,30  120,30  130,20"
+      class="pink-fill"></polygon>
+    <polygon
+      points="130,10  135,10  145,20  135,30  130,30  140,20"
+      class="pink-fill"></polygon>
+  </svg>
+
+  <!-- 2. CENTERPIECE (FLEXIBLE ARCHITECTURE) -->
+  <div
+    style="height: clamp(30px, 4.65vw, 60px); width: clamp(120px, 40vw, 540px); flex-shrink: 1; flex-grow: 1; display: flex; align-items: stretch;"
+    class="relative z-10 mx-1 md:mx-4 xl:mx-6"
+  >
+    <!-- Left Arrowhead & Decals -->
+    <svg
+      viewBox="0 0 50 40"
+      style="height: 100%; width: clamp(37.5px, 5.8125vw, 75px); flex-shrink: 0;"
+      preserveAspectRatio="xMinYMid meet"
+    >
+      <polygon
+        points="10,20  20,10  25,10  15,20  25,30  20,30"
+        class="pink-fill"></polygon>
+      <polygon points="15,20  30,5  40,5  25,20  40,35  30,35" class="pink-fill"
+      ></polygon>
+      <polygon points="50,0  50,40  30,20" class="pink-fill"></polygon>
+    </svg>
+    <!-- Stretchable Middle Line -->
+    <div
+      style="background-color: var(--color-primary); flex-grow: 1; height: 100%; margin: 0 -1px; position: relative; z-index: -1;"
+    >
+    </div>
+    <!-- Right Arrowhead & Decals -->
+    <svg
+      viewBox="0 0 40 40"
+      style="height: 100%; width: clamp(30px, 4.65vw, 60px); flex-shrink: 0;"
+      preserveAspectRatio="xMaxYMid meet"
+    >
+      <polygon points="0,0  20,20  0,40" class="pink-fill"></polygon>
+      <polygon points="10,5  20,5  35,20  20,35  10,35  25,20" class="pink-fill"
+      ></polygon>
+      <polygon
+        points="25,10  30,10  40,20  30,30  25,30  35,20"
+        class="pink-fill"></polygon>
+    </svg>
+  </div>
+
+  <!-- 3. RIGHT WING -->
+  <svg
+    width="160"
+    height="40"
+    viewBox="0 0 160 40"
+    style="height: clamp(30px, 4.65vw, 60px); width: clamp(120px, 18.6vw, 240px); flex-shrink: 0;"
+    preserveAspectRatio="xMidYMid meet"
+    class="relative z-10 mx-1 md:mx-4 xl:mx-6"
+  >
+    <polygon points="30,10  25,10  15,20  25,30  30,30  20,20" class="pink-fill"
+    ></polygon>
+    <polygon points="40,10  35,10  25,20  35,30  40,30  30,20" class="pink-fill"
+    ></polygon>
+    <polygon points="40,20  60,0  80,20  60,40" class="pink-fill"></polygon>
+    <polygon points="55,12  55,28  71,20" class="white-fill"></polygon>
+    <polygon points="70,5  80,5  95,20  80,35  70,35  85,20" class="pink-fill"
+    ></polygon>
+    <rect x="110" y="5" width="10" height="10" class="cyan-fill"></rect>
+    <rect x="130" y="5" width="10" height="10" class="cyan-fill"></rect>
+    <rect x="150" y="5" width="10" height="10" class="cyan-fill"></rect>
+    <rect x="120" y="15" width="10" height="10" class="cyan-fill"></rect>
+    <rect x="140" y="15" width="10" height="10" class="cyan-fill"></rect>
+    <rect x="110" y="25" width="10" height="10" class="cyan-fill"></rect>
+    <rect x="130" y="25" width="10" height="10" class="cyan-fill"></rect>
+    <rect x="150" y="25" width="10" height="10" class="cyan-fill"></rect>
+  </svg>
+
+  <!-- Outer Right Infinite Tail -->
+  <div
+    style="flex-grow: 1; flex-shrink: 1; height: clamp(22px, 3.5vw, 45px); background: linear-gradient(90deg, var(--color-secondary-bright) 0%, #99f0ff 100%);"
+    class="min-w-[5px]"
+  >
+  </div>
+</div>
+
+<style>
+  .pink-fill {
+    fill: var(--color-primary);
+  }
+  .cyan-fill {
+    fill: var(--color-secondary-bright);
+  }
+  .white-fill {
+    fill: var(--base-white);
+  }
+</style>

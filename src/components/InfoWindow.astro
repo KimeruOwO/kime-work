@@ -14,437 +14,449 @@ const iconMap: Record<string, any> = {
 ---
 
 <retro-window class="retro-window">
-    <header class="retro-window__header">
-        <h2 class="retro-window__title">INFORMATION</h2>
+  <header class="retro-window__header">
+    <h2 class="retro-window__title">INFORMATION</h2>
 
-        <div class="retro-window__socials-wrapper">
-            <button
-                class="retro-window__socials-toggle"
-                aria-label="Toggle Social Links"
-                aria-expanded="false"
-                aria-controls="socials-menu"
-            >
-                <svg
-                    viewBox="0 0 24 24"
-                    width="24"
-                    height="24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                >
-                    <circle cx="5" cy="12" r="2.5"></circle>
-                    <circle cx="12" cy="12" r="2.5"></circle>
-                    <circle cx="19" cy="12" r="2.5"></circle>
-                </svg>
-            </button>
-            <nav
-                id="socials-menu"
-                class="retro-window__socials"
-                aria-label="Social Links"
-            >
-                {SOCIAL_LINKS.map((link) => {
-                    const Icon = iconMap[link.platform];
-                    return (
-                        <a href={link.href} target="_blank" rel="noopener noreferrer" class="social-link" aria-label={link.label}>
-                            <Icon />
-                        </a>
-                    );
-                })}
-            </nav>
-        </div>
-    </header>
-
-    <div class="retro-window__body">
-        <section class="info-section">
-            <div class="info-section__title-row">
-                <h3 class="info-section__heading">// ABOUT ME //</h3>
-            </div>
-            <div class="info-section__content">
-                <ul class="custom-list">
-                    <li>
-                        I'm a motion designer working across motion graphics,
-                        music videos, debut videos, and graphic design.<br />
-                        My work focuses on rhythm, movement, and emotional flow that
-                        shaping visuals that respond to sound, timing, and atmosphere.
-                    </li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="info-section info-section--no-decor">
-            <div class="info-section__title-row">
-                <h3 class="info-section__heading">
-                    // ABOUT THE NAME "KIMEYU" //
-                </h3>
-            </div>
-            <div class="info-section__content">
-                <p>
-                    Kimeyu originates from my former name Kimeru, a Japanese
-                    word meaning decisive or determined. Over time, I adapted it
-                    into Kimeyu which softer, more approachable, and reflective
-                    of how my creative direction has evolved.
-                </p>
-                <p>
-                    The name represents a shift from rigidity to flexibility,
-                    while still holding onto intention and focus.
-                </p>
-            </div>
-        </section>
+    <div class="retro-window__socials-wrapper">
+      <button
+        class="retro-window__socials-toggle"
+        aria-label="Toggle Social Links"
+        aria-expanded="false"
+        aria-controls="socials-menu"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <circle cx="5" cy="12" r="2.5"></circle>
+          <circle cx="12" cy="12" r="2.5"></circle>
+          <circle cx="19" cy="12" r="2.5"></circle>
+        </svg>
+      </button>
+      <nav
+        id="socials-menu"
+        class="retro-window__socials"
+        aria-label="Social Links"
+      >
+        {
+          SOCIAL_LINKS.map((link) => {
+            const Icon = iconMap[link.platform];
+            return (
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-link"
+                aria-label={link.label}
+              >
+                <Icon />
+              </a>
+            );
+          })
+        }
+      </nav>
     </div>
+  </header>
+
+  <div class="retro-window__body">
+    <section class="info-section">
+      <div class="info-section__title-row">
+        <h3 class="info-section__heading">// MISSION //</h3>
+      </div>
+      <div class="info-section__content">
+        <ul class="custom-list">
+          <li class="mission-list-item">
+            <p><strong>For the things I truly love</strong></p>
+            <p>
+              I grew up surrounded by games, music, and the internet—spaces
+              where visuals, sound, and interaction blend into one. From an
+              early age, I was drawn to motion and rhythm, and over time, that
+              curiosity evolved into a desire to create visuals that don't just
+              exist, but move and feel alive.
+            </p>
+            <p>
+              As a Motion Designer, I’ve worked across freelance projects,
+              taking on both execution and directional roles. I focus on
+              crafting visual experiences where timing, movement, and emotion
+              are tightly connected.
+            </p>
+            <p>
+              Through motion and design, I aim to create content that resonates
+              on a deeper level, something that, even in a small way, could stay
+              with someone, just like the things that once shaped me.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="info-section info-section--no-decor">
+      <div class="info-section__title-row">
+        <h3 class="info-section__heading">// ABOUT THE NAME "KIMEYU" //</h3>
+      </div>
+      <div class="info-section__content">
+        <p>
+          Kimeyu originates from my former name Kimeru, a Japanese word meaning
+          decisive or determined. Over time, I adapted it into Kimeyu which
+          softer, more approachable.
+        </p>
+      </div>
+    </section>
+  </div>
 </retro-window>
 
 <script>
-    class RetroWindow extends HTMLElement {
-        private _cleanup: (() => void) | null = null;
+  class RetroWindow extends HTMLElement {
+    private _cleanup: (() => void) | null = null;
 
-        connectedCallback() {
-            const wrapper = this.querySelector<HTMLElement>(
-                ".retro-window__socials-wrapper",
-            );
-            const toggle = wrapper?.querySelector<HTMLButtonElement>(
-                ".retro-window__socials-toggle",
-            );
-            const menu = wrapper?.querySelector<HTMLElement>(
-                ".retro-window__socials",
-            );
+    connectedCallback() {
+      const wrapper = this.querySelector<HTMLElement>(
+        ".retro-window__socials-wrapper",
+      );
+      const toggle = wrapper?.querySelector<HTMLButtonElement>(
+        ".retro-window__socials-toggle",
+      );
+      const menu = wrapper?.querySelector<HTMLElement>(
+        ".retro-window__socials",
+      );
 
-            if (!wrapper || !toggle || !menu) return;
+      if (!wrapper || !toggle || !menu) return;
 
-            const toggleMenu = (forceState?: boolean) => {
-                const isOpening =
-                    forceState !== undefined
-                        ? forceState
-                        : !menu.classList.contains("is-open");
-                menu.classList.toggle("is-open", isOpening);
-                toggle.setAttribute("aria-expanded", String(isOpening));
-            };
+      const toggleMenu = (forceState?: boolean) => {
+        const isOpening =
+          forceState !== undefined
+            ? forceState
+            : !menu.classList.contains("is-open");
+        menu.classList.toggle("is-open", isOpening);
+        toggle.setAttribute("aria-expanded", String(isOpening));
+      };
 
-            toggle.addEventListener("click", (e) => {
-                e.stopPropagation();
-                toggleMenu();
-            });
+      toggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleMenu();
+      });
 
-            this.addEventListener("keydown", (e) => {
-                if (e.key === "Escape" && menu.classList.contains("is-open")) {
-                    toggleMenu(false);
-                    toggle.focus();
-                }
-            });
-
-            const handleOutsideClick = (e: Event) => {
-                if (
-                    !wrapper.contains(e.target as Node) &&
-                    menu.classList.contains("is-open")
-                ) {
-                    toggleMenu(false);
-                }
-            };
-
-            document.addEventListener("click", handleOutsideClick);
-
-            this._cleanup = () =>
-                document.removeEventListener("click", handleOutsideClick);
+      this.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && menu.classList.contains("is-open")) {
+          toggleMenu(false);
+          toggle.focus();
         }
+      });
 
-        disconnectedCallback() {
-            if (this._cleanup) this._cleanup();
+      const handleOutsideClick = (e: Event) => {
+        if (
+          !wrapper.contains(e.target as Node) &&
+          menu.classList.contains("is-open")
+        ) {
+          toggleMenu(false);
         }
+      };
+
+      document.addEventListener("click", handleOutsideClick);
+
+      this._cleanup = () =>
+        document.removeEventListener("click", handleOutsideClick);
     }
 
-    if (!customElements.get("retro-window")) {
-        customElements.define("retro-window", RetroWindow);
+    disconnectedCallback() {
+      if (this._cleanup) this._cleanup();
     }
+  }
+
+  if (!customElements.get("retro-window")) {
+    customElements.define("retro-window", RetroWindow);
+  }
 </script>
 
 <style>
+  .retro-window {
+    display: block;
+    border: var(--border-width-sm) solid var(--win-border);
+    border-radius: var(--win-radius);
+    background-color: var(--win-bg-body);
+    max-width: 50rem;
+    margin: 0 auto;
+    font-family: var(--font-sans);
+  }
+
+  .retro-window__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--win-bg-header);
+    border-bottom: var(--border-width-sm) solid var(--win-border);
+    padding: var(--spacing-3) var(--spacing-6);
+    border-top-left-radius: calc(var(--win-radius) - var(--border-width-sm));
+    border-top-right-radius: calc(var(--win-radius) - var(--border-width-sm));
+    position: relative;
+  }
+
+  .retro-window__title {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 899;
+    color: var(--win-text-dark);
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+  }
+
+  .retro-window__title::before {
+    content: "";
+    display: inline-block;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    background-color: var(--win-accent-pink);
+    border: var(--border-width-sm) solid var(--win-border);
+    border-radius: 50%;
+    margin-right: var(--spacing-4);
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  .retro-window__socials-wrapper {
+    position: static;
+  }
+
+  .retro-window__socials-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--win-text-dark);
+    cursor: pointer;
+    padding: var(--spacing-1);
+  }
+
+  .retro-window__socials {
+    display: flex;
+    gap: var(--spacing-4);
+    align-items: center;
+  }
+
+  .social-link {
+    color: var(--win-text-dark);
+    text-decoration: none;
+    font-weight: 899;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .social-link:hover {
+    opacity: 0.7;
+  }
+
+  .social-link :global(svg) {
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    fill: currentColor;
+    display: block;
+  }
+
+  .retro-window__body {
+    padding: var(--spacing-10) var(--spacing-10);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-10);
+    border-bottom-left-radius: calc(var(--win-radius) - var(--border-width-sm));
+    border-bottom-right-radius: calc(
+      var(--win-radius) - var(--border-width-sm)
+    );
+  }
+
+  .info-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  .info-section__title-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  /* ZERO DOM BLOAT DOCTRINE: Replacing empty <div> with structural multi-layer math mask */
+  .info-section__title-row::before {
+    content: "";
+    display: block;
+    flex-shrink: 0;
+
+    --decor-h: var(--spacing-6);
+    --decor-width: 8.75rem;
+    --checker-cell: calc(var(--decor-h) / 1.5);
+    --gap: var(--spacing-1);
+
+    height: var(--decor-h);
+    width: var(--decor-width);
+
+    background-color: var(--win-bg-body);
+    background-image:
+      linear-gradient(
+        to right,
+        transparent 0,
+        transparent var(--decor-h),
+        var(--win-bg-body) var(--decor-h),
+        var(--win-bg-body) calc(var(--decor-h) + var(--gap)),
+        var(--win-bg-header) calc(var(--decor-h) + var(--gap)),
+        var(--win-bg-header) 100%
+      ),
+      repeating-conic-gradient(
+        var(--win-bg-header) 0 90deg,
+        transparent 0 180deg
+      );
+    background-size:
+      100% 100%,
+      var(--checker-cell) var(--checker-cell);
+    background-position:
+      0 0,
+      calc(var(--checker-cell) / 2) 0;
+  }
+
+  .info-section--no-decor .info-section__title-row::before {
+    display: none;
+  }
+
+  .info-section__heading {
+    margin: 0;
+    color: var(--win-accent-pink);
+    font-size: var(--text-base);
+    font-weight: 899;
+    letter-spacing: 0.02em;
+    text-align: center;
+    text-align-last: auto;
+    hyphens: none;
+    -webkit-hyphens: none;
+  }
+
+  .info-section__content {
+    color: var(--win-text-dark);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    font-weight: 400; /* Trả về mức Regular để bóp hoàn toàn hiện tượng sưng tấy nét hoa */
+  }
+
+  .info-section__content p,
+  .info-section__content li {
+    text-align: justify;
+    text-align-last: left;
+  }
+
+  .info-section__content p:last-child {
+    margin: 0;
+  }
+
+  .custom-list {
+    margin: 0;
+    padding-left: 0;
+  }
+  .mission-list-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  .custom-list li {
+    padding-left: 0;
+  }
+  .custom-list li::marker {
+    color: var(--win-text-dark);
+  }
+
+  @media (min-width: 1024px) {
     .retro-window {
-        display: block;
-        border: var(--border-width-sm) solid var(--win-border);
-        border-radius: var(--win-radius);
-        background-color: var(--win-bg-body);
-        max-width: 50rem;
-        margin: 0 auto;
-        font-family: var(--font-sans);
+      position: relative;
+      --decor-cell: clamp(6px, 0.8vw, 6px);
     }
 
-    .retro-window__header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: var(--win-bg-header);
-        border-bottom: var(--border-width-sm) solid var(--win-border);
-        padding: var(--spacing-3) var(--spacing-6);
-        border-top-left-radius: calc(
-            var(--win-radius) - var(--border-width-sm)
-        );
-        border-top-right-radius: calc(
-            var(--win-radius) - var(--border-width-sm)
-        );
-        position: relative;
+    .retro-window::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: calc(100% + var(--spacing-4));
+
+      --blocks-x: 3;
+      --blocks-y: 3.5;
+
+      width: calc(var(--decor-cell) * var(--blocks-x));
+      height: calc(var(--decor-cell) * var(--blocks-y));
+      background-color: var(--win-accent-pink);
     }
 
-    .retro-window__title {
-        margin: 0;
-        font-size: var(--text-base);
-        font-weight: 899;
-        color: var(--win-text-dark);
-        letter-spacing: 0.05em;
-        display: flex;
-        align-items: center;
-    }
+    .retro-window::after {
+      content: "";
+      position: absolute;
+      top: calc(var(--decor-cell) * 4);
+      right: calc(100% + var(--spacing-4));
 
-    .retro-window__title::before {
-        content: "";
-        display: inline-block;
-        width: var(--spacing-6);
-        height: var(--spacing-6);
-        background-color: var(--win-accent-pink);
-        border: var(--border-width-sm) solid var(--win-border);
-        border-radius: 50%;
-        margin-right: var(--spacing-4);
-        vertical-align: middle;
-        flex-shrink: 0;
-    }
+      --blocks-x: 3;
+      --blocks-y: 5;
 
-    .retro-window__socials-wrapper {
-        position: static;
-    }
+      width: calc(var(--decor-cell) * var(--blocks-x));
+      aspect-ratio: var(--blocks-x) / var(--blocks-y);
 
-    .retro-window__socials-toggle {
-        display: none;
-        background: transparent;
-        border: none;
-        color: var(--win-text-dark);
-        cursor: pointer;
-        padding: var(--spacing-1);
-    }
-
-    .retro-window__socials {
-        display: flex;
-        gap: var(--spacing-4);
-        align-items: center;
-    }
-
-    .social-link {
-        color: var(--win-text-dark);
-        text-decoration: none;
-        font-weight: 899;
-        transition: opacity 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    .social-link:hover {
-        opacity: 0.7;
-    }
-
-    .social-link :global(svg) {
-        width: var(--spacing-6);
-        height: var(--spacing-6);
-        fill: currentColor;
-        display: block;
-    }
-
-    .retro-window__body {
-        padding: var(--spacing-10) var(--spacing-10);
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-10);
-        border-bottom-left-radius: calc(
-            var(--win-radius) - var(--border-width-sm)
-        );
-        border-bottom-right-radius: calc(
-            var(--win-radius) - var(--border-width-sm)
-        );
-    }
-
-    .info-section {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-4);
+      background: repeating-conic-gradient(
+          transparent 0 90deg,
+          var(--win-accent-pink) 0 180deg
+        )
+        0 0 / calc(100% / var(--blocks-x) * 2) calc(100% / var(--blocks-y) * 2);
     }
 
     .info-section__title-row {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-4);
+      flex-direction: row;
+      align-items: center;
     }
 
-    /* ZERO DOM BLOAT DOCTRINE: Replacing empty <div> with structural multi-layer math mask */
-    .info-section__title-row::before {
-        content: "";
-        display: block;
-        flex-shrink: 0;
-
-        --decor-h: var(--spacing-6);
-        --decor-width: 8.75rem;
-        --checker-cell: calc(var(--decor-h) / 1.5);
-        --gap: var(--spacing-1);
-
-        height: var(--decor-h);
-        width: var(--decor-width);
-
-        background-color: var(--win-bg-body);
-        background-image: 
-            linear-gradient(
-                to right,
-                transparent 0,
-                transparent var(--decor-h),
-                var(--win-bg-body) var(--decor-h),
-                var(--win-bg-body) calc(var(--decor-h) + var(--gap)),
-                var(--win-bg-header) calc(var(--decor-h) + var(--gap)),
-                var(--win-bg-header) 100%
-            ),
-            repeating-conic-gradient(
-                var(--win-bg-header) 0 90deg,
-                transparent 0 180deg
-            );
-        background-size: 
-            100% 100%,
-            var(--checker-cell) var(--checker-cell);
-        background-position: 
-            0 0,
-            calc(var(--checker-cell) / 2) 0;
-    }
-
-    .info-section--no-decor .info-section__title-row::before {
-        display: none;
-    }
-
-    .info-section__heading {
-        margin: 0;
-        color: var(--win-accent-pink);
-        font-size: var(--text-base);
-        font-weight: 899;
-        letter-spacing: 0.02em;
-        text-align: center;
-        text-align-last: auto;
-        hyphens: none;
-        -webkit-hyphens: none;
-    }
-
-    .info-section__content {
-        color: var(--win-text-dark);
-        font-size: var(--text-base);
-        line-height: 1.6;
-        font-weight: 500;
-    }
-
-    .info-section__content p,
-    .info-section__content li {
-        text-align: justify;
-        text-align-last: left;
-    }
-
-    .info-section__content p:last-child {
-        margin: 0;
-    }
-
-    .custom-list {
-        margin: 0;
-        padding-left: 0;
+    .retro-window__body {
+      padding-top: var(--spacing-4);
     }
     .custom-list li {
-        padding-left: 0;
+      padding-left: var(--spacing-2);
     }
-    .custom-list li::marker {
-        color: var(--win-text-dark);
+    .custom-list {
+      margin: 0;
+      padding-left: var(--spacing-6);
     }
+  }
 
-    @media (min-width: 1024px) {
-        .retro-window {
-            position: relative;
-            --decor-cell: clamp(6px, 0.8vw, 6px);
-        }
-
-        .retro-window::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: calc(
-                100% + var(--spacing-4)
-            ); 
-
-            --blocks-x: 3; 
-            --blocks-y: 3.5; 
-
-            width: calc(var(--decor-cell) * var(--blocks-x));
-            height: calc(var(--decor-cell) * var(--blocks-y));
-            background-color: var(--win-accent-pink);
-        }
-
-        .retro-window::after {
-            content: "";
-            position: absolute;
-            top: calc(var(--decor-cell) * 4);
-            right: calc(100% + var(--spacing-4));
-
-            --blocks-x: 3;
-            --blocks-y: 5;
-
-            width: calc(var(--decor-cell) * var(--blocks-x));
-            aspect-ratio: var(--blocks-x) / var(--blocks-y);
-
-            background: repeating-conic-gradient(
-                    transparent 0 90deg,
-                    var(--win-accent-pink) 0 180deg
-                )
-                0 0 / calc(100% / var(--blocks-x) * 2)
-                calc(100% / var(--blocks-y) * 2);
-        }
-
-        .info-section__title-row {
-            flex-direction: row;
-            align-items: center;
-        }
-
-        .retro-window__body {
-            padding-top: var(--spacing-4);
-        }
-        .custom-list li {
-            padding-left: var(--spacing-2);
-        }
-        .custom-list {
-            margin: 0;
-            padding-left: var(--spacing-6);
-        }
+  @media (max-width: 640px) {
+    .retro-window__header {
+      flex-direction: row;
     }
 
-    @media (max-width: 640px) {
-        .retro-window__header {
-            flex-direction: row;
-        }
-
-        .retro-window__socials-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .retro-window__socials {
-            display: none;
-            position: absolute;
-            top: calc(100% + var(--spacing-2));
-            left: 50%;
-            right: auto;
-            transform: translateX(-50%);
-            width: max-content;
-            background-color: var(--win-bg-body);
-            border: var(--border-width-sm) solid var(--win-border);
-            border-radius: 1.25rem;
-            padding: var(--spacing-3) var(--spacing-5);
-            box-shadow: 4px 4px 0 var(--win-border);
-            z-index: 20;
-            flex-direction: row;
-            gap: var(--spacing-6);
-        }
-
-        .retro-window__socials.is-open {
-            display: flex;
-        }
-        .retro-window__body {
-            padding: var(--spacing-12) var(--spacing-6) var(--spacing-6);
-        }
+    .retro-window__socials-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+
+    .retro-window__socials {
+      display: none;
+      position: absolute;
+      top: calc(100% + var(--spacing-2));
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      width: max-content;
+      background-color: var(--win-bg-body);
+      border: var(--border-width-sm) solid var(--win-border);
+      border-radius: 1.25rem;
+      padding: var(--spacing-3) var(--spacing-5);
+      box-shadow: 4px 4px 0 var(--win-border);
+      z-index: 20;
+      flex-direction: row;
+      gap: var(--spacing-6);
+    }
+
+    .retro-window__socials.is-open {
+      display: flex;
+    }
+    .retro-window__body {
+      padding: var(--spacing-6) var(--spacing-6) var(--spacing-6);
+    }
+  }
 </style>

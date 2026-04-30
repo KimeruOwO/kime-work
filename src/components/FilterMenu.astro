@@ -87,9 +87,6 @@ const {
                 }
             }
 
-            // Gắn Event Delegation cực sạch chặn đứng Memory Leak:
-            // Truyền cứng Object interface "this" thay vì nhồi Anonymous Arrow Function. 
-            // Trình duyệt tự gọi hàm handleEvent() bằng C++ Native!
             this.addEventListener("click", this);
         }
 
@@ -98,7 +95,6 @@ const {
         }
 
         handleEvent(e: Event) {
-            // Bộ định tuyến (Event Router) chuẩn Unix
             if (e.type === "click") {
                 const target = e.target as HTMLElement;
                 const btn = target.closest(".filter-btn") as HTMLElement | null;
@@ -112,7 +108,6 @@ const {
                 
                 this._activateBtn(this._buttons, btn);
 
-                // Bắn event ra DOM thông báo bộ lọc đã thay đổi
                 this.dispatchEvent(
                     new CustomEvent("filter-changed", {
                         detail: { group: this._groupName, value: targetValue },
@@ -138,17 +133,15 @@ const {
         user-select: none;
     }
 
-    /* Mỏm bo 2 bên Trái, Phải - Tái sử dụng chung 1 Token Css */
     .filter-group__label,
     .filter-group::after {
         flex-shrink: 0;
         width: clamp(90px, 18vw, 150px);
-        background-color: var(--color-primary); /* Nền hồng */
+        background-color: var(--color-primary);
         border: var(--border-width-xs) solid var(--color-secondary-darker);
-        box-shadow: 4px 4px 0 var(--color-secondary-bright); /* Bóng Xanh Cyan */
+        box-shadow: 4px 4px 0 var(--color-secondary-bright);
     }
 
-    /* Label góc màn bên Trái */
     .filter-group__label {
         border-radius: var(--radius-2xl) 0 0 var(--radius-2xl);
         display: flex;
@@ -161,14 +154,12 @@ const {
         padding: 0 var(--spacing-4);
     }
 
-    /* Khối Bo góc phải trống rỗng (CẮT GỌT DOM - DÙNG GIẢ MẢO ::AFTER) */
     .filter-group::after {
         content: "";
         display: block;
         border-radius: 0 var(--radius-2xl) var(--radius-2xl) 0;
     }
 
-    /* Danh sách Option 1 Tầng ở Giữa */
     .filter-group__options {
         flex-grow: 1;
         display: flex;
@@ -177,16 +168,14 @@ const {
         justify-content: center;
     }
 
-    /* Nút con */
     .filter-btn {
-        flex: 1; /* Stretch cho bằng nhau */
+        flex: 1;
         min-height: clamp(38px, 6vw, 48px);
-        background-color: var(--color-secondary-light); /* Màu xanh Cyan lợt */
+        background-color: var(--color-secondary-light);
         border: var(--border-width-xs) solid var(--color-secondary-darker);
-        border-radius: 0; /* Vuông chằn chặn */
+        border-radius: 0;
         color: var(--color-secondary-darker);
         font-weight: 899;
-        /* Giảm nhẹ hệ số chữ trên Tablet để tránh chiếm diện tích ngang */
         font-size: clamp(11px, 1.5vw, var(--text-base));
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -201,29 +190,20 @@ const {
         display: flex;
         align-items: center;
         justify-content: center;
-        /* Ép lề mềm để giải phóng không gian lúc bị chật */
         padding: 0 clamp(8px, 1.5vw, 16px);
-        /* KHOÁ CHỐNG XUỐNG DÒNG: Tuyệt đối dàn hàng ngang 1 dòng duy nhất */
         white-space: nowrap;
-
-        /* Bóng đổ Hồng Pink */
         box-shadow: 4px 4px 0 var(--color-primary);
     }
 
-    /* KHI Ở MOBILE (DƯỚI 768px): CÁC NÚT VUÔNG VẮN HOÀN TOÀN (BORDER-RADIUS: 0) ĐÃ ĐƯỢC KẾ THỪA TỪ .filter-btn */
-
-    /* Hover Nút chưa Active */
     .filter-btn:hover:not(.is-active) {
         transform: translate(-1px, -1px);
         box-shadow: 5px 5px 0 var(--color-primary);
         opacity: 0.9;
     }
 
-    /* Trạng thái BẬT Lọc - Invert Màu nền để báo hiệu nổi bật */
     .filter-btn.is-active {
         background-color: var(--color-secondary-darker);
         color: var(--text-inverse);
-        /* Ép bóng xẹp xuống như hiệu ứng Nút Lún Thật */
         box-shadow: 2px 2px 0 var(--color-primary);
         transform: translate(2px, 2px);
     }
@@ -232,10 +212,8 @@ const {
         flex-shrink: 0;
     }
 
-    /* Breakpoint Tablet/PC: Chuyển sang bố cục Cột Ngang (Row Layout) */
     @media (min-width: 768px) {
         .filter-group {
-            /* Giữ full width để kéo giãn đều các phần tử */
             width: 100%;
             margin: 0 auto var(--spacing-12);
         }
@@ -243,33 +221,26 @@ const {
         .filter-group__label {
             gap: var(
                 --spacing-2
-            ); /* Hỗ trợ khoảng cách giữa Chữ và Icon trên PC */
+            );
         }
 
-        /* Chuyển Options từ chồng lên nhau (Stack) sang xếp hàng ngang (Side-by-side) */
         .filter-group__options {
             flex-direction: row;
             min-width: unset;
         }
 
-        /* TRÊN DESKTOP: Tạo hình khối viên thuốc ngắt quãng */
-        
-        /* 1. Nút Đầu Tiên (ALL MOTIONS) - Bo nửa MẶT TRÁI khớp với Label */
         .filter-group__options .filter-btn:first-child {
             border-radius: 0 var(--radius-2xl) var(--radius-2xl) 0;
         }
 
-        /* 2. Nút Ở Giữa - Bo toàn bộ 4 góc độc lập */
         .filter-group__options .filter-btn:nth-child(2) {
             border-radius: var(--radius-2xl);
         }
 
-        /* 3. Nút Cuối Cùng (DEBUT//TRAILER) - Bo nửa MẶT PHẢI khớp với khối giả ::after */
         .filter-group__options .filter-btn:last-child {
             border-radius: var(--radius-2xl) 0 0 var(--radius-2xl);
         }
 
-        /* Tăng nhẹ vách 2 bên để ôm trọn vòm cung đẹp hơn trên màn lớn */
         .filter-group__label,
         .filter-group::after {
             width: clamp(120px, 15vw, 180px);

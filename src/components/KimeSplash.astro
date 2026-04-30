@@ -1,0 +1,364 @@
+---
+import KimeyuIcon from "./icons/KimeyuIcon.astro";
+---
+
+<section class="kime-splash" aria-label="Splash Screen">
+  <!-- Background Video (Lazy Loaded & Zero CPU bloat) -->
+  <video
+    class="kime-splash__video"
+    preload="metadata"
+    autoplay
+    poster="/media/cover/COVER.webp"
+    muted
+    loop
+    playsinline
+  >
+    <source src="/media/videos/WEBM.webm" type="video/webm" />
+    <source src="/media/videos/REEL%2020255.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Diagonal Slash -->
+  <div class="kime-splash__slash" aria-hidden="true"></div>
+
+  <!-- Top Left: Logo -->
+  <div class="kime-splash__top">
+    <h1 class="kime-splash__logo">
+      <span class="sr-only">Kimeyu Art Direction</span>
+      <KimeyuIcon />
+    </h1>
+  </div>
+
+  <!-- Bottom Left: Details and Navigation -->
+  <div class="kime-splash__bottom">
+    <!-- Skills List -->
+    <ul class="kime-splash__skills">
+      <li>ART DIRECTION &bull;</li>
+      <li>MOTION GRAPHICS &bull;</li>
+      <li>ILLUSTRATION &bull;</li>
+    </ul>
+
+    <!-- Navigation Bar -->
+    <nav class="kime-splash__nav">
+      <div class="kime-splash__links">
+        <a href="/about" class="splash-btn splash-btn--pill">ABOUT</a>
+        <a href="/work/motions" class="splash-btn splash-btn--pill">WORKS</a>
+      </div>
+      <button
+        class="splash-btn splash-btn--continue"
+        id="splashContinueBtn"
+        aria-label="Continue to Main Site"
+      >
+        <svg
+          class="splash-continue-icon"
+          viewBox="0 0 60 24"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <!-- Solid Diamond (Mobile) -->
+          <path class="diamond-solid" d="M12 0 L 24 12 L 12 24 L 0 12 Z"></path>
+          <!-- Hollow Diamond (PC) -->
+          <path
+            class="diamond-hollow"
+            d="M12 0 L 24 12 L 12 24 L 0 12 Z M12 6 L 6 12 L 12 18 L 18 12 Z"
+            fill-rule="evenodd"></path>
+          <!-- Thick Chevron (Shorter) -->
+          <path class="chevron-thick" d="M19 3 L 28 12 L 19 21 L 25 21 L 34 12 L 25 3 Z"></path>
+          <!-- Small Chevron (Further away) -->
+          <path class="chevron-small" d="M37 6 L 43 12 L 37 18 L 41 18 L 47 12 L 41 6 Z"></path>
+        </svg>
+        <span class="splash-btn-text">CONTINUE</span>
+      </button>
+    </nav>
+  </div>
+</section>
+
+<script>
+  // Script to scroll down from Splash to the main content (Hero Slider)
+  document.addEventListener("astro:page-load", () => {
+    const continueBtn = document.getElementById("splashContinueBtn");
+
+    if (continueBtn) {
+      continueBtn.addEventListener("click", () => {
+        const targetSection = document.querySelector(".featured-works-section");
+        if (!targetSection) return;
+
+        const targetPosition = targetSection.getBoundingClientRect().top + window.scrollY;
+        const startPosition = window.scrollY;
+        const distance = targetPosition - startPosition;
+        const duration = 1200; // 1.2s cho độ mướt tối đa
+        let start: number | null = null;
+
+        // Custom easing (easeOutQuart) - Trượt nhanh và thắng siêu mượt
+        const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
+
+        const animation = (currentTime: number) => {
+          if (start === null) start = currentTime;
+          const timeElapsed = currentTime - start;
+          const progress = Math.min(timeElapsed / duration, 1);
+          
+          window.scrollTo(0, startPosition + distance * easeOutQuart(progress));
+
+          if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+          }
+        };
+
+        requestAnimationFrame(animation);
+      });
+    }
+
+    // --- ZERO-BLOAT VIDEO OBSERVER ---
+    const splashVideo = document.querySelector(
+      ".kime-splash__video",
+    ) as HTMLVideoElement;
+    if (splashVideo) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            // Chỉ play khi splash screen lọt vào màn hình (tiết kiệm CPU)
+            splashVideo.play().catch(() => {});
+          } else {
+            // Pause ngay khi user scroll qua khỏi splash screen
+            splashVideo.pause();
+          }
+        },
+        { threshold: 0.1 },
+      );
+
+      observer.observe(splashVideo);
+    }
+  });
+</script>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .kime-splash {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    height: 100svh;
+    background-color: var(--color-primary);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(20px, 6vw, 40px);
+    box-sizing: border-box;
+    z-index: 50;
+  }
+
+  .kime-splash__video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 1; /* Video hiển thị 100% thay cho màu hồng */
+    
+    /* Ép Firefox render video bằng GPU để không bị giật lag khi cuộn trang */
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .kime-splash__slash {
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    left: 15%;
+    width: clamp(20px, 4vw, 30px);
+    background-color: var(--base-white);
+    transform: rotate(35deg);
+    transform-origin: center center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .kime-splash__top {
+    position: relative;
+    z-index: 2;
+  }
+
+  .kime-splash__logo {
+    margin: 0;
+    padding: 0;
+    height: clamp(35px, 8vw, 45px);
+  }
+
+  .kime-splash__logo :global(svg) {
+    height: 100%;
+    width: auto;
+    color: var(--base-white);
+  }
+
+  .kime-splash__bottom {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+  }
+
+  .kime-splash__skills {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: var(--font-sans);
+  }
+
+  .kime-splash__skills li {
+    color: var(--base-white);
+    font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+    font-weight: 800;
+    letter-spacing: 0.05em;
+  }
+
+  .kime-splash__nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: var(--spacing-4);
+  }
+
+  .kime-splash__links {
+    display: flex;
+    gap: clamp(10px, 2vw, var(--spacing-4));
+  }
+
+  .splash-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: clamp(0.85rem, 3.5vw, 1rem);
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  }
+
+  .splash-btn:active {
+    transform: scale(0.95);
+  }
+
+  .splash-btn--pill {
+    background-color: var(--bg-secondary);
+    color: var(--color-primary);
+    padding: var(--spacing-2) clamp(16px, 5vw, var(--spacing-20));
+    border-radius: var(--radius-pill);
+  }
+
+  .splash-btn--continue {
+    color: var(--base-white);
+    display: flex;
+    align-items: center;
+    gap: clamp(4px, 1vw, 8px);
+    padding: 0;
+  }
+
+  .splash-continue-icon {
+    height: clamp(18px, 4.5vw, 24px);
+    width: auto;
+  }
+
+  .diamond-hollow {
+    display: none;
+  }
+
+  /* Chevron Slide Animation */
+  .chevron-thick,
+  .chevron-small {
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .splash-btn--continue:hover .chevron-thick {
+    transform: translateX(4px);
+  }
+
+  .splash-btn--continue:hover .chevron-small {
+    transform: translateX(8px);
+  }
+
+  /* ==============================================
+     DESKTOP RESPONSIVE LAYOUT 
+     ============================================== */
+  @media (min-width: 1024px) {
+    .kime-splash {
+      padding: clamp(30px, 4vw, 60px) clamp(40px, 6vw, 80px);
+      margin: 0;
+    }
+
+    .kime-splash__slash {
+      background-color: var(--base-white);
+      width: clamp(60px, 6vw, 100px);
+      left: 20%;
+      transform: rotate(30deg); /* Slightly steeper angle on wide screen */
+    }
+
+    .kime-splash__bottom {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: end;
+      gap: var(--spacing-8);
+      padding-bottom: var(--spacing-2);
+    }
+
+    .kime-splash__nav {
+      grid-column: 2 / 4;
+      justify-self: end;
+      display: flex;
+      gap: clamp(20px, 4vw, 60px);
+      align-items: center;
+    }
+
+    .kime-splash__links {
+      gap: clamp(20px, 3vw, 40px);
+    }
+
+    .splash-btn--continue {
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+    }
+
+    .splash-continue-icon {
+      height: clamp(24px, 2.5vw, 32px);
+    }
+
+    .diamond-solid {
+      display: none;
+    }
+    .diamond-hollow {
+      display: block;
+    }
+
+    .kime-splash__skills {
+      margin-left: clamp(200px, 20vw, 400px);
+    }
+
+    .kime-splash__skills li {
+      font-size: clamp(0.85rem, 1.2vw, 1rem);
+    }
+  }
+</style>

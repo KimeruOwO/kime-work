@@ -159,6 +159,10 @@ const {
     align-items: center;
     z-index: 1;
     pointer-events: none;
+    /* Absolute Structural Guard: Cấm override đè vào vùng text */
+    max-width: calc(var(--text-start, 50vw) - var(--safe-gap-left, 15px));
+    min-width: 0;
+    overflow: visible;
   }
   
   .section-header__left::before {
@@ -167,7 +171,7 @@ const {
     width: var(--block-width);
     height: var(--decor-height);
     background-color: var(--color-secondary-light);
-    flex-shrink: 0;
+    flex-shrink: 1;
     transition: width 0.1s ease-out;
   }
   
@@ -519,17 +523,18 @@ const {
   @media (min-width: 1024px) {
     .section-header {
       padding: var(--spacing-12) 0;
-      --decor-cell: 60px;
-      --text-overlap: 35px;
-      --safe-gap-left: 60px;
+      /* Fluid decors for non-overlap responsive sizing */
+      --decor-cell: clamp(35px, 3.5vw, 60px);
+      --text-overlap: clamp(20px, 2.5vw, 35px);
+      --safe-gap-left: clamp(30px, 3.5vw, 60px);
       --block-max-width: 250px;
       --border-cross: 10px;
       --cross-length: 38px;
-      --symbol-thickness: 8px;
+      --symbol-thickness: 10px;
     }
 
     .section-header__symbols {
-      gap: var(--spacing-6);
+      gap: var(--spacing-4);
     }
 
     /* -------------------------------------
@@ -638,7 +643,10 @@ const {
     .section-header--align-responsive {
       --fluid-block: clamp(0px, calc(100vw - 1100px), 200px);
       --block-max-width: var(--fluid-block);
-      --text-start: calc(var(--block-max-width) + var(--fixed-decor-width) + var(--safe-gap-left));
+      
+      --computed-text-start: calc(var(--block-max-width) + var(--fixed-decor-width) + var(--safe-gap-left));
+      --limit-text-start: calc(var(--distance-to-sidebar) + var(--spacing-4));
+      --text-start: min(var(--computed-text-start), var(--limit-text-start));
     }
 
     .section-header--align-responsive .section-header__wrapper {
@@ -652,9 +660,7 @@ const {
      LAPTOP SMALL
   ========================================================== */
   @media (min-width: 1024px) and (max-width: 1279px) {
-    .section-header {
-      --fixed-decor-width: calc(var(--decor-width) - var(--decor-overlap));
-    }
+    /* Fixed overlapping bug: Restored global --fixed-decor-width math */
     
     .section-header__right-bottom {
       grid-template-columns: var(--sq-width) auto;

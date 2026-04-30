@@ -1,5 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import KimeSplash from "../components/KimeSplash.astro";
+import CyberRibbon from "../components/CyberRibbon.astro";
 import PageDecorBanner from "../components/PageDecorBanner.astro";
 import KimeyuIcon from "../components/icons/KimeyuIcon.astro";
 import { fetchVideos, fetchArtworks } from "../lib/hygraph";
@@ -40,137 +42,36 @@ const heroSlides = [
     : null,
   aIllust
     ? {
-        url: aIllust.image?.heroUrl || aIllust.image?.fullUrl || aIllust.image?.url,
+        url:
+          aIllust.image?.heroUrl ||
+          aIllust.image?.fullUrl ||
+          aIllust.image?.url,
         link: aIllust.linkPixiv || `/work/artwork/`,
         target: "_blank",
       }
     : null,
-].filter((s): s is { url: string; link: string; target: string } => Boolean(s && s.url));
+].filter((s): s is { url: string; link: string; target: string } =>
+  Boolean(s && s.url),
+);
 
 // Extract FEATURED videos
 const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 ---
 
-<Layout
-  title="kimeyu.work"
->
+<Layout title="kimeyu.work">
   <div class="contact-page-wrapper">
-    <header class="art-header">
-      <div class="art-header__left">
-        <h1 class="art-header__logo">
-          <span class="sr-only">Kimeyu Art Direction</span>
-          <svg
-            class="art-header__kimeyu-icon"
-            viewBox="0 0 2302.5 471.06"
-            aria-hidden="true"
-          >
-            <use href="#kimeyu-logo"></use>
-          </svg>
-        </h1>
+    <KimeSplash />
+
+    <!-- Legacy Hero Slider & Media Player removed per user request -->
+
+    <!-- TOP RIBBON (ASCII generated SVG) -->
+    <CyberRibbon />
+
+    <div class="decor-ribbon" aria-hidden="true" style="margin-bottom: 2rem;">
+      <div class="film-strip-bg">
+        <div class="banner-strip" style="transform: translateY(-50%);"></div>
       </div>
-
-      <div class="art-header__right">
-        <ul class="art-header__text">
-          <li>// ART DIRECTION</li>
-          <li>// MOTION GRAPHICS</li>
-          <li>// ILLUSTRATION</li>
-        </ul>
-      </div>
-    </header>
-
-    <hero-slider data-slides={JSON.stringify(heroSlides)}>
-      <section class="contact-hero-showcase">
-        <div class="top-decor-banner" aria-hidden="true">
-          <div class="top-decor-banner__cap"></div>
-          <div class="top-decor-banner__body"></div>
-        </div>
-
-        <div class="hero-layer-over">
-          <div class="art-carousel-track">
-            {
-              heroSlides.map((slide: any, i: number) => (
-                <div class={`art-carousel-slide ${i === 0 ? "is-active" : ""}`}>
-                  <a
-                    href={slide.link}
-                    target={slide.target}
-                    class="slide-link"
-                    draggable="false"
-                  >
-                    <img
-                      src={slide.url}
-                      alt={`Kimeyu Hero Artwork ${i + 1}`}
-                      class="slide-img"
-                      decoding="async"
-                      draggable="false"
-                    />
-                  </a>
-                </div>
-              ))
-            }
-            {}
-            {
-              heroSlides.length > 0 && (
-                <div class="art-carousel-slide slick-cloned" aria-hidden="true">
-                  <a
-                    href={heroSlides[0].link}
-                    target={heroSlides[0].target}
-                    class="slide-link"
-                    draggable="false"
-                    tabindex="-1"
-                  >
-                    <img
-                      src={heroSlides[0].url}
-                      alt="Kimeyu Hero Artwork Clone"
-                      class="slide-img"
-                      decoding="async"
-                      draggable="false"
-                    />
-                  </a>
-                </div>
-              )
-            }
-          </div>
-        </div>
-
-        <div class="bottom-decor-banner" aria-hidden="true">
-          <div class="bottom-decor-banner__cap"></div>
-          <div class="bottom-decor-banner__body"></div>
-        </div>
-      </section>
-
-      <!-- MEDIA PLAYER WIDGET -->
-      <div class="kime-media-player" aria-label="Decorative Media Controls">
-        <div class="kime-media-track"></div>
-        <div class="kime-media-controls">
-          <button
-            class="kime-media-btn kime-media-btn--prev"
-            aria-label="Previous Track"></button>
-          <button
-            class="kime-media-btn kime-media-btn--pause"
-            aria-label="Pause"></button>
-          <button
-            class="kime-media-btn kime-media-btn--next"
-            aria-label="Next Track"></button>
-        </div>
-      </div>
-
-      <!-- INVERTED BANNER STRIP -->
-      <div class="contact-bottom-ribbon">
-        <nav class="ribbon-nav-dots" aria-label="Page Navigation">
-          {
-            heroSlides.map((_, i) => (
-              <button
-                class={`nav-dot ${i === 0 ? "nav-dot--active" : ""}`}
-                aria-label={`Slide ${i + 1}`}
-              />
-            ))
-          }
-        </nav>
-        <div class="film-strip-bg" aria-hidden="true">
-          <div class="banner-strip banner-strip--inverted"></div>
-        </div>
-      </div>
-    </hero-slider>
+    </div>
 
     <!-- Kimeyu Core Slogan -->
     <section class="contact-quote-block" aria-label="Kimeyu Slogan">
@@ -187,7 +88,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     </section>
 
     <!-- PICK UP WORKS BANNER -->
-    <div class="contact-bottom-ribbon pickup-works-ribbon">
+    <div class="decor-ribbon pickup-works-ribbon">
       <div class="ribbon-pickup-label">
         <span class="pickup-en">PICK-UP WORKS</span>
         <span class="pickup-jp">ピックアップ作品</span>
@@ -286,7 +187,13 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
         </div>
       </div>
 
-      <div class="contact-entry-ribbon" aria-hidden="true"></div>
+      <div class="contact-entry-ribbon" aria-hidden="true">
+        <span class="ribbon-dot"></span>
+        <span class="ribbon-dot"></span>
+        <span class="ribbon-dot"></span>
+        <span class="ribbon-dot"></span>
+        <span class="ribbon-dot ribbon-dot--pink"></span>
+      </div>
 
       <div class="contact-entry-main">
         <h2 class="contact-entry-heading">
@@ -458,243 +365,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 </Layout>
 
 <script>
-  class HeroSlider extends HTMLElement {
-    private slides: string[] = [];
-    private currentIndex: number = 0;
-    private realCount: number = 0;
-    private isPlaying: boolean = true;
-    private intervalDuration: number = 5000;
-    private timer: ReturnType<typeof setTimeout> | null = null;
-
-    private startTime: number = 0;
-    private savedProgress: number = 0;
-    private isDragging: boolean = false;
-
-    private carouselTrack: HTMLElement | null = null;
-    private slidesEl: NodeListOf<HTMLElement> | null = null;
-    private track: HTMLElement | null = null;
-    private navDots: NodeListOf<HTMLElement> | null = null;
-
-    connectedCallback() {
-      this.slides = JSON.parse(this.dataset.slides || "[]");
-      if (this.slides.length === 0) return;
-
-      this.currentIndex = 0;
-      this.isPlaying = true;
-      this.intervalDuration = 5000;
-
-      // Cache DOM O(1)
-      this.carouselTrack = this.querySelector<HTMLElement>(
-        ".art-carousel-track",
-      );
-      this.slidesEl = this.querySelectorAll<HTMLElement>(".art-carousel-slide");
-      this.track = this.querySelector<HTMLElement>(".kime-media-track");
-      this.navDots = this.querySelectorAll<HTMLElement>(".nav-dot");
-      this.realCount = this.navDots?.length || this.slides.length;
-
-      // Infinite Loop Teleportation Logic
-      this.carouselTrack?.addEventListener(
-        "transitionend",
-        (e: TransitionEvent) => {
-          if (e.propertyName !== "transform") return;
-          if (this.currentIndex >= this.realCount) {
-            // Tắt hiệu ứng, giật về 0 trong tàng hình
-            this.carouselTrack!.style.transition = "none";
-            this.currentIndex = 0;
-            this.carouselTrack!.style.setProperty("--idx", "0");
-            void this.carouselTrack!.offsetWidth; // Ép reflow chặn render
-            this.carouselTrack!.style.transition = ""; // Trả lại CSS cũ
-            this.updateSlide(false);
-          }
-        },
-      );
-
-      this.setupDrag();
-
-      this.updateSlide(true);
-      this.addEventListener("click", this);
-    }
-
-    disconnectedCallback() {
-      this.removeEventListener("click", this);
-      this.clearTimer(false);
-    }
-
-    setupDrag() {
-      if (!this.track) return;
-      const scrub = (e: MouseEvent | TouchEvent | any) => {
-        const rect = this.track!.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        let p = (clientX - rect.left) / rect.width;
-        p = Math.max(0, Math.min(1, p));
-        this.savedProgress = p;
-        this.track!.style.setProperty("--track-dur", `0ms`);
-        this.track!.style.setProperty("--progress", `${p * 100}%`);
-      };
-
-      this.track.addEventListener("pointerdown", (e: any) => {
-        this.isDragging = true;
-        this.clearTimer(true);
-        scrub(e);
-        this.track!.style.cursor = "grabbing";
-        if (e.pointerId) this.track!.setPointerCapture(e.pointerId);
-      });
-
-      window.addEventListener("pointermove", (e: any) => {
-        if (!this.isDragging) return;
-        scrub(e);
-      });
-
-      window.addEventListener("pointerup", (e: any) => {
-        if (!this.isDragging) return;
-        this.isDragging = false;
-        this.track!.style.cursor = "grab";
-        if (e.pointerId && this.track!.hasPointerCapture(e.pointerId)) {
-          this.track!.releasePointerCapture(e.pointerId);
-        }
-        if (this.isPlaying) {
-          this.startTimer(this.savedProgress);
-        }
-      });
-
-      // Fallback
-      window.addEventListener("pointercancel", () => {
-        this.isDragging = false;
-      });
-    }
-
-    handleEvent(e: Event) {
-      if (e.type === "click") {
-        const target = e.target as HTMLElement;
-        const btn = target.closest<HTMLElement>(".kime-media-btn");
-        const dot = target.closest<HTMLElement>(".nav-dot");
-
-        if (btn) {
-          if (btn.classList.contains("kime-media-btn--prev")) {
-            this.prevSlide();
-          } else if (btn.classList.contains("kime-media-btn--next")) {
-            this.nextSlide();
-          } else if (btn.classList.contains("kime-media-btn--pause")) {
-            this.togglePlay(btn);
-          }
-        } else if (dot && this.navDots) {
-          const idx = Array.from(this.navDots).indexOf(dot);
-          if (idx !== -1 && idx !== this.currentIndex) {
-            this.currentIndex = idx;
-            this.updateSlide();
-          }
-        }
-      }
-    }
-
-    nextSlide() {
-      if (this.currentIndex >= this.realCount) return; // Khoá double click khi đang lướt vào ảo ảnh
-      this.currentIndex = this.currentIndex + 1;
-      this.updateSlide();
-    }
-
-    prevSlide() {
-      // Lướt ngược thì do chưa có ảo ảnh đầu nên đơn giản là jump thẳng về cuối mộc mạc
-      if (this.currentIndex <= 0) {
-        this.currentIndex = this.realCount - 1;
-      } else {
-        this.currentIndex--;
-      }
-      this.updateSlide();
-    }
-
-    togglePlay(btn: HTMLElement) {
-      this.isPlaying = !this.isPlaying;
-      if (this.isPlaying) {
-        btn.classList.remove("paused");
-        this.startTimer(this.savedProgress);
-      } else {
-        btn.classList.add("paused");
-        this.clearTimer(true);
-      }
-    }
-
-    clearTimer(saveProgress = false) {
-      if (this.timer) {
-        clearTimeout(this.timer);
-        this.timer = null;
-      }
-      if (saveProgress && this.track && !this.isDragging) {
-        let elapsed = Date.now() - this.startTime;
-        this.savedProgress += elapsed / this.intervalDuration;
-        this.savedProgress = Math.max(0, Math.min(1, this.savedProgress));
-        this.track.style.setProperty("--track-dur", "0ms");
-        this.track.style.setProperty(
-          "--progress",
-          `${this.savedProgress * 100}%`,
-        );
-      }
-    }
-
-    startTimer(startProgress = 0) {
-      this.clearTimer(false);
-      this.savedProgress = startProgress;
-      if (!this.isPlaying || !this.track) return;
-
-      this.startTime = Date.now();
-      const remainingTime = this.intervalDuration * (1 - startProgress);
-
-      this.track.style.setProperty("--track-dur", "0ms");
-      this.track.style.setProperty("--progress", `${startProgress * 100}%`);
-
-      void this.track.offsetWidth;
-
-      this.track.style.setProperty("--track-dur", `${remainingTime}ms`);
-      this.track.style.setProperty("--progress", "100%");
-
-      this.timer = setTimeout(() => {
-        this.nextSlide();
-      }, remainingTime);
-    }
-
-    updateSlide(init: boolean = false) {
-      const visualIndex = this.currentIndex % this.realCount;
-
-      if (this.navDots) {
-        this.navDots.forEach((dot, idx) => {
-          dot.classList.toggle("nav-dot--active", idx === visualIndex);
-        });
-      }
-
-      if (this.carouselTrack) {
-        this.carouselTrack.style.setProperty(
-          "--idx",
-          this.currentIndex.toString(),
-        );
-      }
-      if (this.slidesEl) {
-        this.slidesEl.forEach((el, idx) => {
-          // Ép cả ảo ảnh (Clone) và bản thể gốc cùng sáng lên để lúc giật Teleport màn hình đéo bị chớp (flash) đen
-          el.classList.toggle(
-            "is-active",
-            idx === this.currentIndex || idx === visualIndex,
-          );
-        });
-      }
-
-      if (this.isPlaying) {
-        this.startTimer(0);
-      } else {
-        this.savedProgress = 0;
-        if (this.track) {
-          this.track.style.setProperty("--track-dur", "0ms");
-          this.track.style.setProperty("--progress", "0%");
-        }
-      }
-    }
-  }
-
-  if (!customElements.get("hero-slider")) {
-    customElements.define("hero-slider", HeroSlider);
-  }
-</script>
-
-<script>
   const initCopyEngine = () => {
     const copyBtns = document.querySelectorAll<HTMLButtonElement>(".btn-copy");
 
@@ -766,180 +436,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: var(--spacing-8) 0;
-  }
-
-  .art-header {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: flex-start;
-    z-index: 10;
-    box-sizing: border-box;
-  }
-
-  @media (max-width: 768px) {
-    .art-header {
-      padding: 0 clamp(0.8rem, 4vw, 3rem);
-      margin-bottom: var(--spacing-6);
-    }
-  }
-
-  @media (min-width: 769px) {
-    .art-header {
-      flex-direction: column;
-      gap: clamp(20px, 3.5vw, 40px);
-    }
-  }
-
-  .art-header__left {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-3);
-  }
-
-  .art-header__left::before {
-    content: "";
-    display: block;
-    width: clamp(120px, 40vw, 180px);
-
-    --h-thick: 6px;
-    --h-thin: 3px;
-    --gap: 6px;
-    --w-b1: 30px;
-    --w-b2: 54px;
-    --w-b3: 24px;
-    --w-b4: 16px;
-    --dot: var(--h-thick);
-
-    --x1: 0px;
-    --x2: calc(var(--x1) + var(--w-b1) + var(--gap));
-    --x3: calc(var(--x2) + var(--dot) + var(--gap));
-    --x4: calc(var(--x3) + var(--w-b2) + var(--gap));
-    --x5: calc(var(--x4) + var(--dot) + var(--gap));
-    --x6: calc(var(--x5) + var(--w-b3) + var(--gap));
-
-    height: var(--h-thick);
-    --c: var(--color-secondary-light);
-    --p: var(--color-primary);
-
-    background:
-      linear-gradient(var(--c), var(--c)) var(--x1) center / var(--w-b1)
-        var(--h-thick) no-repeat,
-      radial-gradient(circle closest-side, var(--p) 85%, transparent 100%)
-        var(--x2) center / var(--dot) var(--dot) no-repeat,
-      linear-gradient(var(--c), var(--c)) var(--x3) center / var(--w-b2)
-        var(--h-thin) no-repeat,
-      radial-gradient(circle closest-side, var(--p) 85%, transparent 100%)
-        var(--x4) center / var(--dot) var(--dot) no-repeat,
-      linear-gradient(var(--c), var(--c)) var(--x5) center / var(--w-b3)
-        var(--h-thick) no-repeat,
-      linear-gradient(var(--c), var(--c)) var(--x6) center / var(--w-b4)
-        var(--h-thick) no-repeat;
-  }
-
-  /* Ẩn trên Tablet/Desktop vì tỷ lệ ảnh đang là 82% (2 ảnh). Chỉ bật lại trên Mobile (<768px) khi nó full Width 1 ảnh */
-  @media (min-width: 769px) {
-    .art-header {
-      display: none;
-    }
-  }
-
-  .art-header__logo {
-    display: flex;
-    align-items: flex-end;
-    gap: 4px;
-    height: clamp(32px, 8vw, 45px);
-    margin: 0;
-    padding: 0;
-  }
-
-  .art-header__logo :global(.art-header__kimeyu-icon) {
-    height: 100%;
-    width: auto;
-    color: var(--color-primary);
-  }
-
-  .art-header__right {
-    display: flex;
-    align-items: stretch;
-    margin-top: calc(4px + var(--spacing-3) + 10px);
-  }
-
-  .art-header__text {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: clamp(32px, 8vw, 45px);
-    margin: 0;
-    list-style: none;
-    padding: 0 0 0 calc(6px + calc(var(--spacing-3) / 2));
-    position: relative;
-  }
-
-  .art-header__text::before {
-    content: "";
-    position: absolute;
-    top: -40%;
-    left: 0;
-    width: 8px;
-    height: 8px;
-    border: 2.5px solid var(--color-primary);
-    border-radius: 50%;
-    box-sizing: border-box;
-    transform: translateX(-1px);
-  }
-
-  .art-header__text::after {
-    content: "";
-    position: absolute;
-    top: calc(-40% + 10px);
-    bottom: 30%;
-    left: 0;
-    width: 6px;
-
-    --p: var(--color-primary);
-    --t: transparent;
-    --pair: linear-gradient(
-      to bottom,
-      var(--p) 0 32%,
-      var(--t) 32% 68%,
-      var(--p) 68% 100%
-    );
-    --solo: linear-gradient(
-      to bottom,
-      var(--t) 0 32%,
-      var(--p) 32% 68%,
-      var(--t) 68% 100%
-    );
-
-    background:
-      var(--solo) 0 0 / 1px 100% no-repeat,
-      var(--pair) 0 0 / 2px 100% no-repeat,
-      var(--solo) 2px 0 / 3px 100% no-repeat,
-      var(--pair) 3px 0 / 3px 100% no-repeat;
-  }
-
-  .art-header__text li {
-    font-family: var(--font-mono, monospace);
-    font-size: clamp(0.5rem, 1.5vw, 0.65rem);
-    font-weight: 900;
-    line-height: 1;
-    color: var(--color-secondary-dark, #008080);
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-  }
-
-  @media (min-width: 1024px) {
-    .art-header__logo {
-      height: clamp(45px, 5vw, 65px);
-    }
-    .art-header__text {
-      min-height: clamp(45px, 5vw, 65px);
-    }
-    .art-header__text li {
-      font-size: clamp(0.85rem, 1.25vw, 1rem);
-    }
   }
 
   .top-decor-banner,
@@ -1002,11 +498,11 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       100% 100%;
 
     background-position:
+      0 0,
+      calc(var(--cell)) 0,
+      calc(100% - var(--pink-len)) 0,
       100% 0,
       calc(100% - var(--cell)) 0,
-      calc(100% - var(--pink-len)) 0,
-      calc(100% - var(--pink-len) + var(--cell)) 0,
-      calc(100% - var(--pink-len) - var(--cell)) 0,
       0 0;
 
     background-repeat:
@@ -1436,7 +932,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: clamp(var(--spacing-16), 15vw, var(--spacing-24)) var(--spacing-4);
+    padding: clamp(var(--spacing-16), 15vw, var(--spacing-36)) var(--spacing-4);
     background-color: var(--hero-bg);
     width: 100%;
   }
@@ -1496,7 +992,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   /* ==============================================
      INVERTED BANNER STRIP
      ============================================== */
-  .contact-bottom-ribbon {
+  .decor-ribbon {
     --b-gap: clamp(4px, 1vw, 12px);
     --b-h-top: clamp(10px, 3vw, 28px);
     --b-h-bottom: clamp(20px, 5vw, 48px);
@@ -1507,20 +1003,16 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     --safe-edge: clamp(var(--spacing-6), 5vw, var(--spacing-12));
 
     position: relative;
+    z-index: 5;
     width: 100%;
     height: var(--b-total-h);
-    margin-top: var(--spacing-8);
+    margin-top: var(--spacing-12);
     overflow: hidden;
   }
 
   @media (min-width: 80rem) {
-    .contact-bottom-ribbon {
+    .decor-ribbon {
       --safe-edge: calc(50vw - 40rem + var(--spacing-12));
-    }
-  }
-  @media (min-width: 1024px) {
-    .contact-bottom-ribbon {
-      margin-top: 0;
     }
   }
 
@@ -1622,7 +1114,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     --checker-cell: calc((var(--dot-size) + 2 * var(--dot-pad)) / 3);
     --grid-w: calc(var(--checker-cell) * 7);
     --gap-to-grid: max(calc(var(--b-total-h) * 0.185), 14px);
-    --grid-pad-right: max(calc(var(--b-total-h) * 0.14), 10px);
+    --grid-pad-left: clamp(24px, 4vw, 64px);
 
     position: absolute;
     left: var(--safe-edge);
@@ -1634,11 +1126,11 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     gap: var(--dot-gap);
 
     padding: var(--dot-pad);
-    border: var(--dot-border) solid var(--color-secondary-darker);
-    border-radius: calc(var(--dot-size) / 2 + var(--dot-pad));
-    padding-right: calc(
-      var(--gap-to-grid) + var(--grid-w) + var(--grid-pad-right)
+    border: none;
+    padding-left: calc(
+      var(--grid-pad-left) + var(--grid-w) + var(--gap-to-grid)
     );
+    padding-right: clamp(24px, 4vw, 64px);
     overflow: hidden;
     isolation: isolate;
   }
@@ -1675,34 +1167,40 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-image:
-      linear-gradient(var(--base-white), var(--base-white)),
-      linear-gradient(var(--base-white), var(--base-white));
-    background-position:
-      left center,
-      right center;
-    background-size:
-      calc(100% - var(--grid-w) - var(--grid-pad-right)) 100%,
-      var(--grid-pad-right) 100%;
-    background-repeat: no-repeat;
-  }
+    background-color: var(--base-white);
 
-  .ribbon-nav-dots::after {
-    content: "";
-    position: absolute;
-    right: var(--grid-pad-right);
-    top: 0;
-    width: var(--grid-w);
-    height: 100%;
-    z-index: -1;
-    background-image: conic-gradient(
-      var(--base-white) 90deg,
-      transparent 90deg 180deg,
-      var(--base-white) 180deg 270deg,
-      transparent 270deg
-    );
-    background-size: calc(var(--checker-cell) * 2) calc(var(--checker-cell) * 2);
-    background-position: 0 0;
+    -webkit-mask-image:
+      linear-gradient(#000, #000), linear-gradient(#000, #000),
+      var(--checker-mask-uri);
+    mask-image:
+      linear-gradient(#000, #000), linear-gradient(#000, #000),
+      var(--checker-mask-uri);
+
+    -webkit-mask-position:
+      0 0,
+      calc(var(--grid-pad-left) + var(--grid-w)) 0,
+      var(--grid-pad-left) 0;
+    mask-position:
+      0 0,
+      calc(var(--grid-pad-left) + var(--grid-w)) 0,
+      var(--grid-pad-left) 0;
+
+    -webkit-mask-size:
+      var(--grid-pad-left) 100%,
+      100% 100%,
+      calc(var(--checker-cell) * 2) calc(var(--checker-cell) * 2);
+    mask-size:
+      var(--grid-pad-left) 100%,
+      100% 100%,
+      calc(var(--checker-cell) * 2) calc(var(--checker-cell) * 2);
+
+    -webkit-mask-repeat: no-repeat, no-repeat, repeat;
+    mask-repeat: no-repeat, no-repeat, repeat;
+    transform: translateZ(0);
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .nav-dot {
@@ -1744,23 +1242,30 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   .featured-header {
     width: 100%;
     background-color: var(--color-primary);
-    padding: var(--spacing-8) 0 calc(var(--spacing-16) + 4vw) 0;
+    padding: var(--spacing-16) 0 calc(var(--spacing-24) + 10vw) 0;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    overflow: hidden;
+    position: relative;
   }
 
   .featured-title {
+    position: absolute;
+    right: clamp(16px, 4vw, 40px);
+    top: clamp(10px, 3vw, 40px);
     font-family: var(--font-sans);
-    font-size: clamp(4rem, 15vw, 10rem);
+    font-size: clamp(3rem, 12.5vw, 24rem);
     font-weight: 900;
     color: var(--base-gray-50);
     margin: 0;
     line-height: 0.8;
     letter-spacing: -0.02em;
+    z-index: 1;
+    white-space: nowrap;
   }
 
   .featured-cards-container {
-    margin-top: -8vw;
+    margin-top: clamp(-200px, -15vw, -80px); /* Negative margin responsive */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
     justify-items: center;
@@ -1775,16 +1280,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   @media (max-width: 1023px) {
     .featured-card:nth-child(n + 4) {
       display: none !important;
-    }
-  }
-  @media (max-width: 400px) {
-    .featured-cards-container {
-      margin-top: -12vw;
-    }
-  }
-  @media (min-width: 768px) {
-    .featured-cards-container {
-      margin-top: -70px;
     }
   }
 
@@ -1831,12 +1326,18 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     --blocks-y: 5;
     width: calc(var(--decor-cell) * var(--blocks-x));
     aspect-ratio: var(--blocks-x) / var(--blocks-y);
-    background: repeating-conic-gradient(
-        transparent 0 90deg,
-        var(--color-secondary-light) 0 180deg
-      )
-      0 0 / calc((100% + 0.5px) / var(--blocks-x) * 2)
-      calc((100% + 0.5px) / var(--blocks-y) * 2);
+    background-color: var(--color-secondary-light);
+    -webkit-mask-image: var(--checker-mask-uri);
+    mask-image: var(--checker-mask-uri);
+    -webkit-mask-size: calc(var(--decor-cell) * 2) calc(var(--decor-cell) * 2);
+    mask-size: calc(var(--decor-cell) * 2) calc(var(--decor-cell) * 2);
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .card-info {
@@ -2031,84 +1532,63 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
   .contact-entry-ribbon {
     --sq: clamp(30px, 4vw, 44px);
+    --cell: calc(var(--sq) / 3);
+    --caro-w: calc(var(--cell) * 7);
     width: 100%;
     height: var(--sq);
-    background-color: var(--color-primary);
+    background-color: var(--base-white);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--sq) * 0.4);
 
-    --c-cyan: var(--color-secondary-light);
-    --c-pink: var(--color-primary);
+    /* Dots config */
+    --r-in: calc(var(--sq) * 0.22);
+    --r-out: calc(var(--sq) * 0.32);
     --c-border: var(--color-secondary-darker);
-    --c-white: var(--base-white);
+  }
 
-    --cell: calc(var(--sq) / 3);
-    --w-cell-p: calc(100% / 6);
-    --r-in: calc(var(--sq) * 0.25);
-    --r-out: calc(var(--sq) * 0.36);
+  /* Dots (center) */
+  .contact-entry-ribbon::before,
+  .contact-entry-ribbon::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: var(--caro-w);
+    height: 100%;
+    background-color: var(--color-primary);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cpattern id='c' width='2' height='2' patternUnits='userSpaceOnUse'%3E%3Crect width='1' height='1' fill='black'/%3E%3Crect x='1' y='1' width='1' height='1' fill='black'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='7' height='3' fill='url(%23c)'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 3' shape-rendering='crispEdges' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cpattern id='c' width='2' height='2' patternUnits='userSpaceOnUse'%3E%3Crect width='1' height='1' fill='black'/%3E%3Crect x='1' y='1' width='1' height='1' fill='black'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='7' height='3' fill='url(%23c)'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
 
-    --dot-c: radial-gradient(
-      circle,
-      var(--c-cyan) 0,
-      var(--c-cyan) var(--r-in),
-      var(--c-border) calc(var(--r-in) + 0.5px),
-      var(--c-border) var(--r-out),
-      transparent calc(var(--r-out) + 0.5px)
-    );
-    --dot-p: radial-gradient(
-      circle,
-      var(--c-pink) 0,
-      var(--c-pink) var(--r-in),
-      var(--c-border) calc(var(--r-in) + 0.5px),
-      var(--c-border) var(--r-out),
-      transparent calc(var(--r-out) + 0.5px)
-    );
-    --w-blk: linear-gradient(var(--c-white), var(--c-white));
-    --caro-odd: repeating-linear-gradient(
-      90deg,
-      var(--c-white) 0,
-      var(--c-white) var(--w-cell-p),
-      transparent var(--w-cell-p),
-      transparent calc(var(--w-cell-p) * 2)
-    );
-    --caro-even: repeating-linear-gradient(
-      90deg,
-      transparent 0,
-      transparent var(--w-cell-p),
-      var(--c-white) var(--w-cell-p),
-      var(--c-white) calc(var(--w-cell-p) * 2)
-    );
+  .contact-entry-ribbon::before {
+    left: calc(var(--cell) * 4);
+  }
 
-    background-image:
-      var(--w-blk), var(--dot-p), var(--dot-c), var(--dot-c), var(--dot-c),
-      var(--dot-c), var(--w-blk), var(--caro-odd), var(--caro-even),
-      var(--caro-odd), var(--w-blk);
+  .contact-entry-ribbon::after {
+    right: calc(var(--cell) * 4);
+  }
 
-    background-size:
-      var(--sq) 100%,
-      var(--sq) var(--sq),
-      var(--sq) var(--sq),
-      var(--sq) var(--sq),
-      var(--sq) var(--sq),
-      var(--sq) var(--sq),
-      calc(100% - calc(var(--sq) * 3)) 100%,
-      calc(var(--sq) * 2) var(--cell),
-      calc(var(--sq) * 2) var(--cell),
-      calc(var(--sq) * 2) var(--cell),
-      var(--sq) 100%;
+  .ribbon-dot {
+    --dot-size: calc(var(--sq) * 0.55);
+    width: var(--dot-size);
+    height: var(--dot-size);
+    border-radius: 50%;
+    background-color: var(--color-secondary-light);
+    border: calc(var(--sq) * 0.1) solid var(--color-secondary-darker);
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+  }
 
-    background-position:
-      100% 0,
-      calc(100% - calc(var(--sq) * 1)) 0,
-      calc(100% - calc(var(--sq) * 2)) 0,
-      calc(100% - calc(var(--sq) * 3)) 0,
-      calc(100% - calc(var(--sq) * 4)) 0,
-      calc(100% - calc(var(--sq) * 5)) 0,
-      calc(var(--sq) * 3) 0,
-      calc(var(--sq) * 1) calc(var(--cell) * 2),
-      calc(var(--sq) * 1) var(--cell),
-      calc(var(--sq) * 1) 0,
-      0 0;
-
-    background-repeat: no-repeat;
+  .ribbon-dot--pink {
+    background-color: var(--color-primary);
+    border-color: var(--color-secondary-darker);
   }
 
   .contact-huge-row {
@@ -2178,14 +1658,14 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     border: var(--symbol-thickness) solid var(--color-primary);
     border-radius: var(--radius-pill);
     flex-shrink: 0;
-    order: 1;
+    order: 4;
   }
   .cht-symbol-cross {
     width: var(--symbol-size);
     height: var(--symbol-size);
     position: relative;
     flex-shrink: 0;
-    order: 2;
+    order: 3;
   }
   .cht-symbol-cross::before,
   .cht-symbol-cross::after {
@@ -2207,7 +1687,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
   .cht-right-top::before {
     content: "";
-    order: 3;
+    order: 1;
     flex: 0 0 auto;
     width: clamp(30px, 8vw, 80px);
     min-width: calc(var(--checker-h) * var(--block-ratio));
@@ -2216,7 +1696,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
   .cht-right-top::after {
     content: "";
-    order: 4;
+    order: 2;
     width: var(--checker-w);
     height: var(--checker-h);
     background-color: var(--bg-primary);
@@ -2261,7 +1741,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     border-right: none;
     padding: var(--border-pad);
     padding-right: 0;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.12);
+    box-shadow: -8px 8px 20px rgba(0, 0, 0, 0.25);
   }
   .cht-right-bottom::before {
     content: "";
@@ -2389,12 +1869,20 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     --blocks-y: 5;
     width: calc(var(--decor-cell) * var(--blocks-x));
     aspect-ratio: var(--blocks-x) / var(--blocks-y);
-    background: repeating-conic-gradient(
-        transparent 0 90deg,
-        var(--color-secondary-light) 0 180deg
-      )
-      0 0 / calc((100% + 0.5px) / var(--blocks-x) * 2)
-      calc((100% + 0.5px) / var(--blocks-y) * 2);
+    background-color: var(--color-secondary-light);
+    -webkit-mask-image: var(--checker-mask-uri);
+    mask-image: var(--checker-mask-uri);
+    -webkit-mask-size: round(nearest, calc(var(--decor-cell) * 2), 1px)
+      round(nearest, calc(var(--decor-cell) * 2), 1px);
+    mask-size: round(nearest, calc(var(--decor-cell) * 2), 1px)
+      round(nearest, calc(var(--decor-cell) * 2), 1px);
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .instruction-strong {
@@ -2430,8 +1918,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     height: clamp(64px, 8vw, 86px);
     border-radius: 43px;
     border: 3px solid var(--base-white);
-    box-shadow: 0px 6px 0px 0px var(--base-white);
-    background-color: var(--color-primary-light, #ff87b2);
     overflow: hidden;
     border-radius: 40px 50px 50px 0px;
   }
@@ -2570,77 +2056,5 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     background-size: var(--tile-w) var(--tile-h);
     background-repeat: repeat-x;
     background-position: 0 center;
-  }
-
-  @media (min-width: 769px) {
-    .contact-page-wrapper {
-      --hero-offset-x: clamp(60px, calc(30vw - 80px), 450px);
-      --left-safe-w: calc(50vw + var(--hero-offset-x) - 250px);
-      display: grid;
-      grid-template-columns: var(--left-safe-w) 1fr;
-      grid-template-rows: auto 1fr auto auto 1fr auto auto auto auto auto auto;
-      padding-top: calc(var(--border-width-md, 2px) + 4px);
-    }
-
-    .top-decor-banner,
-    .contact-hero-showcase,
-    .bottom-decor-banner,
-    .contact-bottom-ribbon,
-    .contact-quote-block,
-    .pickup-works-ribbon,
-    .featured-works-section,
-    .contact-entry-section {
-      grid-column: 1 / -1;
-    }
-
-    .top-decor-banner {
-      grid-row: 1;
-      margin: 0;
-      justify-self: end;
-    }
-    .contact-hero-showcase {
-      grid-row: 2 / 6;
-      height: var(--hero-h);
-    }
-    .bottom-decor-banner {
-      grid-row: 6;
-    }
-    .contact-bottom-ribbon {
-      grid-row: 7;
-    }
-    .contact-quote-block {
-      grid-row: 8;
-    }
-    .pickup-works-ribbon {
-      grid-row: 9;
-    }
-    .featured-works-section {
-      grid-row: 10;
-    }
-    .contact-entry-section {
-      grid-row: 11;
-    }
-
-    .art-header {
-      grid-column: 1 / 2;
-      grid-row: 3;
-      align-self: end;
-      justify-self: center;
-      width: max-content;
-      max-width: 90%;
-      padding: 0;
-      margin: 0;
-      z-index: 50;
-    }
-
-    .kime-media-player {
-      grid-column: 1 / 2;
-      grid-row: 4;
-      align-self: start;
-      justify-self: center;
-      width: clamp(220px, 80%, 450px);
-      margin: clamp(30px, 4vw, 50px) 0 0 0;
-      z-index: 50;
-    }
   }
 </style>
