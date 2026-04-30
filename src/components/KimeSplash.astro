@@ -113,13 +113,15 @@ import KimeyuIcon from "./icons/KimeyuIcon.astro";
       ".kime-splash__video",
     ) as HTMLVideoElement;
     if (splashVideo) {
+      // Ép trình duyệt load lại source sau khi Astro View Transition swap DOM
+      // Không gọi load() thì video sẽ bị trắng khi navigate back
+      splashVideo.load();
+
       const observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            // Chỉ play khi splash screen lọt vào màn hình (tiết kiệm CPU)
             splashVideo.play().catch(() => {});
           } else {
-            // Pause ngay khi user scroll qua khỏi splash screen
             splashVideo.pause();
           }
         },
