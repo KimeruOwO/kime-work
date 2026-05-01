@@ -86,6 +86,7 @@ const avifSrcset = (
       <PageDecorBanner
         text="ABOUT ME"
         href="#about-me"
+        variant="secondary"
         compact
         checkerPosition="end"
       />
@@ -107,9 +108,10 @@ const avifSrcset = (
 
     <div class="page-content">
       <!-- ================= SECTION: HERO ================= -->
-      <PageDecorBanner id="about-me" text="ABOUT ME" />
+      <PageDecorBanner id="banner-about-me" text="ABOUT ME" variant="secondary" />
 
       <header
+        id="about-me"
         class="profile-hero-header grid-area-hero"
         style={`--avatar-min: ${AVATAR_MOBILE_PX}px; --avatar-max: ${AVATAR_DESKTOP_PX}px;`}
       >
@@ -135,10 +137,11 @@ const avifSrcset = (
       </header>
 
       <!-- ================= SECTION: TOOLS ================= -->
-      <section class="tools-section">
+      <section id="creative-tools" class="tools-section">
         <div class="tools-section__inner">
           <div class="tools-section__head">
             <PageDecorBanner
+              id="banner-creative-tools"
               text="TOOLS FOCUS"
               compact
               checkerPosition="both"
@@ -192,7 +195,7 @@ const avifSrcset = (
       <!-- ================= SECTION: VALUE ================= -->
       <div id="value" class="bottom-banners">
         <div class="value-header-row">
-          <PageDecorBanner text="VALUE" variant="secondary" noMargin />
+          <PageDecorBanner id="banner-value" text="VALUE" variant="secondary" noMargin />
           <div class="banner-empty-filler" aria-hidden="true">
             <div class="symbol-circle"></div>
             <div class="symbol-cross"></div>
@@ -216,10 +219,10 @@ const avifSrcset = (
           }
         </div>
 
-        <div class="value-conclusion">
+        <div id="experiences" class="value-conclusion">
           <div class="value-header-row">
             <PageDecorBanner
-              id="experiences"
+              id="banner-experiences"
               text="Experiences and Collaboration"
               variant="secondary"
               noMargin
@@ -620,9 +623,9 @@ const avifSrcset = (
   }
 
   .collab-cta {
-    display: inline-flex;
+    display: grid;
+    grid-template-columns: clamp(20px, 3vw, 28px) 1fr clamp(20px, 3vw, 28px);
     align-items: center;
-    justify-content: center;
     gap: var(--spacing-4);
     width: min(100%, max(300px, 50%));
     padding: var(--spacing-2) var(--spacing-4);
@@ -654,6 +657,8 @@ const avifSrcset = (
   }
 
   .collab-cta__text {
+    grid-column: 2;
+    text-align: center;
     color: var(--bg-secondary);
     font-size: clamp(var(--text-base), 3vw, var(--text-xl));
     font-weight: 900;
@@ -664,6 +669,8 @@ const avifSrcset = (
   }
 
   .collab-cta :global(.collab-cta__icon) {
+    grid-column: 3;
+    justify-self: end;
     width: clamp(20px, 3vw, 28px);
     height: clamp(20px, 3vw, 28px);
     color: var(--bg-secondary);
@@ -1041,6 +1048,16 @@ const avifSrcset = (
 
     .sidebar-nav :global(.page-decor-banner) {
       width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    :global(.page-decor-banner) {
+      transition: background-color 0.3s ease;
+    }
+    :global(.page-decor-banner.is-active) {
+      background-color: var(--color-primary) !important;
+    }
+    :global(.page-decor-banner.is-active .page-decor-banner__text) {
+      color: var(--base-white) !important;
     }
     .info-banner::before {
       width: 0;
@@ -1149,9 +1166,32 @@ const avifSrcset = (
 <script>
   // Script xử lý hiệu ứng cuộn mượt (smooth scroll) cho thanh điều hướng bên (sidebar)
   document.addEventListener("astro:page-load", () => {
-    // Lấy tất cả các thẻ a có href bắt đầu bằng # bên trong sidebar-nav
     const sidebarLinks = document.querySelectorAll<HTMLAnchorElement>('.sidebar-nav a[href^="#"]');
-    
+
+    // --- 2. ACTIVE STATE ON SCROLL ---
+    const orderedIds = ["about-me", "creative-tools", "value", "experiences"];
+    let forcedActiveId: string | null = null;
+    let clickTimeout: number | ReturnType<typeof setTimeout> | null = null;
+
+    function applyActiveState(activeId: string | null) {
+      if (!activeId) return;
+      sidebarLinks.forEach(link => {
+        if (link.getAttribute("href") === `#${activeId}`) {
+          link.classList.add("is-active");
+        } else {
+          link.classList.remove("is-active");
+        }
+      });
+
+      document.querySelectorAll('.page-content .page-decor-banner').forEach(banner => {
+        if (banner.id === `banner-${activeId}`) {
+          banner.classList.add("is-active");
+        } else {
+          banner.classList.remove("is-active");
+        }
+      });
+    }
+
     sidebarLinks.forEach(link => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
@@ -1159,18 +1199,30 @@ const avifSrcset = (
         const targetId = link.getAttribute("href");
         if (!targetId || targetId === "#") return;
         
+        // Force active state immediately on click
+        const id = targetId.substring(1);
+        forcedActiveId = id;
+        applyActiveState(id);
+        
+        if (clickTimeout) {
+          clearTimeout(clickTimeout);
+        }
+        clickTimeout = setTimeout(() => {
+          forcedActiveId = null;
+        }, 1300); // 1.2s scroll + 100ms buffer
+        
         const targetSection = document.querySelector(targetId);
         if (!targetSection) return;
 
-        // Bù trừ 120px (chiều cao header + padding) để phần tử không bị dính sát mép trên
-        const headerOffset = 120; 
+        const extraOffset = targetId === "#about-me" ? 80 : 0;
+        
+        const headerOffset = 120 + extraOffset; 
         const targetPosition = targetSection.getBoundingClientRect().top + window.scrollY - headerOffset;
         const startPosition = window.scrollY;
         const distance = targetPosition - startPosition;
-        const duration = 1200; // 1.2s cho độ lướt mượt
+        const duration = 1200;
         let start: number | null = null;
 
-        // Custom easing (easeOutQuart) - Đồng bộ phong cách lướt êm ái với splash
         const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
 
         const animation = (currentTime: number) => {
@@ -1188,5 +1240,56 @@ const avifSrcset = (
         requestAnimationFrame(animation);
       });
     });
+
+    // --- 2. ACTIVE STATE ON SCROLL ---
+
+    function updateActiveNav() {
+      if (forcedActiveId) return;
+      
+      let activeId = null;
+      let minDistance = Infinity;
+
+      orderedIds.forEach(id => {
+        const section = document.getElementById(id);
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          const topThreshold = id === "about-me" ? 250 : 150;
+          if (rect.top <= topThreshold && rect.bottom >= 150) {
+            activeId = id;
+          }
+        }
+      });
+
+      // Fallback: Closest to offset
+      if (!activeId) {
+        orderedIds.forEach(id => {
+          const section = document.getElementById(id);
+          if (section) {
+            const rect = section.getBoundingClientRect();
+            const distance = Math.abs(rect.top - 150);
+            if (distance < minDistance) {
+              minDistance = distance;
+              activeId = id;
+            }
+          }
+        });
+      }
+
+      applyActiveState(activeId);
+    }
+
+    let isTicking = false;
+    window.addEventListener("scroll", () => {
+      if (!isTicking) {
+        window.requestAnimationFrame(() => {
+          updateActiveNav();
+          isTicking = false;
+        });
+        isTicking = true;
+      }
+    });
+
+    // Init
+    updateActiveNav();
   });
 </script>

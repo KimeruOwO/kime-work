@@ -181,6 +181,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
     grid-row: 2;
     justify-self: center;
     margin-top: var(--spacing-4);
+    
 
     display: flex;
     align-items: center;
@@ -188,7 +189,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
     width: fit-content;
     border: var(--border-width-xs) solid var(--color-secondary-darker);
     border-radius: var(--radius-2xl);
-    padding: var(--spacing-1) var(--spacing-2);
+    padding: var(--spacing-1) var(--spacing-2) calc(var(--spacing-1) + 1px);
     background-color: var(--bg-secondary);
     position: relative;
     user-select: none;
@@ -200,7 +201,7 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
     content: "";
     position: absolute;
     top: var(--spacing-1);
-    bottom: var(--spacing-1);
+    bottom: calc(var(--spacing-1) + 3px);
     left: var(--spacing-2);
     border-radius: var(--radius-2xl);
     border: var(--border-width-xs) solid var(--color-secondary-darker);
