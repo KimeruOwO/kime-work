@@ -1138,6 +1138,18 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     isolation: isolate;
   }
 
+  @media (max-width: 767px) {
+    .ribbon-nav-dots {
+      --dot-size: 14px;
+      --dot-gap: 3px;
+      --dot-border: 1.5px;
+      --dot-pad: 3px;
+      --grid-pad-left: 12px;
+      --gap-to-grid: 6px;
+      padding-right: 12px;
+    }
+  }
+
   @media (min-width: 1024px) {
     .ribbon-nav-dots {
       left: clamp(var(--spacing-12), 10vw, 15vw);
@@ -1154,7 +1166,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     --dot-gap: max(calc(var(--ui-h) * 0.25), 8px);
     --gap-to-grid: max(calc(var(--ui-h) * 0.3), 8px);
     --checker-cell: calc(var(--ui-h) / 3);
-    
+
     position: relative;
     left: auto;
     top: auto;
@@ -1168,7 +1180,15 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
   @media (max-width: 768px) {
     .pickup-works-ribbon .ribbon-nav-dots {
+      --dot-size: 11px;
+      --dot-gap: 5px;
+      --dot-border: 2px;
       --grid-w: calc(var(--checker-cell) * 3);
+      --grid-pad-left: 10px;
+      --gap-to-grid: 5px;
+      padding-right: 10px;
+      flex-shrink: 1;
+      min-width: 0;
     }
   }
 

@@ -108,7 +108,11 @@ const avifSrcset = (
 
     <div class="page-content">
       <!-- ================= SECTION: HERO ================= -->
-      <PageDecorBanner id="banner-about-me" text="ABOUT ME" variant="secondary" />
+      <PageDecorBanner
+        id="banner-about-me"
+        text="ABOUT ME"
+        variant="secondary"
+      />
 
       <header
         id="about-me"
@@ -195,7 +199,12 @@ const avifSrcset = (
       <!-- ================= SECTION: VALUE ================= -->
       <div id="value" class="bottom-banners">
         <div class="value-header-row">
-          <PageDecorBanner id="banner-value" text="VALUE" variant="secondary" noMargin />
+          <PageDecorBanner
+            id="banner-value"
+            text="VALUE"
+            variant="secondary"
+            noMargin
+          />
           <div class="banner-empty-filler" aria-hidden="true">
             <div class="symbol-circle"></div>
             <div class="symbol-cross"></div>
@@ -623,17 +632,20 @@ const avifSrcset = (
   }
 
   .collab-cta {
+    container-type: inline-size;
     display: grid;
-    grid-template-columns: clamp(20px, 3vw, 28px) 1fr clamp(20px, 3vw, 28px);
+    --icon-size: clamp(16px, 3.5vw, 28px);
+    grid-template-columns: var(--icon-size) minmax(0, 1fr) var(--icon-size);
     align-items: center;
-    gap: var(--spacing-4);
-    width: min(100%, max(300px, 50%));
-    padding: var(--spacing-2) var(--spacing-4);
+    gap: clamp(8px, 2vw, var(--spacing-4));
+    width: min(calc(100% - 10px), 450px);
+    padding: clamp(6px, 1.5vw, var(--spacing-2)) clamp(12px, 3vw, var(--spacing-4));
 
     background: var(--color-primary);
     border: 4px solid var(--color-secondary-dark);
     box-shadow: 5px 8px 0px #7ee6fa;
     border-radius: 20px;
+    overflow: hidden;
 
     text-decoration: none;
     transition:
@@ -660,7 +672,7 @@ const avifSrcset = (
     grid-column: 2;
     text-align: center;
     color: var(--bg-secondary);
-    font-size: clamp(var(--text-base), 3vw, var(--text-xl));
+    font-size: clamp(14px, 4.5cqw, var(--text-xl));
     font-weight: 900;
     letter-spacing: 0.02em;
     white-space: nowrap;
@@ -670,9 +682,9 @@ const avifSrcset = (
 
   .collab-cta :global(.collab-cta__icon) {
     grid-column: 3;
-    justify-self: end;
-    width: clamp(20px, 3vw, 28px);
-    height: clamp(20px, 3vw, 28px);
+    justify-self: center;
+    width: var(--icon-size);
+    height: var(--icon-size);
     color: var(--bg-secondary);
     flex-shrink: 0;
   }
@@ -871,10 +883,13 @@ const avifSrcset = (
     gap: var(--spacing-6);
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 920px) {
     .banner-empty-filler {
-      display: flex; /* Bật lại ở mốc Tablet trở lên */
+      display: flex;
     }
+  }
+
+  @media (min-width: 768px) {
 
     .tools-section::before,
     .tools-section::after {
@@ -1062,6 +1077,10 @@ const avifSrcset = (
     .info-banner::before {
       width: 0;
     }
+
+    .banner-empty-filler {
+      display: none;
+    }
   }
 
   /* ==========================================================
@@ -1094,6 +1113,7 @@ const avifSrcset = (
     }
 
     .banner-empty-filler {
+      display: flex;
     }
 
     .value-cards-layout {
@@ -1166,7 +1186,9 @@ const avifSrcset = (
 <script>
   // Script xử lý hiệu ứng cuộn mượt (smooth scroll) cho thanh điều hướng bên (sidebar)
   document.addEventListener("astro:page-load", () => {
-    const sidebarLinks = document.querySelectorAll<HTMLAnchorElement>('.sidebar-nav a[href^="#"]');
+    const sidebarLinks = document.querySelectorAll<HTMLAnchorElement>(
+      '.sidebar-nav a[href^="#"]',
+    );
 
     // --- 2. ACTIVE STATE ON SCROLL ---
     const orderedIds = ["about-me", "creative-tools", "value", "experiences"];
@@ -1175,7 +1197,7 @@ const avifSrcset = (
 
     function applyActiveState(activeId: string | null) {
       if (!activeId) return;
-      sidebarLinks.forEach(link => {
+      sidebarLinks.forEach((link) => {
         if (link.getAttribute("href") === `#${activeId}`) {
           link.classList.add("is-active");
         } else {
@@ -1183,41 +1205,46 @@ const avifSrcset = (
         }
       });
 
-      document.querySelectorAll('.page-content .page-decor-banner').forEach(banner => {
-        if (banner.id === `banner-${activeId}`) {
-          banner.classList.add("is-active");
-        } else {
-          banner.classList.remove("is-active");
-        }
-      });
+      document
+        .querySelectorAll(".page-content .page-decor-banner")
+        .forEach((banner) => {
+          if (banner.id === `banner-${activeId}`) {
+            banner.classList.add("is-active");
+          } else {
+            banner.classList.remove("is-active");
+          }
+        });
     }
 
-    sidebarLinks.forEach(link => {
+    sidebarLinks.forEach((link) => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
-        
+
         const targetId = link.getAttribute("href");
         if (!targetId || targetId === "#") return;
-        
+
         // Force active state immediately on click
         const id = targetId.substring(1);
         forcedActiveId = id;
         applyActiveState(id);
-        
+
         if (clickTimeout) {
           clearTimeout(clickTimeout);
         }
         clickTimeout = setTimeout(() => {
           forcedActiveId = null;
         }, 1300); // 1.2s scroll + 100ms buffer
-        
+
         const targetSection = document.querySelector(targetId);
         if (!targetSection) return;
 
         const extraOffset = targetId === "#about-me" ? 80 : 0;
-        
-        const headerOffset = 120 + extraOffset; 
-        const targetPosition = targetSection.getBoundingClientRect().top + window.scrollY - headerOffset;
+
+        const headerOffset = 120 + extraOffset;
+        const targetPosition =
+          targetSection.getBoundingClientRect().top +
+          window.scrollY -
+          headerOffset;
         const startPosition = window.scrollY;
         const distance = targetPosition - startPosition;
         const duration = 1200;
@@ -1229,7 +1256,7 @@ const avifSrcset = (
           if (start === null) start = currentTime;
           const timeElapsed = currentTime - start;
           const progress = Math.min(timeElapsed / duration, 1);
-          
+
           window.scrollTo(0, startPosition + distance * easeOutQuart(progress));
 
           if (timeElapsed < duration) {
@@ -1245,11 +1272,11 @@ const avifSrcset = (
 
     function updateActiveNav() {
       if (forcedActiveId) return;
-      
+
       let activeId = null;
       let minDistance = Infinity;
 
-      orderedIds.forEach(id => {
+      orderedIds.forEach((id) => {
         const section = document.getElementById(id);
         if (section) {
           const rect = section.getBoundingClientRect();
@@ -1262,7 +1289,7 @@ const avifSrcset = (
 
       // Fallback: Closest to offset
       if (!activeId) {
-        orderedIds.forEach(id => {
+        orderedIds.forEach((id) => {
           const section = document.getElementById(id);
           if (section) {
             const rect = section.getBoundingClientRect();
