@@ -39,6 +39,14 @@ export interface Artwork {
   isFeatured?: boolean;
 }
 
+export interface Experience {
+  id: string;
+  category: string;
+  year?: string;
+  description: string;
+  sortOrder?: number;
+}
+
 const HYGRAPH_ENDPOINT = import.meta.env.HYGRAPH_ENDPOINT;
 
 async function fetchAPI<T>(query: string, variables = {}): Promise<T> {
@@ -147,4 +155,94 @@ export async function fetchVideos(): Promise<Video[]> {
       linkFacebook
     };
   });
+}
+
+export interface Experience {
+  id: string;
+  category: string;
+  year?: string;
+  description: string;
+  sortOrder?: number;
+}
+
+export async function fetchExperiences(): Promise<Experience[]> {
+  const data = await fetchAPI<{ experiences: Experience[] }>(`
+    query AllExperiences {
+      experiences(first: 100, stage: PUBLISHED, orderBy: sortOrder_DESC) {
+        id
+        category
+        year
+        description
+        sortOrder
+      }
+    }
+  `);
+  return data.experiences;
+}
+
+export interface SiteProfile {
+  id: string;
+  avatar?: Asset;
+  splashVideo?: Asset;
+  linkDiscord?: string;
+  handleDiscord?: string;
+  linkX?: string;
+  handleX?: string;
+  linkFacebook?: string;
+  handleFacebook?: string;
+  linkEmail?: string;
+  handleEmail?: string;
+  linkYoutube?: string;
+  linkPixiv?: string;
+}
+
+export async function fetchSiteProfile(): Promise<SiteProfile | null> {
+  const data = await fetchAPI<{ siteProfiles: SiteProfile[] }>(`
+    query GetSiteProfile {
+      siteProfiles(first: 1, stage: PUBLISHED) {
+        id
+        avatar {
+          url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 600, height: 600, fit: crop } } })
+          fullUrl: url
+        }
+        splashVideo {
+          url
+        }
+        linkDiscord
+        handleDiscord
+        linkX
+        handleX
+        linkFacebook
+        handleFacebook
+        linkEmail
+        handleEmail
+        linkYoutube
+        linkPixiv
+      }
+    }
+  `);
+  return data.siteProfiles[0] || null;
+}
+
+export interface AboutPageConfig {
+  id: string;
+  bioText?: string;
+  bioQuote?: string;
+  missionText?: string;
+  aboutNameText?: string;
+}
+
+export async function fetchAboutPageConfig(): Promise<AboutPageConfig | null> {
+  const data = await fetchAPI<{ aboutPageConfigs: AboutPageConfig[] }>(`
+    query GetAboutPageConfig {
+      aboutPageConfigs(first: 1, stage: PUBLISHED) {
+        id
+        bioText
+        bioQuote
+        missionText
+        aboutNameText
+      }
+    }
+  `);
+  return data.aboutPageConfigs[0] || null;
 }

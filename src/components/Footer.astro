@@ -3,7 +3,8 @@ import FacebookIcon from "./icons/FacebookIcon.astro";
 import XIcon from "./icons/XIcon.astro";
 import YouTubeIcon from "./icons/YouTubeIcon.astro";
 import PixivIcon from "./icons/PixivIcon.astro";
-import { SOCIAL_LINKS } from "../lib/socials";
+import { getSocialLinks } from "../lib/socials";
+import { fetchSiteProfile } from "../lib/hygraph";
 
 const iconMap: Record<string, any> = {
   facebook: FacebookIcon,
@@ -11,12 +12,15 @@ const iconMap: Record<string, any> = {
   youtube: YouTubeIcon,
   pixiv: PixivIcon,
 };
+
+const profileData = await fetchSiteProfile().catch(() => null);
+const dynamicSocials = getSocialLinks(profileData);
 ---
 
 <footer class="site-footer">
   <div class="footer-socials">
     {
-      SOCIAL_LINKS.map((link) => {
+      dynamicSocials.map((link) => {
         const Icon = iconMap[link.platform];
         return (
           <a
@@ -48,7 +52,6 @@ const iconMap: Record<string, any> = {
     flex-direction: column;
     width: 100%;
     background-color: var(--bg-primary);
-    margin-top: var(--spacing-12);
   }
 
   .footer-socials {

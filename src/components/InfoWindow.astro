@@ -3,7 +3,8 @@ import FacebookIcon from "./icons/FacebookIcon.astro";
 import XIcon from "./icons/XIcon.astro";
 import YouTubeIcon from "./icons/YouTubeIcon.astro";
 import PixivIcon from "./icons/PixivIcon.astro";
-import { SOCIAL_LINKS } from "../lib/socials";
+import { getSocialLinks } from "../lib/socials";
+import { fetchSiteProfile, fetchAboutPageConfig } from "../lib/hygraph";
 
 const iconMap: Record<string, any> = {
   facebook: FacebookIcon,
@@ -11,6 +12,27 @@ const iconMap: Record<string, any> = {
   youtube: YouTubeIcon,
   pixiv: PixivIcon,
 };
+
+const [profileData, aboutPageConfig] = await Promise.all([
+  fetchSiteProfile().catch(() => null),
+  fetchAboutPageConfig().catch(() => null)
+]);
+
+const dynamicSocials = getSocialLinks(profileData);
+
+const defaultMission = [
+  "I grew up surrounded by games, music, and the internet—spaces where visuals, sound, and interaction blend into one. From an early age, I was drawn to motion and rhythm, and over time, that curiosity evolved into a desire to create visuals that don't just exist, but move and feel alive.",
+  "As a Motion Designer, I’ve worked across freelance projects, taking on both execution and directional roles. I focus on crafting visual experiences where timing, movement, and emotion are tightly connected.",
+  "Through motion and design, I aim to create content that resonates on a deeper level, something that, even in a small way, could stay with someone, just like the things that once shaped me."
+];
+const missionParagraphs = aboutPageConfig?.missionText 
+  ? aboutPageConfig.missionText.split('\n').filter(p => p.trim() !== '')
+  : defaultMission;
+
+const defaultAboutName = "Kimeyu originates from my former name Kimeru, a Japanese word meaning decisive or determined. Over time, I adapted it into Kimeyu which softer, more approachable.";
+const aboutNameParagraphs = aboutPageConfig?.aboutNameText
+  ? aboutPageConfig.aboutNameText.split('\n').filter(p => p.trim() !== '')
+  : [defaultAboutName];
 ---
 
 <retro-window class="retro-window">
@@ -42,7 +64,7 @@ const iconMap: Record<string, any> = {
         aria-label="Social Links"
       >
         {
-          SOCIAL_LINKS.map((link) => {
+          dynamicSocials.map((link) => {
             const Icon = iconMap[link.platform];
             return (
               <a
@@ -70,24 +92,9 @@ const iconMap: Record<string, any> = {
         <ul class="custom-list">
           <li class="mission-list-item">
             <p><strong>For the things I truly love</strong></p>
-            <p>
-              I grew up surrounded by games, music, and the internet—spaces
-              where visuals, sound, and interaction blend into one. From an
-              early age, I was drawn to motion and rhythm, and over time, that
-              curiosity evolved into a desire to create visuals that don't just
-              exist, but move and feel alive.
-            </p>
-            <p>
-              As a Motion Designer, I’ve worked across freelance projects,
-              taking on both execution and directional roles. I focus on
-              crafting visual experiences where timing, movement, and emotion
-              are tightly connected.
-            </p>
-            <p>
-              Through motion and design, I aim to create content that resonates
-              on a deeper level, something that, even in a small way, could stay
-              with someone, just like the things that once shaped me.
-            </p>
+            {missionParagraphs.map(p => (
+              <p>{p}</p>
+            ))}
           </li>
         </ul>
       </div>
@@ -98,11 +105,9 @@ const iconMap: Record<string, any> = {
         <h3 class="info-section__heading">// ABOUT THE NAME "KIMEYU" //</h3>
       </div>
       <div class="info-section__content">
-        <p>
-          Kimeyu originates from my former name Kimeru, a Japanese word meaning
-          decisive or determined. Over time, I adapted it into Kimeyu which
-          softer, more approachable.
-        </p>
+        {aboutNameParagraphs.map(p => (
+          <p>{p}</p>
+        ))}
       </div>
     </section>
   </div>

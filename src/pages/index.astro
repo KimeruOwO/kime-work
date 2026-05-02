@@ -1,4 +1,26 @@
 ---
-// Redirect root "/" to "/home"
-return Astro.redirect("/home", 301);
+// Silent Redirect root "/" to "/home"
 ---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=/home" />
+    <title>Kimeyu - Loading...</title>
+    <script>
+      window.location.replace("/home");
+    </script>
+    <style is:inline>
+      body {
+        background-color: #f4f5f8;
+        margin: 0;
+        padding: 0;
+        opacity: 0;
+        visibility: hidden;
+        display: none;
+      }
+    </style>
+  </head>
+  <body> </body>
+</html>

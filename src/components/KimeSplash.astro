@@ -1,5 +1,9 @@
 ---
 import KimeyuIcon from "./icons/KimeyuIcon.astro";
+import { fetchSiteProfile } from "../lib/hygraph";
+
+const profileData = await fetchSiteProfile().catch(() => null);
+const cmsVideoUrl = profileData?.splashVideo?.url;
 ---
 
 <section class="kime-splash" aria-label="Splash Screen">
@@ -13,8 +17,14 @@ import KimeyuIcon from "./icons/KimeyuIcon.astro";
     loop
     playsinline
   >
-    <source src="/media/videos/WEBM.webm" type="video/webm" />
-    <source src="/media/videos/REEL%2020255.mp4" type="video/mp4" />
+    {cmsVideoUrl ? (
+      <source src={cmsVideoUrl} type="video/mp4" />
+    ) : (
+      <>
+        <source src="/media/videos/WEBM.webm" type="video/webm" />
+        <source src="/media/videos/REEL%2020255.mp4" type="video/mp4" />
+      </>
+    )}
   </video>
 
   <!-- Diagonal Slash -->
@@ -86,10 +96,9 @@ import KimeyuIcon from "./icons/KimeyuIcon.astro";
         const targetPosition = targetSection.getBoundingClientRect().top + window.scrollY;
         const startPosition = window.scrollY;
         const distance = targetPosition - startPosition;
-        const duration = 1200; // 1.2s cho độ mướt tối đa
+        const duration = 1200;
         let start: number | null = null;
 
-        // Custom easing (easeOutQuart) - Trượt nhanh và thắng siêu mượt
         const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
 
         const animation = (currentTime: number) => {
@@ -108,13 +117,10 @@ import KimeyuIcon from "./icons/KimeyuIcon.astro";
       });
     }
 
-    // --- ZERO-BLOAT VIDEO OBSERVER ---
     const splashVideo = document.querySelector(
       ".kime-splash__video",
     ) as HTMLVideoElement;
     if (splashVideo) {
-      // Ép trình duyệt load lại source sau khi Astro View Transition swap DOM
-      // Không gọi load() thì video sẽ bị trắng khi navigate back
       splashVideo.load();
 
       const observer = new IntersectionObserver(
@@ -170,9 +176,7 @@ import KimeyuIcon from "./icons/KimeyuIcon.astro";
     object-fit: cover;
     z-index: 0;
     pointer-events: none;
-    opacity: 1; /* Video hiển thị 100% thay cho màu hồng */
-    
-    /* Ép Firefox render video bằng GPU để không bị giật lag khi cuộn trang */
+    opacity: 1;
     transform: translateZ(0);
     will-change: transform;
     backface-visibility: hidden;
@@ -200,7 +204,7 @@ import KimeyuIcon from "./icons/KimeyuIcon.astro";
   .kime-splash__logo {
     margin: 0;
     padding: 0;
-    height: clamp(35px, 8vw, 45px);
+    height: clamp(22px, 5vw, 30px);
   }
 
   .kime-splash__logo :global(svg) {

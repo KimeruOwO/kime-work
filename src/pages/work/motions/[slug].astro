@@ -220,6 +220,14 @@ const thumbUrl = ytId
         </>
       )
     }
+
+    <!-- 5. BOTTOM RIBBON -->
+    <div class="hero-ribbon hero-ribbon--bottom">
+      <div class="film-strip-bg" aria-hidden="true">
+        <div class="banner-strip banner-strip--back banner-strip--bottom-back"></div>
+        <div class="banner-strip banner-strip--front banner-strip--bottom-front"></div>
+      </div>
+    </div>
   </div>
 </Layout>
 
@@ -228,7 +236,7 @@ const thumbUrl = ytId
     position: relative;
     width: 100%;
     overflow-x: hidden;
-    padding-bottom: var(--spacing-16);
+    padding-bottom: var(--spacing-60);
   }
 
   /* ==================================
@@ -302,9 +310,30 @@ const thumbUrl = ytId
     z-index: 3;
   }
 
+  /* MODIFIERS FOR BOTTOM RIBBON */
+  .hero-ribbon--bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    height: 0;
+    z-index: 10;
+  }
+  
+  .banner-strip--bottom-back {
+    transform: translateY(-50%) rotate(-4deg) translateZ(0);
+  }
+
+  .banner-strip--bottom-front {
+    transform: translateY(-100%) rotate(2deg) translateZ(0);
+  }
+
   @media (max-width: 768px) {
     .banner-strip--front {
       transform: translateY(-100%) rotate(-22deg) translateZ(0);
+    }
+    .banner-strip--bottom-front {
+      transform: translateY(-100%) rotate(12deg) translateZ(0);
     }
   }
 
@@ -612,7 +641,7 @@ const thumbUrl = ytId
     letter-spacing: 1px;
   }
   .desc-text {
-    font-size: var(--text-sm);
+    font-size: clamp(var(--text-sm), 1.5vw, var(--text-lg));
     font-weight: 600;
     color: var(--color-secondary-darker);
     line-height: 1.6;
@@ -624,7 +653,7 @@ const thumbUrl = ytId
     display: grid;
     grid-template-columns: auto 1fr;
     gap: var(--spacing-3) var(--spacing-8);
-    font-size: var(--text-sm);
+    font-size: clamp(var(--text-sm), 1.5vw, var(--text-lg));
     font-weight: 600;
     line-height: 1.6;
     margin: 0 0 var(--spacing-6) 0;
@@ -782,7 +811,7 @@ const thumbUrl = ytId
   .detail-embed-img {
     width: 100%;
     height: auto;
-    border: var(--border-width-sm) solid var(--base-black-800);
+    border: var(--border-width-sm) solid var(--color-secondary-dark);
     background-color: var(--color-secondary-light);
     display: block;
     content-visibility: auto;

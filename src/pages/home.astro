@@ -4,13 +4,27 @@ import KimeSplash from "../components/KimeSplash.astro";
 import CyberRibbon from "../components/CyberRibbon.astro";
 import PageDecorBanner from "../components/PageDecorBanner.astro";
 import KimeyuIcon from "../components/icons/KimeyuIcon.astro";
-import { fetchVideos, fetchArtworks } from "../lib/hygraph";
+import { fetchVideos, fetchArtworks, fetchSiteProfile } from "../lib/hygraph";
 
 // FETCH HERO SLIDER DATA
-const [allVideos, allArtworks] = await Promise.all([
+const [allVideos, allArtworks, profileData] = await Promise.all([
   fetchVideos(),
   fetchArtworks(),
+  fetchSiteProfile().catch(() => null),
 ]);
+
+// Social Links Fallbacks
+const discordLink = profileData?.linkDiscord || "https://discord.com/users/683574461147906078";
+const discordHandle = profileData?.handleDiscord || "kimeyu_39";
+
+const xLink = profileData?.linkX || "https://twitter.com/Kimeru2001";
+const xHandle = profileData?.handleX || "@Kimeru2001";
+
+const fbLink = profileData?.linkFacebook || "https://facebook.com/kimerukirisu/";
+const fbHandle = profileData?.handleFacebook || "facebook.com/kimerukirisu/";
+
+const emailLink = profileData?.linkEmail || "mailto:kimeyukawa@gmail.com";
+const emailHandle = profileData?.handleEmail || "kimeyukawa@gmail.com";
 
 // Extract newest item per category (Zero bloat: only storing strings)
 const vMusic = allVideos.find((v) => v.category?.name?.includes("MusicVideos"));
@@ -61,8 +75,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 <Layout title="kimeyu.work">
   <div class="contact-page-wrapper">
     <KimeSplash />
-
-    <!-- Legacy Hero Slider & Media Player removed per user request -->
 
     <!-- TOP RIBBON (ASCII generated SVG) -->
     <CyberRibbon />
@@ -219,7 +231,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
           <!-- Discord -->
           <div class="social-pill-wrapper">
             <a
-              href="https://discord.com/users/683574461147906078"
+              href={discordLink}
               target="_blank"
               rel="noopener noreferrer"
               class="social-pill__link"
@@ -233,13 +245,13 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
                 >
               </div>
               <div class="social-pill__content">
-                <span class="social-pill__handle">kimeyu_39</span>
+                <span class="social-pill__handle">{discordHandle}</span>
                 <span class="social-pill__platform">DISCORD</span>
               </div>
             </a>
             <button
               class="social-copy btn-copy"
-              data-copy-text="kimeyu_39"
+              data-copy-text={discordHandle}
               aria-label="Copy Discord"
             >
               <svg viewBox="0 0 24 24"
@@ -254,7 +266,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
           <!-- X (Twitter) -->
           <div class="social-pill-wrapper">
             <a
-              href="https://twitter.com/Kimeru2001"
+              href={xLink}
               target="_blank"
               rel="noopener noreferrer"
               class="social-pill__link"
@@ -268,13 +280,13 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
                 >
               </div>
               <div class="social-pill__content">
-                <span class="social-pill__handle">@Kimeru2001</span>
+                <span class="social-pill__handle">{xHandle}</span>
                 <span class="social-pill__platform">X</span>
               </div>
             </a>
             <button
               class="social-copy btn-copy"
-              data-copy-text="@Kimeru2001"
+              data-copy-text={xHandle}
               aria-label="Copy X"
             >
               <svg viewBox="0 0 24 24"
@@ -289,7 +301,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
           <!-- Facebook -->
           <div class="social-pill-wrapper">
             <a
-              href="https://facebook.com/kimerukirisu/"
+              href={fbLink}
               target="_blank"
               rel="noopener noreferrer"
               class="social-pill__link"
@@ -304,14 +316,14 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
               </div>
               <div class="social-pill__content">
                 <span class="social-pill__handle"
-                  >facebook.com/kimerukirisu/</span
+                  >{fbHandle}</span
                 >
                 <span class="social-pill__platform">FACEBOOK//MESSSENGER</span>
               </div>
             </a>
             <button
               class="social-copy btn-copy"
-              data-copy-text="facebook.com/kimerukirisu/"
+              data-copy-text={fbHandle}
               aria-label="Copy Facebook"
             >
               <svg viewBox="0 0 24 24"
@@ -326,7 +338,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
           <!-- Email -->
           <div class="social-pill-wrapper">
             <a
-              href="mailto:kimeyukawa@gmail.com"
+              href={emailLink}
               class="social-pill__link"
               aria-label="Kimeyu Mail"
             >
@@ -338,13 +350,13 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
                 >
               </div>
               <div class="social-pill__content">
-                <span class="social-pill__handle">kimeyukawa@gmail.com</span>
+                <span class="social-pill__handle">{emailHandle}</span>
                 <span class="social-pill__platform">GMAIL</span>
               </div>
             </a>
             <button
               class="social-copy btn-copy"
-              data-copy-text="kimeyukawa@gmail.com"
+              data-copy-text={emailHandle}
               aria-label="Copy Email"
             >
               <svg viewBox="0 0 24 24"
