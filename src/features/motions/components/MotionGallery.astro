@@ -617,6 +617,29 @@ const { page } = Astro.props;
     }
   }
 
+  @media (max-width: 1760px) {
+    .grid-btn[data-cols="4"] {
+      display: none !important;
+    }
+
+    .motions-grid[data-grid-cols="4"],
+    .motions-grid[data-grid-cols="default"] {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+
+  @media (max-width: 1380px) {
+    .grid-btn[data-cols="3"] {
+      display: none !important;
+    }
+
+    .motions-grid[data-grid-cols="3"],
+    .motions-grid[data-grid-cols="4"],
+    .motions-grid[data-grid-cols="default"] {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+
   @media (min-width: 768px) {
     .motions-grid[data-grid-cols="default"],
     .motions-grid[data-grid-cols="2"] {
