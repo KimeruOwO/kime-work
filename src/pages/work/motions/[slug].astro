@@ -235,8 +235,11 @@ const thumbUrl = ytId
   .motion-detail-page {
     position: relative;
     width: 100%;
-    overflow-x: hidden;
-    padding-bottom: var(--spacing-60);
+    overflow-x: clip;
+  }
+
+  :global(footer.site-footer.site-footer) {
+    margin-top: 0;
   }
 
   /* ==================================
@@ -312,11 +315,12 @@ const thumbUrl = ytId
 
   /* MODIFIERS FOR BOTTOM RIBBON */
   .hero-ribbon--bottom {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin: 0;
-    height: 0;
+    position: relative;
+    bottom: auto;
+    left: auto;
+    margin-top: clamp(160px, 20vw, 240px);
+    margin-bottom: clamp(120px, 15vw, 180px);
+    height: clamp(10px, 5vw, 50px);
     z-index: 10;
   }
   

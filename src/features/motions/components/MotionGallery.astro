@@ -640,6 +640,13 @@ const { page } = Astro.props;
     }
   }
 
+  @media (max-width: 767px) {
+    .motions-grid,
+    .motions-grid[data-grid-cols] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
   @media (min-width: 768px) {
     .motions-grid[data-grid-cols="default"],
     .motions-grid[data-grid-cols="2"] {
@@ -828,7 +835,7 @@ const { page } = Astro.props;
   }
 
   /* Responsive mobile pagination */
-  @media (max-width: 639px) {
+  @media (max-width: 767px) {
     :global(#motion-pagination) {
       display: flex;
       --cell: 24px;
