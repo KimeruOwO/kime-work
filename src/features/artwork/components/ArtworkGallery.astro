@@ -1060,6 +1060,7 @@ const { page } = Astro.props;
     justify-content: center;
     height: round(nearest, calc(var(--cell) * 1.5), 1px);
     color: var(--text-inverse);
+    min-width: clamp(120px, 16vw, 200px);
     font-weight: 899;
     font-size: clamp(var(--text-base), 2vw, var(--text-lg));
     font-family: inherit;
