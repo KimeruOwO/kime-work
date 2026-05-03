@@ -1,5 +1,6 @@
 ---
 import { Picture, getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
 
 import Layout from "../layouts/Layout.astro";
 import SectionHeader from "../components/SectionHeader.astro";
@@ -26,8 +27,23 @@ const [profileData, aboutPageConfig] = await Promise.all([
   })
 ]);
 
-const avatarSource = profileData?.avatar?.url || kimeyuPFP;
-const isRemoteAvatar = !!profileData?.avatar?.url;
+// Check if the remote avatar is actually reachable before using it
+let isRemoteAvatar = false;
+let avatarSource: string | ImageMetadata = kimeyuPFP;
+
+if (profileData?.avatar?.url) {
+  try {
+    const probe = await fetch(profileData.avatar.url, { method: "HEAD", signal: AbortSignal.timeout(5000) });
+    if (probe.ok) {
+      isRemoteAvatar = true;
+      avatarSource = profileData.avatar.url;
+    } else {
+      console.warn("Remote avatar returned non-OK status, using local fallback.");
+    }
+  } catch {
+    console.warn("Remote avatar unreachable, using local fallback.");
+  }
+}
 
 // Bio Fallbacks
 const defaultBio = "Born in VietNam in 2005. Worked as a freelancer who has creative journey began with anime to form a way of seeing the world through emotion, color, and movement.";
