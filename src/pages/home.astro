@@ -482,24 +482,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       window.addEventListener("scroll", updateParallax, { passive: true });
       updateParallax();
     }
-
-    // Checkerboard header reveal
-    const featuredHeader =
-      document.querySelector<HTMLElement>(".featured-header");
-    if (featuredHeader) {
-      const headerObserver = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("is-revealed");
-              headerObserver.disconnect();
-            }
-          }
-        },
-        { threshold: 0.3 },
-      );
-      headerObserver.observe(featuredHeader);
-    }
   };
 
   initFeaturedEffects();
@@ -1705,37 +1687,16 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
 
   /* ==============================================
-     ③ CHECKERBOARD HEADER REVEAL
-     ============================================== */
-  .featured-header::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    background-color: var(--color-secondary-light);
-    -webkit-mask-image: var(--checker-mask-uri);
-    mask-image: var(--checker-mask-uri);
-    -webkit-mask-size: 8px 8px;
-    mask-size: 8px 8px;
-    transform: translateX(0);
-    will-change: transform;
-    pointer-events: none;
-  }
-  .featured-header.is-revealed::before {
-    animation: checker-wipe 0.6s cubic-bezier(0.77, 0, 0.175, 1) 0.3s forwards;
-  }
-
-  @keyframes checker-wipe {
-    from { transform: translateX(0); }
-    to { transform: translateX(100%); }
-  }
-
-  /* ==============================================
      CARD WIPE REVEAL (subtle band per card)
      ============================================== */
   .featured-card {
     position: relative;
     overflow: clip;
+    opacity: 0;
+  }
+
+  @keyframes card-show {
+    to { opacity: 1; }
   }
   .card-wipe-band {
     position: absolute;
@@ -1761,20 +1722,38 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     animation: card-wipe-in 0.35s cubic-bezier(0.77, 0, 0.175, 1) forwards,
       card-wipe-out 0.35s cubic-bezier(0.77, 0, 0.175, 1) 0.38s forwards;
   }
+  .featured-card.is-visible {
+    animation: card-show 0.01s 0.38s forwards;
+  }
   .featured-card.is-visible:nth-child(2) .card-wipe-band {
     animation-delay: 0.1s, 0.48s;
+  }
+  .featured-card.is-visible:nth-child(2) {
+    animation-delay: 0.48s;
   }
   .featured-card.is-visible:nth-child(3) .card-wipe-band {
     animation-delay: 0.2s, 0.58s;
   }
+  .featured-card.is-visible:nth-child(3) {
+    animation-delay: 0.58s;
+  }
   .featured-card.is-visible:nth-child(4) .card-wipe-band {
     animation-delay: 0.3s, 0.68s;
+  }
+  .featured-card.is-visible:nth-child(4) {
+    animation-delay: 0.68s;
   }
   .featured-card.is-visible:nth-child(5) .card-wipe-band {
     animation-delay: 0.4s, 0.78s;
   }
+  .featured-card.is-visible:nth-child(5) {
+    animation-delay: 0.78s;
+  }
   .featured-card.is-visible:nth-child(6) .card-wipe-band {
     animation-delay: 0.5s, 0.88s;
+  }
+  .featured-card.is-visible:nth-child(6) {
+    animation-delay: 0.88s;
   }
 
   @keyframes card-wipe-in {
