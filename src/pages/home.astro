@@ -1012,7 +1012,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
 
   .quote-text {
-    font-size: clamp(1.8rem, 7.5vw, 3.8rem);
+    font-size: clamp(1.8rem, 7vw, 3.8rem);
     font-weight: 900;
     font-family: var(--font-sans);
     color: var(--color-secondary-darker);
@@ -1022,6 +1022,9 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     display: flex;
     flex-direction: column;
     letter-spacing: -0.01em;
+  }
+  .quote-line {
+    white-space: nowrap;
   }
   .quote-text .text-cyan {
     color: var(--color-secondary-bright);
