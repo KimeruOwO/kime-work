@@ -87,18 +87,22 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
     <!-- Kimeyu Core Slogan -->
     <section class="contact-quote-block" aria-label="Kimeyu Slogan">
-      <div class="quote-reveal-mask" aria-hidden="true">
-        <div class="qr-band qr-band--pink"></div>
-        <div class="qr-band qr-band--cyan"></div>
-      </div>
       <div class="quote-wrapper">
         <h2 class="quote-text">
-          <span class="quote-line"
-            >BUILT ON <span class="text-cyan">RHYTHM</span></span
-          >
-          <span class="quote-line"
-            >DRIVEN BY <span class="text-pink">PRECISION</span></span
-          >
+          <span class="quote-line-wrap">
+            <span class="quote-line"
+              >BUILT ON <span class="text-cyan">RHYTHM</span></span
+            >
+            <span class="qr-band qr-band--pink" aria-hidden="true"></span>
+            <span class="qr-band qr-band--cyan" aria-hidden="true"></span>
+          </span>
+          <span class="quote-line-wrap">
+            <span class="quote-line"
+              >DRIVEN BY <span class="text-pink">PRECISION</span></span
+            >
+            <span class="qr-band qr-band--pink" aria-hidden="true"></span>
+            <span class="qr-band qr-band--cyan" aria-hidden="true"></span>
+          </span>
         </h2>
       </div>
     </section>
@@ -1029,47 +1033,60 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
 
   /* ==============================================
-     QUOTE REVEAL BANDS (TWXD-style wipe)
+     QUOTE REVEAL BANDS (TWXD-style wipe per line)
      ============================================== */
   .contact-quote-block {
     position: relative;
     overflow: hidden;
   }
 
-  .quote-reveal-mask {
-    position: absolute;
-    inset: 0;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    pointer-events: none;
+  .quote-line-wrap {
+    position: relative;
+    display: block;
+    overflow: hidden;
   }
 
   .qr-band {
-    flex: 1;
+    position: absolute;
+    inset: 0;
     width: 110%;
     transform: translateX(-110%);
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    pointer-events: none;
   }
 
   .qr-band--pink {
     background-color: var(--color-primary);
+    z-index: 1;
   }
 
   .qr-band--cyan {
     background-color: var(--color-secondary-bright);
+    z-index: 2;
   }
 
-  .contact-quote-block.is-revealed .qr-band--pink {
-    animation: qr-wipe-in 0.5s cubic-bezier(0.77, 0, 0.175, 1) forwards,
-      qr-wipe-out 0.5s cubic-bezier(0.77, 0, 0.175, 1) 0.55s forwards;
+  /* Line 1 — pink wipe */
+  .contact-quote-block.is-revealed .quote-line-wrap:nth-child(1) .qr-band--pink {
+    animation: qr-wipe-in 0.45s cubic-bezier(0.77, 0, 0.175, 1) forwards,
+      qr-wipe-out 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.5s forwards;
+  }
+  /* Line 1 — cyan wipe */
+  .contact-quote-block.is-revealed .quote-line-wrap:nth-child(1) .qr-band--cyan {
+    animation: qr-wipe-in 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.06s forwards,
+      qr-wipe-out 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.56s forwards;
   }
 
-  .contact-quote-block.is-revealed .qr-band--cyan {
-    animation: qr-wipe-in 0.5s cubic-bezier(0.77, 0, 0.175, 1) 0.08s forwards,
-      qr-wipe-out 0.5s cubic-bezier(0.77, 0, 0.175, 1) 0.63s forwards;
+  /* Line 2 — pink wipe (delayed) */
+  .contact-quote-block.is-revealed .quote-line-wrap:nth-child(2) .qr-band--pink {
+    animation: qr-wipe-in 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.25s forwards,
+      qr-wipe-out 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.75s forwards;
+  }
+  /* Line 2 — cyan wipe (delayed) */
+  .contact-quote-block.is-revealed .quote-line-wrap:nth-child(2) .qr-band--cyan {
+    animation: qr-wipe-in 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.31s forwards,
+      qr-wipe-out 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.81s forwards;
   }
 
   @keyframes qr-wipe-in {
