@@ -64,11 +64,9 @@ const initialMode: "motions" | "artwork" = "motions";
   const BAND_DUR = 500;
   const STAGGER = 80;
   const BAND_COUNT = 4;
-  let isSwitching = false;
+  let activeOverlay: HTMLElement | null = null;
 
   function switchMode(targetMode: string) {
-    if (isSwitching) return;
-
     const container = document.querySelector<HTMLElement>(".mode-switch-container");
     const panels = document.querySelectorAll<HTMLElement>(".spa-panel");
     const wrapper = document.querySelector<HTMLElement>(".spa-gallery-wrapper");
@@ -77,11 +75,25 @@ const initialMode: "motions" | "artwork" = "motions";
 
     const currentMode = container.dataset.activeMode;
     if (currentMode === targetMode) return;
-    isSwitching = true;
+
+    // Cancel previous animation if running
+    if (activeOverlay) {
+      activeOverlay.remove();
+      activeOverlay = null;
+    }
+
+    // Update state immediately so duplicate clicks are ignored
+    container.dataset.activeMode = targetMode;
+    container.querySelectorAll<HTMLElement>(".switch-btn").forEach((btn) => {
+      const isActive = btn.dataset.mode === targetMode;
+      btn.classList.toggle("is-active", isActive);
+      btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
 
     const rect = wrapper.getBoundingClientRect();
     const overlay = document.createElement("div");
     overlay.style.cssText = `position:absolute;top:0;left:0;width:100%;height:${rect.height}px;z-index:100;pointer-events:none;overflow:hidden;`;
+    activeOverlay = overlay;
 
     for (let i = 0; i < BAND_COUNT; i++) {
       const band = document.createElement("div");
@@ -104,20 +116,13 @@ const initialMode: "motions" | "artwork" = "motions";
       }, i * STAGGER);
     });
 
-    // Swap panels
+    // Swap panels when bands cover
     const swapTime = BAND_COUNT * STAGGER + BAND_DUR * 0.6;
     setTimeout(() => {
+      if (activeOverlay !== overlay) return; // cancelled
       panels.forEach((p) => {
         p.hidden = p.dataset.mode !== targetMode;
       });
-
-      container.dataset.activeMode = targetMode;
-      container.querySelectorAll<HTMLElement>(".switch-btn").forEach((btn) => {
-        const isActive = btn.dataset.mode === targetMode;
-        btn.classList.toggle("is-active", isActive);
-        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
-      });
-
       history.pushState({ mode: targetMode }, "", targetMode === "motions" ? "/work/" : "/work/?mode=artwork");
     }, swapTime);
 
@@ -131,21 +136,19 @@ const initialMode: "motions" | "artwork" = "motions";
 
     // Cleanup
     setTimeout(() => {
-      overlay.remove();
-      isSwitching = false;
+      if (activeOverlay === overlay) {
+        overlay.remove();
+        activeOverlay = null;
+      }
     }, outDelay + BAND_COUNT * STAGGER + BAND_DUR + 100);
   }
 
   function initSPAToggle() {
-    const btns = document.querySelectorAll<HTMLElement>("[data-mode]");
-    console.log("[SPA] Found", btns.length, "mode buttons");
-
-    btns.forEach((btn) => {
+    document.querySelectorAll<HTMLElement>("[data-mode]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const mode = btn.dataset.mode;
-        console.log("[SPA] Clicked:", mode);
         const container = document.querySelector<HTMLElement>(".mode-switch-container");
-        if (!container) { console.warn("[SPA] No container"); return; }
+        if (!container) return;
 
         if (mode === "toggle") {
           switchMode(container.dataset.activeMode === "motions" ? "artwork" : "motions");
