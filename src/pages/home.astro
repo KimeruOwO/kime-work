@@ -226,15 +226,29 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
           <li class="instruction-strong">
             Please include as much information as possible
           </li>
-          <li>Details of your request</li>
-          <li>Desired delivery date</li>
-          <li>Budget (to the extent known)</li>
           <li>
-            Contact method (if you would prefer to be contacted via Discord,
-            Facebook, etc. instead of email, please include your ID, profile
-            link, username etc.)
+            <span class="instr-num">01</span>
+            <span class="instr-text">Details of your request</span>
           </li>
-          <li>And any other remarks.</li>
+          <li>
+            <span class="instr-num">02</span>
+            <span class="instr-text">Desired delivery date</span>
+          </li>
+          <li>
+            <span class="instr-num">03</span>
+            <span class="instr-text">Budget (to the extent known)</span>
+          </li>
+          <li>
+            <span class="instr-num">04</span>
+            <span class="instr-text"
+              >Contact method — Discord, Facebook, email, etc. (include your ID,
+              profile link, username)</span
+            >
+          </li>
+          <li>
+            <span class="instr-num">05</span>
+            <span class="instr-text">And any other remarks.</span>
+          </li>
         </ul>
 
         <div class="contact-pill-grid">
@@ -2144,63 +2158,50 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
   .contact-instructions {
     list-style: none;
-    padding-left: clamp(45px, 4vw, 50px);
+    padding: 0;
     position: relative;
     color: var(--base-white);
     font-size: clamp(16px, 1.8vw, 22px);
     line-height: 1.6;
     margin-bottom: var(--spacing-16);
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(8px, 1.5vw, 14px);
   }
 
-  .contact-instructions::before,
-  .contact-instructions::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    --decor-cell: clamp(6px, 0.8vw, 8px);
-    --blocks-x: 3;
+  .contact-instructions li {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(10px, 1.5vw, 16px);
   }
-  .contact-instructions::before {
-    top: 0;
-    --blocks-y: 3;
-    width: calc(var(--decor-cell) * var(--blocks-x));
-    height: calc(var(--decor-cell) * var(--blocks-y));
-    background-color: var(--color-secondary-light);
+
+  .instr-num {
+    flex-shrink: 0;
+    font-size: clamp(11px, 1.2vw, 14px);
+    font-weight: 900;
+    color: var(--color-secondary-bright);
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-sm);
+    padding: 2px 8px;
+    line-height: 1.4;
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    margin-top: 3px;
   }
-  .contact-instructions::after {
-    top: calc(var(--decor-cell) * 3.5);
-    --blocks-y: 5;
-    width: calc(var(--decor-cell) * var(--blocks-x));
-    aspect-ratio: var(--blocks-x) / var(--blocks-y);
-    background-color: var(--color-secondary-light);
-    -webkit-mask-image: var(--checker-mask-uri);
-    mask-image: var(--checker-mask-uri);
-    -webkit-mask-size: round(nearest, calc(var(--decor-cell) * 2), 1px)
-      round(nearest, calc(var(--decor-cell) * 2), 1px);
-    mask-size: round(nearest, calc(var(--decor-cell) * 2), 1px)
-      round(nearest, calc(var(--decor-cell) * 2), 1px);
-    -webkit-mask-repeat: repeat;
-    mask-repeat: repeat;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
+
+  .instr-text {
+    flex: 1;
   }
 
   .instruction-strong {
-    font-weight: bold;
-    font-size: 1.1em;
-    margin-bottom: 8px;
-  }
-  .contact-instructions li::before {
-    content: "· ";
-    position: absolute;
-    margin-left: -20px;
-  }
-  .instruction-strong::before {
-    content: none;
+    font-weight: 900;
+    font-size: clamp(17px, 2vw, 24px);
+    color: var(--base-white);
+    margin-bottom: clamp(4px, 1vw, 8px);
+    padding-bottom: clamp(8px, 1.5vw, 14px);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.15);
   }
 
   /* =========================================
