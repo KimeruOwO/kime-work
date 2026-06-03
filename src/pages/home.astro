@@ -87,6 +87,10 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
     <!-- Kimeyu Core Slogan -->
     <section class="contact-quote-block" aria-label="Kimeyu Slogan">
+      <div class="quote-reveal-mask" aria-hidden="true">
+        <div class="qr-band qr-band--pink"></div>
+        <div class="qr-band qr-band--cyan"></div>
+      </div>
       <div class="quote-wrapper">
         <h2 class="quote-text">
           <span class="quote-line"
@@ -418,6 +422,29 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   initCopyEngine();
 
   document.addEventListener("astro:page-load", initCopyEngine);
+
+  // --- QUOTE REVEAL ON SCROLL ---
+  const initQuoteReveal = () => {
+    const section = document.querySelector<HTMLElement>(".contact-quote-block");
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            section.classList.add("is-revealed");
+            observer.disconnect();
+          }
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    observer.observe(section);
+  };
+
+  initQuoteReveal();
+  document.addEventListener("astro:page-load", initQuoteReveal);
 </script>
 <style>
   /* ==============================================
@@ -999,6 +1026,68 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
   .quote-text .text-pink {
     color: var(--color-primary);
+  }
+
+  /* ==============================================
+     QUOTE REVEAL BANDS (TWXD-style wipe)
+     ============================================== */
+  .contact-quote-block {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quote-reveal-mask {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+  }
+
+  .qr-band {
+    flex: 1;
+    width: 110%;
+    transform: translateX(-110%);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .qr-band--pink {
+    background-color: var(--color-primary);
+  }
+
+  .qr-band--cyan {
+    background-color: var(--color-secondary-bright);
+  }
+
+  .contact-quote-block.is-revealed .qr-band--pink {
+    animation: qr-wipe-in 0.5s cubic-bezier(0.77, 0, 0.175, 1) forwards,
+      qr-wipe-out 0.5s cubic-bezier(0.77, 0, 0.175, 1) 0.55s forwards;
+  }
+
+  .contact-quote-block.is-revealed .qr-band--cyan {
+    animation: qr-wipe-in 0.5s cubic-bezier(0.77, 0, 0.175, 1) 0.08s forwards,
+      qr-wipe-out 0.5s cubic-bezier(0.77, 0, 0.175, 1) 0.63s forwards;
+  }
+
+  @keyframes qr-wipe-in {
+    from {
+      transform: translateX(-110%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes qr-wipe-out {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(110%);
+    }
   }
 
   /* ==============================================
