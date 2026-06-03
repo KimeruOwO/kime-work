@@ -60,7 +60,7 @@ const heroSlides = [
           aIllust.image?.heroUrl ||
           aIllust.image?.fullUrl ||
           aIllust.image?.url,
-        link: aIllust.linkPixiv || `/work/artwork/`,
+        link: aIllust.linkPixiv || `/work/?mode=artwork`,
         target: "_blank",
       }
     : null,
@@ -180,7 +180,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
         </div>
 
         <PageDecorBanner
-          href="/work/motions"
+          href="/work/"
           text="SEE MORE "
           checkerPosition="both"
           checkerPositionPc="start"
