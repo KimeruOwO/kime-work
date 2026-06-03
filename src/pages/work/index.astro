@@ -58,3 +58,122 @@ const initialMode: "motions" | "artwork" = "motions";
     display: none;
   }
 </style>
+
+<script>
+  const EASING = "cubic-bezier(0.77, 0, 0.175, 1)";
+  const BAND_DUR = 500;
+  const STAGGER = 80;
+  const BAND_COUNT = 4;
+  let isSwitching = false;
+
+  function switchMode(targetMode: string) {
+    if (isSwitching) return;
+
+    const container = document.querySelector<HTMLElement>(".mode-switch-container");
+    const panels = document.querySelectorAll<HTMLElement>(".spa-panel");
+    const wrapper = document.querySelector<HTMLElement>(".spa-gallery-wrapper");
+
+    if (!container || !wrapper || panels.length === 0) {
+      console.warn("[SPA] Missing elements:", { container: !!container, wrapper: !!wrapper, panels: panels.length });
+      return;
+    }
+
+    const currentMode = container.dataset.activeMode;
+    if (currentMode === targetMode) return;
+    isSwitching = true;
+
+    const rect = wrapper.getBoundingClientRect();
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `position:absolute;top:0;left:0;width:100%;height:${rect.height}px;z-index:100;pointer-events:none;overflow:hidden;`;
+
+    for (let i = 0; i < BAND_COUNT; i++) {
+      const band = document.createElement("div");
+      const isPink = i % 2 === 0;
+      band.style.cssText = `position:absolute;top:${(i / BAND_COUNT) * 100}%;left:0;width:100%;height:${100 / BAND_COUNT + 1}%;background:${isPink ? "#fa729d" : "#29d0f6"};transform:translateX(-110%);will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden;`;
+      band.dataset.index = i.toString();
+      overlay.appendChild(band);
+    }
+
+    wrapper.style.position = "relative";
+    wrapper.appendChild(overlay);
+
+    const bands = Array.from(overlay.children) as HTMLElement[];
+
+    // Bands wipe in
+    bands.forEach((band, i) => {
+      setTimeout(() => {
+        band.style.transition = `transform ${BAND_DUR}ms ${EASING}`;
+        band.style.transform = "translateX(0)";
+      }, i * STAGGER);
+    });
+
+    // Swap panels
+    const swapTime = BAND_COUNT * STAGGER + BAND_DUR * 0.6;
+    setTimeout(() => {
+      panels.forEach((p) => {
+        p.hidden = p.dataset.mode !== targetMode;
+      });
+
+      container.dataset.activeMode = targetMode;
+      container.querySelectorAll<HTMLElement>(".switch-btn").forEach((btn) => {
+        const isActive = btn.dataset.mode === targetMode;
+        btn.classList.toggle("is-active", isActive);
+        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+
+      history.pushState({ mode: targetMode }, "", targetMode === "motions" ? "/work/" : "/work/?mode=artwork");
+    }, swapTime);
+
+    // Bands wipe out
+    const outDelay = BAND_COUNT * STAGGER + BAND_DUR + 50;
+    bands.forEach((band, i) => {
+      setTimeout(() => {
+        band.style.transform = "translateX(110%)";
+      }, outDelay + i * STAGGER);
+    });
+
+    // Cleanup
+    setTimeout(() => {
+      overlay.remove();
+      isSwitching = false;
+    }, outDelay + BAND_COUNT * STAGGER + BAND_DUR + 100);
+  }
+
+  function initSPAToggle() {
+    const container = document.querySelector<HTMLElement>(".mode-switch-container");
+    if (!container) return;
+
+    container.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-mode]");
+      if (!btn) return;
+
+      const mode = btn.dataset.mode;
+      if (mode === "toggle") {
+        switchMode(container.dataset.activeMode === "motions" ? "artwork" : "motions");
+      } else if (mode === "motions" || mode === "artwork") {
+        switchMode(mode);
+      }
+    });
+
+    window.addEventListener("popstate", (e) => {
+      const mode = e.state?.mode || (new URLSearchParams(location.search).get("mode") === "artwork" ? "artwork" : "motions");
+      document.querySelectorAll<HTMLElement>(".spa-panel").forEach((p) => {
+        p.hidden = p.dataset.mode !== mode;
+      });
+      container.dataset.activeMode = mode;
+      container.querySelectorAll<HTMLElement>(".switch-btn").forEach((btn) => {
+        const isActive = btn.dataset.mode === mode;
+        btn.classList.toggle("is-active", isActive);
+        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    });
+  }
+
+  initSPAToggle();
+
+  // Restore mode from URL on load
+  const params = new URLSearchParams(location.search);
+  if (params.get("mode") === "artwork") {
+    switchMode("artwork");
+  }
+</script>
