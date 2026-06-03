@@ -141,9 +141,12 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
                 style={`background-image: url('${video.thumbnail.url}'); background-size: cover; background-position: center; display: block;`}
                 aria-label={`Watch ${video.title}`}
               >
-                <div class="card-shine" aria-hidden="true"></div>
                 {index === 0 && <span class="card-badge">NEW!</span>}
               </a>
+              <div
+                class={`card-wipe-band ${index % 2 === 0 ? "card-wipe-band--pink" : "card-wipe-band--cyan"}`}
+                aria-hidden="true"
+              ></div>
               <div class="card-info">
                 <div class="card-info__text">
                   <h3 class="card-title">{video.title}</h3>
@@ -451,7 +454,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
   // --- FEATURED SECTION ANIMATIONS ---
   const initFeaturedEffects = () => {
-    // ① Staggered card entrance
+    // Card wipe reveal on scroll
     const cards = document.querySelectorAll<HTMLElement>(".featured-card");
     const cardObserver = new IntersectionObserver(
       (entries) => {
@@ -465,20 +468,19 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     );
     cards.forEach((c) => cardObserver.observe(c));
 
-    // ② FEATURED text parallax
+    // FEATURED text parallax
     const featuredTitle =
       document.querySelector<HTMLElement>(".featured-title");
     if (featuredTitle) {
       const updateParallax = () => {
         const rect = featuredTitle.getBoundingClientRect();
-        const offset = rect.top * 0.3;
-        featuredTitle.style.setProperty("--parallax", `${offset}px`);
+        featuredTitle.style.setProperty("--parallax", `${rect.top * 0.3}px`);
       };
       window.addEventListener("scroll", updateParallax, { passive: true });
       updateParallax();
     }
 
-    // ③ Checkerboard header reveal
+    // Checkerboard header reveal
     const featuredHeader =
       document.querySelector<HTMLElement>(".featured-header");
     if (featuredHeader) {
@@ -495,27 +497,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       );
       headerObserver.observe(featuredHeader);
     }
-
-    // ④ Card 3D tilt + shine
-    cards.forEach((card) => {
-      const thumb = card.querySelector<HTMLElement>(".card-thumb");
-      if (!thumb) return;
-
-      card.addEventListener("mousemove", (e: MouseEvent) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        thumb.style.setProperty("--rx", `${-y * 12}deg`);
-        thumb.style.setProperty("--ry", `${x * 12}deg`);
-        thumb.style.setProperty("--mx", `${(x + 0.5) * 100}%`);
-        thumb.style.setProperty("--my", `${(y + 0.5) * 100}%`);
-      });
-
-      card.addEventListener("mouseleave", () => {
-        thumb.style.setProperty("--rx", "0deg");
-        thumb.style.setProperty("--ry", "0deg");
-      });
-    });
   };
 
   initFeaturedEffects();
@@ -1713,67 +1694,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
 
   /* ==============================================
-     ⑤ BADGE PULSE + SHIMMER
-     ============================================== */
-  .card-badge {
-    animation: badge-pulse 2.5s ease-in-out infinite;
-    overflow: hidden;
-  }
-  .card-badge::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.6),
-      transparent
-    );
-    animation: badge-shimmer 3s ease-in-out infinite;
-  }
-
-  @keyframes badge-pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.06); }
-  }
-  @keyframes badge-shimmer {
-    0% { left: -100%; }
-    50%, 100% { left: 200%; }
-  }
-
-  /* ==============================================
-     ① STAGGERED CARD ENTRANCE
-     ============================================== */
-  .featured-card {
-    opacity: 0;
-    transform: translateY(60px);
-    will-change: transform, opacity;
-  }
-  .featured-card.is-visible {
-    animation: card-enter 0.6s cubic-bezier(0.77, 0, 0.175, 1) forwards;
-  }
-  .featured-card.is-visible:nth-child(1) { animation-delay: 0ms; }
-  .featured-card.is-visible:nth-child(2) { animation-delay: 120ms; }
-  .featured-card.is-visible:nth-child(3) { animation-delay: 240ms; }
-  .featured-card.is-visible:nth-child(4) { animation-delay: 360ms; }
-  .featured-card.is-visible:nth-child(5) { animation-delay: 480ms; }
-  .featured-card.is-visible:nth-child(6) { animation-delay: 600ms; }
-
-  @keyframes card-enter {
-    from {
-      opacity: 0;
-      transform: translateY(60px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* ==============================================
      ② FEATURED TEXT PARALLAX (JS sets --parallax)
      ============================================== */
   .featured-title {
@@ -1808,41 +1728,56 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
 
   /* ==============================================
-     ④ CARD 3D TILT + SHINE
+     CARD WIPE REAVEAL (subtle band per card)
      ============================================== */
   .featured-card {
-    perspective: 800px;
-  }
-  .featured-card .card-thumb {
-    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-    transition:
-      transform 0.15s ease-out,
-      box-shadow 0.3s ease;
-    will-change: transform;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 0 var(--color-secondary-light);
   }
-  .card-shine {
+  .card-wipe-band {
     position: absolute;
     inset: 0;
     z-index: 20;
     pointer-events: none;
-    background: radial-gradient(
-      circle at var(--mx, 50%) var(--my, 50%),
-      rgba(255, 255, 255, 0.3) 0%,
-      transparent 60%
-    );
-    opacity: 0;
-    transition: opacity 0.2s ease;
+    transform: translateX(-100%);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
-  .featured-card:hover .card-shine {
-    opacity: 1;
+  .card-wipe-band--pink {
+    background-color: var(--color-primary);
   }
-  .featured-card:hover .card-thumb {
-    box-shadow:
-      0 8px 0 var(--color-secondary-bright),
-      0 12px 24px rgba(41, 208, 246, 0.2);
+  .card-wipe-band--cyan {
+    background-color: var(--color-secondary-bright);
+  }
+
+  .featured-card.is-visible .card-wipe-band {
+    animation: card-wipe-in 0.35s cubic-bezier(0.77, 0, 0.175, 1) forwards,
+      card-wipe-out 0.35s cubic-bezier(0.77, 0, 0.175, 1) 0.38s forwards;
+  }
+  .featured-card.is-visible:nth-child(2) .card-wipe-band {
+    animation-delay: 0.1s, 0.48s;
+  }
+  .featured-card.is-visible:nth-child(3) .card-wipe-band {
+    animation-delay: 0.2s, 0.58s;
+  }
+  .featured-card.is-visible:nth-child(4) .card-wipe-band {
+    animation-delay: 0.3s, 0.68s;
+  }
+  .featured-card.is-visible:nth-child(5) .card-wipe-band {
+    animation-delay: 0.4s, 0.78s;
+  }
+  .featured-card.is-visible:nth-child(6) .card-wipe-band {
+    animation-delay: 0.5s, 0.88s;
+  }
+
+  @keyframes card-wipe-in {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+  @keyframes card-wipe-out {
+    from { transform: translateX(0); }
+    to { transform: translateX(100%); }
   }
 
   .featured-footer-row {
