@@ -366,7 +366,10 @@ const { activeMode } = Astro.props;
   const STAGGER = 60;
   const BAND_COUNT = 4;
 
+  let isSwitching = false;
+
   function switchMode(targetMode: string) {
+    if (isSwitching) return;
     const container = document.querySelector<HTMLElement>(".mode-switch-container");
     const panels = document.querySelectorAll<HTMLElement>(".spa-panel");
     const wrapper = document.querySelector<HTMLElement>(".spa-gallery-wrapper");
@@ -375,6 +378,7 @@ const { activeMode } = Astro.props;
 
     const currentMode = container.dataset.activeMode;
     if (currentMode === targetMode) return;
+    isSwitching = true;
 
     // Build wipe bands over gallery
     const rect = wrapper.getBoundingClientRect();
@@ -439,6 +443,7 @@ const { activeMode } = Astro.props;
     const totalTime = outDelay + BAND_COUNT * STAGGER + BAND_DUR + 100;
     setTimeout(() => {
       overlay.remove();
+      isSwitching = false;
     }, totalTime);
   }
 
