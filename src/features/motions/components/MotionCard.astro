@@ -51,7 +51,7 @@ const { vid, index, catMatch, visMatch } = Astro.props;
   .motion-card {
     /* Design Tokens */
     --theme-color-pink: var(--color-primary);
-    --theme-color-blue: #7ee6fa;
+    --theme-blue: #7ee6fa;
     --theme-text-blue: #046277;
 
     --card-bg: var(--theme-color-pink);
@@ -73,6 +73,18 @@ const { vid, index, catMatch, visMatch } = Astro.props;
     gap: var(--spacing-3);
     cursor: pointer;
     min-width: 0;
+    animation: motion-card-in 0.4s ease-out both;
+  }
+
+  @keyframes motion-card-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .motion-card[data-theme="pink"] {

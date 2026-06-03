@@ -883,6 +883,20 @@ const { page } = Astro.props;
     content-visibility: auto;
   }
 
+  .artwork-card {
+    animation: artwork-card-in 0.4s ease-out both;
+  }
+  @keyframes artwork-card-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   /* Lightbox */
   .lightbox-modal {
     padding: 0;
