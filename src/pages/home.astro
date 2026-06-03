@@ -141,6 +141,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
                 style={`background-image: url('${video.thumbnail.url}'); background-size: cover; background-position: center; display: block;`}
                 aria-label={`Watch ${video.title}`}
               >
+                <div class="card-shine" aria-hidden="true"></div>
                 {index === 0 && <span class="card-badge">NEW!</span>}
               </a>
               <div class="card-info">
@@ -447,6 +448,78 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
   initQuoteReveal();
   document.addEventListener("astro:page-load", initQuoteReveal);
+
+  // --- FEATURED SECTION ANIMATIONS ---
+  const initFeaturedEffects = () => {
+    // ① Staggered card entrance
+    const cards = document.querySelectorAll<HTMLElement>(".featured-card");
+    const cardObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+          }
+        }
+      },
+      { threshold: 0.15 },
+    );
+    cards.forEach((c) => cardObserver.observe(c));
+
+    // ② FEATURED text parallax
+    const featuredTitle =
+      document.querySelector<HTMLElement>(".featured-title");
+    if (featuredTitle) {
+      const updateParallax = () => {
+        const rect = featuredTitle.getBoundingClientRect();
+        const offset = rect.top * 0.3;
+        featuredTitle.style.setProperty("--parallax", `${offset}px`);
+      };
+      window.addEventListener("scroll", updateParallax, { passive: true });
+      updateParallax();
+    }
+
+    // ③ Checkerboard header reveal
+    const featuredHeader =
+      document.querySelector<HTMLElement>(".featured-header");
+    if (featuredHeader) {
+      const headerObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-revealed");
+              headerObserver.disconnect();
+            }
+          }
+        },
+        { threshold: 0.3 },
+      );
+      headerObserver.observe(featuredHeader);
+    }
+
+    // ④ Card 3D tilt + shine
+    cards.forEach((card) => {
+      const thumb = card.querySelector<HTMLElement>(".card-thumb");
+      if (!thumb) return;
+
+      card.addEventListener("mousemove", (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        thumb.style.setProperty("--rx", `${-y * 12}deg`);
+        thumb.style.setProperty("--ry", `${x * 12}deg`);
+        thumb.style.setProperty("--mx", `${(x + 0.5) * 100}%`);
+        thumb.style.setProperty("--my", `${(y + 0.5) * 100}%`);
+      });
+
+      card.addEventListener("mouseleave", () => {
+        thumb.style.setProperty("--rx", "0deg");
+        thumb.style.setProperty("--ry", "0deg");
+      });
+    });
+  };
+
+  initFeaturedEffects();
+  document.addEventListener("astro:page-load", initFeaturedEffects);
 </script>
 <style>
   /* ==============================================
@@ -1637,6 +1710,139 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     border-bottom: 3px solid var(--color-secondary-darker);
     border-left: 3px solid var(--color-secondary-darker);
     transform: rotate(-45deg);
+  }
+
+  /* ==============================================
+     ⑤ BADGE PULSE + SHIMMER
+     ============================================== */
+  .card-badge {
+    animation: badge-pulse 2.5s ease-in-out infinite;
+    overflow: hidden;
+  }
+  .card-badge::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    );
+    animation: badge-shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes badge-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+  @keyframes badge-shimmer {
+    0% { left: -100%; }
+    50%, 100% { left: 200%; }
+  }
+
+  /* ==============================================
+     ① STAGGERED CARD ENTRANCE
+     ============================================== */
+  .featured-card {
+    opacity: 0;
+    transform: translateY(60px);
+    will-change: transform, opacity;
+  }
+  .featured-card.is-visible {
+    animation: card-enter 0.6s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  }
+  .featured-card.is-visible:nth-child(1) { animation-delay: 0ms; }
+  .featured-card.is-visible:nth-child(2) { animation-delay: 120ms; }
+  .featured-card.is-visible:nth-child(3) { animation-delay: 240ms; }
+  .featured-card.is-visible:nth-child(4) { animation-delay: 360ms; }
+  .featured-card.is-visible:nth-child(5) { animation-delay: 480ms; }
+  .featured-card.is-visible:nth-child(6) { animation-delay: 600ms; }
+
+  @keyframes card-enter {
+    from {
+      opacity: 0;
+      transform: translateY(60px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ==============================================
+     ② FEATURED TEXT PARALLAX (JS sets --parallax)
+     ============================================== */
+  .featured-title {
+    will-change: transform;
+    transform: translateY(var(--parallax, 0px));
+  }
+
+  /* ==============================================
+     ③ CHECKERBOARD HEADER REVEAL
+     ============================================== */
+  .featured-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background-color: var(--color-secondary-light);
+    -webkit-mask-image: var(--checker-mask-uri);
+    mask-image: var(--checker-mask-uri);
+    -webkit-mask-size: 8px 8px;
+    mask-size: 8px 8px;
+    transform: translateX(0);
+    will-change: transform;
+    pointer-events: none;
+  }
+  .featured-header.is-revealed::before {
+    animation: checker-wipe 0.6s cubic-bezier(0.77, 0, 0.175, 1) 0.3s forwards;
+  }
+
+  @keyframes checker-wipe {
+    from { transform: translateX(0); }
+    to { transform: translateX(100%); }
+  }
+
+  /* ==============================================
+     ④ CARD 3D TILT + SHINE
+     ============================================== */
+  .featured-card {
+    perspective: 800px;
+  }
+  .featured-card .card-thumb {
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition:
+      transform 0.15s ease-out,
+      box-shadow 0.3s ease;
+    will-change: transform;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 0 var(--color-secondary-light);
+  }
+  .card-shine {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at var(--mx, 50%) var(--my, 50%),
+      rgba(255, 255, 255, 0.3) 0%,
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .featured-card:hover .card-shine {
+    opacity: 1;
+  }
+  .featured-card:hover .card-thumb {
+    box-shadow:
+      0 8px 0 var(--color-secondary-bright),
+      0 12px 24px rgba(41, 208, 246, 0.2);
   }
 
   .featured-footer-row {
