@@ -94,13 +94,11 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
               >BUILT ON <span class="text-cyan">RHYTHM</span></span
             >
             <span class="qr-band qr-band--pink" aria-hidden="true"></span>
-            <span class="qr-band qr-band--cyan" aria-hidden="true"></span>
           </span>
           <span class="quote-line-wrap">
             <span class="quote-line"
               >DRIVEN BY <span class="text-pink">PRECISION</span></span
             >
-            <span class="qr-band qr-band--pink" aria-hidden="true"></span>
             <span class="qr-band qr-band--cyan" aria-hidden="true"></span>
           </span>
         </h2>
@@ -1046,6 +1044,24 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     overflow: hidden;
   }
 
+  .quote-line {
+    opacity: 0;
+    transition: opacity 0.01s;
+  }
+
+  .contact-quote-block.is-revealed .quote-line-wrap:nth-child(1) .quote-line {
+    animation: qr-text-show 0.01s 0.5s forwards;
+  }
+  .contact-quote-block.is-revealed .quote-line-wrap:nth-child(2) .quote-line {
+    animation: qr-text-show 0.01s 0.85s forwards;
+  }
+
+  @keyframes qr-text-show {
+    to {
+      opacity: 1;
+    }
+  }
+
   .qr-band {
     position: absolute;
     inset: 0;
@@ -1055,38 +1071,27 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     pointer-events: none;
+    z-index: 5;
   }
 
   .qr-band--pink {
     background-color: var(--color-primary);
-    z-index: 1;
   }
 
   .qr-band--cyan {
     background-color: var(--color-secondary-bright);
-    z-index: 2;
   }
 
-  /* Line 1 — pink wipe */
+  /* Line 1 — pink band wipe */
   .contact-quote-block.is-revealed .quote-line-wrap:nth-child(1) .qr-band--pink {
-    animation: qr-wipe-in 0.45s cubic-bezier(0.77, 0, 0.175, 1) forwards,
-      qr-wipe-out 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.5s forwards;
-  }
-  /* Line 1 — cyan wipe */
-  .contact-quote-block.is-revealed .quote-line-wrap:nth-child(1) .qr-band--cyan {
-    animation: qr-wipe-in 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.06s forwards,
-      qr-wipe-out 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.56s forwards;
+    animation: qr-wipe-in 0.4s cubic-bezier(0.77, 0, 0.175, 1) forwards,
+      qr-wipe-out 0.4s cubic-bezier(0.77, 0, 0.175, 1) 0.45s forwards;
   }
 
-  /* Line 2 — pink wipe (delayed) */
-  .contact-quote-block.is-revealed .quote-line-wrap:nth-child(2) .qr-band--pink {
-    animation: qr-wipe-in 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.25s forwards,
-      qr-wipe-out 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.75s forwards;
-  }
-  /* Line 2 — cyan wipe (delayed) */
+  /* Line 2 — cyan band wipe (staggered) */
   .contact-quote-block.is-revealed .quote-line-wrap:nth-child(2) .qr-band--cyan {
-    animation: qr-wipe-in 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.31s forwards,
-      qr-wipe-out 0.45s cubic-bezier(0.77, 0, 0.175, 1) 0.81s forwards;
+    animation: qr-wipe-in 0.4s cubic-bezier(0.77, 0, 0.175, 1) 0.35s forwards,
+      qr-wipe-out 0.4s cubic-bezier(0.77, 0, 0.175, 1) 0.8s forwards;
   }
 
   @keyframes qr-wipe-in {
