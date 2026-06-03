@@ -112,14 +112,18 @@ const { page } = Astro.props;
                       data-category={catMatch}
                       data-visibility={visMatch}
                       data-full-src={art.image.fullUrl || art.image.url}
+                      data-index={index}
                     >
-                      <img
-                        src={art.image.url}
-                        loading={index < 3 ? "eager" : "lazy"}
-                        fetchpriority={index < 3 ? "high" : "auto"}
-                        decoding={index < 3 ? "sync" : "async"}
-                        alt={art.title}
-                      />
+                      <div class="artwork-card__header" />
+                      <div class="artwork-card__body">
+                        <img
+                          src={art.image.url}
+                          loading={index < 3 ? "eager" : "lazy"}
+                          fetchpriority={index < 3 ? "high" : "auto"}
+                          decoding={index < 3 ? "sync" : "async"}
+                          alt={art.title}
+                        />
+                      </div>
                     </div>
                   );
                 })
@@ -804,49 +808,79 @@ const { page } = Astro.props;
     }
   }
 
-  /* Artwork Card */
+  /* Artwork Card (v-card style) */
   .artwork-card {
     break-inside: avoid;
-    margin-bottom: clamp(16px, 2vw, 32px);
-    border-radius: var(--radius-lg);
-    background-color: color-mix(in srgb, var(--color-primary) 50%, transparent);
-    padding: clamp(6px, 1.5vw, 12px) clamp(6px, 1.5vw, 12px)
-      clamp(16px, 3vw, 24px);
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
+    margin-bottom: clamp(12px, 2vw, 20px);
+    border: var(--border-width-sm) solid var(--color-secondary-darker);
+    border-radius: var(--spacing-3);
+    background-color: var(--bg-secondary);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     cursor: pointer;
     position: relative;
     z-index: 1;
+    transition: transform 0.3s ease;
   }
-  .artwork-card::before {
+
+  .artwork-card__header {
+    height: 1.5rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-2);
+    border-bottom: var(--border-width-sm) solid var(--color-secondary-darker);
+  }
+  .artwork-card__header::before {
     content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
+    display: block;
+    width: 0.75rem;
+    height: 0.75rem;
+    border: 2px solid var(--color-secondary-darker);
+    border-radius: 50%;
   }
+
+  /* Symmetrical header colors: pink, cyan, pink */
+  .artwork-card:nth-child(3n+1) .artwork-card__header {
+    background-color: var(--color-primary);
+  }
+  .artwork-card:nth-child(3n+1) .artwork-card__header::before {
+    background-color: var(--color-secondary-light);
+  }
+  .artwork-card:nth-child(3n+2) .artwork-card__header {
+    background-color: var(--color-secondary-light);
+  }
+  .artwork-card:nth-child(3n+2) .artwork-card__header::before {
+    background-color: var(--color-accent-badge);
+  }
+  .artwork-card:nth-child(3n+3) .artwork-card__header {
+    background-color: var(--color-primary);
+  }
+  .artwork-card:nth-child(3n+3) .artwork-card__header::before {
+    background-color: var(--color-secondary-light);
+  }
+
+  .artwork-card__body {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
   .artwork-card:hover {
-    transform: translateY(-4px);
-    background-color: rgba(255, 205, 221, 0.5);
+    transform: translateY(-3px);
   }
-  .artwork-card:hover::before {
-    opacity: 1;
-  }
+
   .artwork-card:active {
-    transform: translateY(-2px);
-    background-color: rgba(255, 205, 221, 0.7);
+    transform: translateY(-1px);
   }
-  .artwork-card img {
+
+  .artwork-card__body img {
     width: 100%;
     height: auto;
     display: block;
     object-fit: cover;
     content-visibility: auto;
-    border-radius: var(--radius-sm);
   }
 
   /* Lightbox */
