@@ -39,7 +39,7 @@ const isWorks = currentPath.startsWith("/work");
         </a>
 
         <a
-          href="/work/motions"
+          href="/work/"
           class="cyber-header__nav-btn"
           aria-current={isWorks ? "page" : undefined}
           data-astro-prefetch="hover"
@@ -63,20 +63,7 @@ const isWorks = currentPath.startsWith("/work");
 
 <script>
   document.addEventListener("astro:page-load", () => {
-    const path = window.location.pathname.replace(/\/$/, "");
-    const link = document.querySelector<HTMLAnchorElement>("[data-works-link]");
-    if (!link) return;
-
-    // Save mode when user is on a works page
-    if (path.startsWith("/work/motions")) {
-      localStorage.setItem("kime-works-mode", "motions");
-    } else if (path.startsWith("/work/artwork")) {
-      localStorage.setItem("kime-works-mode", "artwork");
-    }
-
-    // Update WORKS link to match saved preference (default: motions)
-    const savedMode = localStorage.getItem("kime-works-mode");
-    link.href = savedMode === "artwork" ? "/work/artwork/" : "/work/motions";
+    // No WORKS link override needed - SPA handles mode via URL param
   });
 </script>
 

@@ -9,8 +9,6 @@ interface Props {
 }
 
 const { activeMode } = Astro.props;
-
-const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
 ---
 
 <div class="mode-switch-section">
@@ -19,42 +17,39 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
   </header>
 
   <div class="mode-switch-container" data-active-mode={activeMode}>
-    <a
-      href="/work/motions"
+    <button
       class:list={[
         "switch-btn",
         "switch-btn--motions",
         activeMode === "motions" && "is-active",
       ]}
+      data-mode="motions"
       aria-pressed={activeMode === "motions" ? "true" : "false"}
-      data-astro-prefetch="hover"
     >
       <span>MOTIONS</span>
       <VideoIcon width="20" height="20" />
-    </a>
+    </button>
 
-    <a
-      href={toggleUrl}
+    <button
       class="switch-divider-btn"
+      data-mode="toggle"
       aria-label="Toggle Mode"
-      data-astro-prefetch="hover"
     >
       <SwitchIcon width="24" height="24" />
-    </a>
+    </button>
 
-    <a
-      href="/work/artwork"
+    <button
       class:list={[
         "switch-btn",
         "switch-btn--artwork",
         activeMode === "artwork" && "is-active",
       ]}
+      data-mode="artwork"
       aria-pressed={activeMode === "artwork" ? "true" : "false"}
-      data-astro-prefetch="hover"
     >
       <span>ARTWORK</span>
       <ArtworkIcon width="20" height="20" />
-    </a>
+    </button>
   </div>
 </div>
 
@@ -241,9 +236,11 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
     padding: var(--spacing-2) clamp(var(--spacing-4), 4vw, var(--spacing-8));
     font-size: clamp(var(--text-sm), 2.5vw, var(--text-base));
     font-weight: 899;
+    font-family: inherit;
     color: var(--color-secondary-darker);
     text-decoration: none;
     background: transparent;
+    cursor: pointer;
     transition:
       color 0.3s ease,
       opacity 0.2s ease;
@@ -363,79 +360,136 @@ const toggleUrl = activeMode === "motions" ? "/work/artwork" : "/work/motions";
     new ResizeObserver(update).observe(container);
   }
 
-  initPillMetrics();
-  document.addEventListener("astro:after-swap", initPillMetrics);
+  // --- SPA MODE TOGGLE ---
+  const EASING = "cubic-bezier(0.77, 0, 0.175, 1)";
+  const BAND_DUR = 400;
+  const STAGGER = 60;
+  const BAND_COUNT = 4;
 
-  // --- MODE SWITCH WIPE TRANSITION ---
-  function initModeSwitchWipe() {
-    const EASING = "cubic-bezier(0.77, 0, 0.175, 1)";
-    const DURATION = 400;
-    const STAGGER = 60;
-    const BAND_COUNT = 4;
+  function switchMode(targetMode: string) {
+    const container = document.querySelector<HTMLElement>(".mode-switch-container");
+    const panels = document.querySelectorAll<HTMLElement>(".spa-panel");
+    const wrapper = document.querySelector<HTMLElement>(".spa-gallery-wrapper");
 
-    document.querySelectorAll<HTMLAnchorElement>(".switch-btn, .switch-divider-btn").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        const href = btn instanceof HTMLAnchorElement ? btn.href : null;
-        if (!href) return;
+    if (!container || !wrapper) return;
 
-        const currentPath = window.location.pathname.replace(/\/$/, "");
-        const targetPath = new URL(href).pathname.replace(/\/$/, "");
+    const currentMode = container.dataset.activeMode;
+    if (currentMode === targetMode) return;
 
-        if (!currentPath.startsWith("/work") || !targetPath.startsWith("/work")) return;
-        if (currentPath === targetPath) return;
+    // Build wipe bands over gallery
+    const rect = wrapper.getBoundingClientRect();
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `position:absolute;top:0;left:0;width:100%;height:${rect.height}px;z-index:100;pointer-events:none;overflow:hidden;`;
 
-        e.preventDefault();
+    for (let i = 0; i < BAND_COUNT; i++) {
+      const band = document.createElement("div");
+      const isPink = i % 2 === 0;
+      band.style.cssText = `position:absolute;top:${(i / BAND_COUNT) * 100}%;left:0;width:100%;height:${100 / BAND_COUNT + 1}%;background:${isPink ? "#fa729d" : "#29d0f6"};transform:translateX(-100%);will-change:transform;backface-visibility:hidden;`;
+      band.dataset.index = i.toString();
+      overlay.appendChild(band);
+    }
 
-        const gallery = document.querySelector<HTMLElement>(".works-content") 
-          || document.querySelector<HTMLElement>("main");
-        if (!gallery) {
-          window.location.href = href;
-          return;
+    wrapper.style.position = "relative";
+    wrapper.appendChild(overlay);
+
+    // Animate bands in
+    const bands = overlay.querySelectorAll<HTMLElement>("div");
+    bands.forEach((band) => {
+      const i = parseInt(band.dataset.index || "0");
+      setTimeout(() => {
+        band.style.transition = `transform ${BAND_DUR}ms ${EASING}`;
+        band.style.transform = "translateX(0)";
+      }, i * STAGGER);
+    });
+
+    // Swap panels when bands cover
+    const swapTime = BAND_COUNT * STAGGER + BAND_DUR * 0.6;
+    setTimeout(() => {
+      panels.forEach((p) => {
+        if (p.dataset.mode === targetMode) {
+          p.hidden = false;
+        } else {
+          p.hidden = true;
         }
+      });
 
-        const rect = gallery.getBoundingClientRect();
-        const overlay = document.createElement("div");
-        overlay.className = "mode-wipe-overlay";
-        overlay.style.cssText = `position:absolute;top:0;left:0;width:100%;height:${rect.height}px;z-index:100;pointer-events:none;overflow:hidden;`;
+      // Update pill state
+      container.dataset.activeMode = targetMode;
+      container.querySelectorAll<HTMLElement>(".switch-btn").forEach((btn) => {
+        const isActive = btn.dataset.mode === targetMode;
+        btn.classList.toggle("is-active", isActive);
+        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
 
-        for (let i = 0; i < BAND_COUNT; i++) {
-          const band = document.createElement("div");
-          const isPink = i % 2 === 0;
-          band.style.cssText = `position:absolute;top:${(i / BAND_COUNT) * 100}%;left:0;width:100%;height:${100 / BAND_COUNT + 1}%;background:${isPink ? "#fa729d" : "#29d0f6"};transform:translateX(-100%);will-change:transform;backface-visibility:hidden;`;
-          band.dataset.index = i.toString();
-          overlay.appendChild(band);
-        }
+      // Update URL
+      const url = targetMode === "motions" ? "/work/" : "/work/?mode=artwork";
+      history.pushState({ mode: targetMode }, "", url);
+    }, swapTime);
 
-        gallery.style.position = "relative";
-        gallery.appendChild(overlay);
+    // Animate bands out
+    const outDelay = BAND_COUNT * STAGGER + BAND_DUR + 50;
+    bands.forEach((band) => {
+      const i = parseInt(band.dataset.index || "0");
+      setTimeout(() => {
+        band.style.transform = "translateX(100%)";
+      }, outDelay + i * STAGGER);
+    });
 
-        const bands = overlay.querySelectorAll<HTMLElement>("div");
-        let maxEnd = 0;
+    // Cleanup
+    const totalTime = outDelay + BAND_COUNT * STAGGER + BAND_DUR + 100;
+    setTimeout(() => {
+      overlay.remove();
+    }, totalTime);
+  }
 
-        bands.forEach((band) => {
-          const i = parseInt(band.dataset.index || "0");
-          const delayIn = i * STAGGER;
-          const delayOut = delayIn + DURATION + 50;
-          const end = delayOut + DURATION;
-          if (end > maxEnd) maxEnd = end;
+  function initModeSwitch() {
+    const container = document.querySelector<HTMLElement>(".mode-switch-container");
+    if (!container) return;
 
-          setTimeout(() => {
-            band.style.transition = `transform ${DURATION}ms ${EASING}`;
-            band.style.transform = "translateX(0)";
-          }, delayIn);
+    container.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-mode]");
+      if (!btn) return;
 
-          setTimeout(() => {
-            band.style.transform = "translateX(100%)";
-          }, delayOut);
-        });
+      const mode = btn.dataset.mode;
+      if (mode === "toggle") {
+        const current = container.dataset.activeMode;
+        switchMode(current === "motions" ? "artwork" : "motions");
+      } else if (mode === "motions" || mode === "artwork") {
+        switchMode(mode);
+      }
+    });
 
-        setTimeout(() => {
-          window.location.href = href;
-        }, maxEnd * 0.6);
+    // Handle browser back/forward
+    window.addEventListener("popstate", (e) => {
+      const mode = e.state?.mode || (new URLSearchParams(window.location.search).get("mode") === "artwork" ? "artwork" : "motions");
+      const panels = document.querySelectorAll<HTMLElement>(".spa-panel");
+      panels.forEach((p) => {
+        p.hidden = p.dataset.mode !== mode;
+      });
+      container.dataset.activeMode = mode;
+      container.querySelectorAll<HTMLElement>(".switch-btn").forEach((btn) => {
+        const isActive = btn.dataset.mode === mode;
+        btn.classList.toggle("is-active", isActive);
+        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
       });
     });
   }
 
-  initModeSwitchWipe();
-  document.addEventListener("astro:after-swap", initModeSwitchWipe);
+  // Init on load
+  const init = () => {
+    initPillMetrics();
+    initModeSwitch();
+
+    // Restore mode from URL
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("mode") === "artwork") {
+      switchMode("artwork");
+    }
+  };
+
+  init();
+  document.addEventListener("astro:after-swap", () => {
+    initPillMetrics();
+    initModeSwitch();
+  });
 </script>

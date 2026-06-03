@@ -1,0 +1,53 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SectionHeader from "../../components/SectionHeader.astro";
+import ModeSwitch from "../../components/ModeSwitch.astro";
+import MotionGallery from "../../features/motions/components/MotionGallery.astro";
+import ArtworkGallery from "../../features/artwork/components/ArtworkGallery.astro";
+import { fetchVideos, fetchArtworks } from "../../lib/hygraph";
+
+const [videos, artworks] = await Promise.all([
+  fetchVideos(),
+  fetchArtworks(),
+]);
+
+const { paginate } = Astro;
+
+const videoPage = paginate(videos, { pageSize: 100 })[0];
+const artworkPage = paginate(artworks, { pageSize: 100 })[0];
+
+const initialMode: "motions" | "artwork" = "motions";
+---
+
+<Layout title="Kimeyu Work">
+  <Fragment slot="banner">
+    <div class="works-hero-group">
+      <SectionHeader
+        title="WORKS"
+        isBanner={true}
+        isHeroBanner={true}
+        align="responsive"
+      />
+      <div class="switch-overlap">
+        <ModeSwitch activeMode={initialMode} />
+      </div>
+    </div>
+  </Fragment>
+
+  <div class="spa-gallery-wrapper">
+    <div class="spa-panel" data-mode="motions">
+      <MotionGallery page={videoPage} />
+    </div>
+    <div class="spa-panel" data-mode="artwork" hidden>
+      <ArtworkGallery page={artworkPage} />
+    </div>
+  </div>
+</Layout>
+
+<style>
+  @import "../../styles/works-hero.css";
+
+  .spa-panel[hidden] {
+    display: none;
+  }
+</style>
