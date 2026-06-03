@@ -461,12 +461,15 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
         for (const entry of entries) {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
+            cardObserver.unobserve(entry.target);
           }
         }
       },
-      { threshold: 0.15 },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
-    cards.forEach((c) => cardObserver.observe(c));
+    cards.forEach((c) => {
+      if (!c.classList.contains("is-visible")) cardObserver.observe(c);
+    });
 
     // FEATURED text parallax
     const featuredTitle =
@@ -1728,18 +1731,21 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
 
   /* ==============================================
-     CARD WIPE REAVEAL (subtle band per card)
+     CARD WIPE REVEAL (subtle band per card)
      ============================================== */
   .featured-card {
     position: relative;
-    overflow: hidden;
+    overflow: clip;
   }
   .card-wipe-band {
     position: absolute;
-    inset: 0;
+    top: -5%;
+    left: -5%;
+    width: 110%;
+    height: 110%;
     z-index: 20;
     pointer-events: none;
-    transform: translateX(-100%);
+    transform: translateX(-110%);
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -1772,12 +1778,12 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
 
   @keyframes card-wipe-in {
-    from { transform: translateX(-100%); }
+    from { transform: translateX(-110%); }
     to { transform: translateX(0); }
   }
   @keyframes card-wipe-out {
     from { transform: translateX(0); }
-    to { transform: translateX(100%); }
+    to { transform: translateX(110%); }
   }
 
   .featured-footer-row {
