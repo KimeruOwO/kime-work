@@ -442,7 +442,12 @@ const { activeMode } = Astro.props;
     }, totalTime);
   }
 
+  let modeSwitchCtrl: AbortController | null = null;
+
   function initModeSwitch() {
+    if (modeSwitchCtrl) modeSwitchCtrl.abort();
+    modeSwitchCtrl = new AbortController();
+
     const container = document.querySelector<HTMLElement>(".mode-switch-container");
     if (!container) return;
 
@@ -457,22 +462,7 @@ const { activeMode } = Astro.props;
       } else if (mode === "motions" || mode === "artwork") {
         switchMode(mode);
       }
-    });
-
-    // Handle browser back/forward
-    window.addEventListener("popstate", (e) => {
-      const mode = e.state?.mode || (new URLSearchParams(window.location.search).get("mode") === "artwork" ? "artwork" : "motions");
-      const panels = document.querySelectorAll<HTMLElement>(".spa-panel");
-      panels.forEach((p) => {
-        p.hidden = p.dataset.mode !== mode;
-      });
-      container.dataset.activeMode = mode;
-      container.querySelectorAll<HTMLElement>(".switch-btn").forEach((btn) => {
-        const isActive = btn.dataset.mode === mode;
-        btn.classList.toggle("is-active", isActive);
-        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
-      });
-    });
+    }, { signal: modeSwitchCtrl.signal });
   }
 
   // Init on load
