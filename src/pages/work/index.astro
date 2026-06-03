@@ -11,10 +11,17 @@ const [videos, artworks] = await Promise.all([
   fetchArtworks(),
 ]);
 
-const { paginate } = Astro;
+const makePage = <T,>(data: T[]) => ({
+  data,
+  currentPage: 1,
+  lastPage: 1,
+  size: data.length,
+  total: data.length,
+  url: { current: "/work/", prev: undefined, next: undefined },
+});
 
-const videoPage = paginate(videos, { pageSize: 100 })[0];
-const artworkPage = paginate(artworks, { pageSize: 100 })[0];
+const videoPage = makePage(videos);
+const artworkPage = makePage(artworks);
 
 const initialMode: "motions" | "artwork" = "motions";
 ---
