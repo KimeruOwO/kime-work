@@ -73,10 +73,7 @@ const initialMode: "motions" | "artwork" = "motions";
     const panels = document.querySelectorAll<HTMLElement>(".spa-panel");
     const wrapper = document.querySelector<HTMLElement>(".spa-gallery-wrapper");
 
-    if (!container || !wrapper || panels.length === 0) {
-      console.warn("[SPA] Missing elements:", { container: !!container, wrapper: !!wrapper, panels: panels.length });
-      return;
-    }
+    if (!container || !wrapper || panels.length === 0) return;
 
     const currentMode = container.dataset.activeMode;
     if (currentMode === targetMode) return;
@@ -140,19 +137,22 @@ const initialMode: "motions" | "artwork" = "motions";
   }
 
   function initSPAToggle() {
-    const container = document.querySelector<HTMLElement>(".mode-switch-container");
-    if (!container) return;
+    const btns = document.querySelectorAll<HTMLElement>("[data-mode]");
+    console.log("[SPA] Found", btns.length, "mode buttons");
 
-    container.addEventListener("click", (e) => {
-      const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-mode]");
-      if (!btn) return;
+    btns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const mode = btn.dataset.mode;
+        console.log("[SPA] Clicked:", mode);
+        const container = document.querySelector<HTMLElement>(".mode-switch-container");
+        if (!container) { console.warn("[SPA] No container"); return; }
 
-      const mode = btn.dataset.mode;
-      if (mode === "toggle") {
-        switchMode(container.dataset.activeMode === "motions" ? "artwork" : "motions");
-      } else if (mode === "motions" || mode === "artwork") {
-        switchMode(mode);
-      }
+        if (mode === "toggle") {
+          switchMode(container.dataset.activeMode === "motions" ? "artwork" : "motions");
+        } else if (mode === "motions" || mode === "artwork") {
+          switchMode(mode);
+        }
+      });
     });
 
     window.addEventListener("popstate", (e) => {
@@ -160,12 +160,15 @@ const initialMode: "motions" | "artwork" = "motions";
       document.querySelectorAll<HTMLElement>(".spa-panel").forEach((p) => {
         p.hidden = p.dataset.mode !== mode;
       });
-      container.dataset.activeMode = mode;
-      container.querySelectorAll<HTMLElement>(".switch-btn").forEach((btn) => {
-        const isActive = btn.dataset.mode === mode;
-        btn.classList.toggle("is-active", isActive);
-        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
-      });
+      const container = document.querySelector<HTMLElement>(".mode-switch-container");
+      if (container) {
+        container.dataset.activeMode = mode;
+        container.querySelectorAll<HTMLElement>(".switch-btn").forEach((btn) => {
+          const isActive = btn.dataset.mode === mode;
+          btn.classList.toggle("is-active", isActive);
+          btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
+      }
     });
   }
 
