@@ -155,7 +155,11 @@ const isWorks = currentPath.startsWith("/work");
 
   .cyber-header__nav-btn {
     align-self: center;
-    padding: var(--spacing-2) clamp(var(--spacing-2), 3vw, var(--spacing-4));
+    padding: clamp(var(--spacing-3), 3vw, var(--spacing-2)) clamp(var(--spacing-3), 3vw, var(--spacing-4));
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background-color: var(--bg-secondary);
     color: var(--color-primary);
     font-size: var(--text-xs);
@@ -171,6 +175,11 @@ const isWorks = currentPath.startsWith("/work");
   .cyber-header__nav-btn:hover {
     transform: translateY(-2px);
     filter: brightness(0.9);
+  }
+
+  .cyber-header__nav-btn:active {
+    transform: translateY(0);
+    filter: brightness(0.85);
   }
 
   .cyber-header__nav-btn[aria-current="page"] {

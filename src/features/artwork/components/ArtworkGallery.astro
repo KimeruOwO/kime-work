@@ -836,6 +836,10 @@ const { page } = Astro.props;
   .artwork-card:hover::before {
     opacity: 1;
   }
+  .artwork-card:active {
+    transform: translateY(-2px);
+    background-color: rgba(255, 205, 221, 0.7);
+  }
   .artwork-card img {
     width: 100%;
     height: auto;
@@ -971,6 +975,10 @@ const { page } = Astro.props;
   .lightbox-close:hover {
     color: var(--color-primary);
     transform: scale(1.1);
+  }
+  .lightbox-close:active {
+    color: var(--color-primary);
+    transform: scale(0.95);
   }
   .lightbox-body {
     padding: var(--spacing-4);
@@ -1163,10 +1171,10 @@ const { page } = Astro.props;
       font-size: var(--text-sm);
     }
     :global(#artwork-pagination .page-link) {
-      width: 32px;
-      height: 32px;
+      width: 44px;
+      height: 44px;
       font-size: var(--text-sm);
-      border-width: 1px;
+      border-width: 2px;
     }
   }
 </style>
