@@ -1194,11 +1194,31 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     background-size: var(--tile-w) var(--tile-h);
     background-repeat: repeat-x;
     background-position: 0 center;
+    animation: banner-scroll-right 20s linear infinite;
   }
 
   .banner-strip--inverted {
     transform: translateY(-50%) rotate(0) scaleY(-1) translateZ(0);
     z-index: 1;
+    animation: banner-scroll-left 20s linear infinite;
+  }
+
+  @keyframes banner-scroll-right {
+    from {
+      background-position: 0 center;
+    }
+    to {
+      background-position: var(--tile-w) center;
+    }
+  }
+
+  @keyframes banner-scroll-left {
+    from {
+      background-position: 0 center;
+    }
+    to {
+      background-position: calc(-1 * var(--tile-w)) center;
+    }
   }
 
   /* ==============================================
