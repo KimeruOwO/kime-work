@@ -184,7 +184,7 @@ const valueCards = [
         class="profile-hero-header grid-area-hero"
         style={`--avatar-min: ${AVATAR_MOBILE_PX}px; --avatar-max: ${AVATAR_DESKTOP_PX}px;`}
       >
-        <div class="avatar-container">
+        <div class="avatar-container" data-reveal style="--delay: 100ms;">
           {isRemoteAvatar ? (
             <Picture
               src={avatarSource as string}
@@ -211,7 +211,7 @@ const valueCards = [
           )}
         </div>
 
-        <div class="info-banner">
+        <div class="info-banner" data-reveal style="--delay: 300ms;">
           <div class="info-title-group">
             <h1 class="info-name">KIMEYU</h1>
             <PlayIcon class="icon-play" />
@@ -233,13 +233,13 @@ const valueCards = [
 
           <div class="tools-grid">
             {
-              toolsFocus.map((tool) => (
-                <div class={`tool-card tool-card--${tool.variant}`}>
+              toolsFocus.map((tool, index) => (
+                <div class={`tool-card tool-card--${tool.variant}`} data-reveal style={`--delay: ${100 + index * 100}ms;`}>
                   <span class="tool-name">{tool.name}</span>
                 </div>
               ))
             }
-            <div class="tool-card tool-card--custom">
+            <div class="tool-card tool-card--custom" data-reveal style={`--delay: ${100 + toolsFocus.length * 100}ms;`}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 50 50"
@@ -256,7 +256,7 @@ const valueCards = [
       </section>
 
       <!-- ================= SECTION: BIO ================= -->
-      <section class="bio-section grid-area-bio">
+      <section class="bio-section grid-area-bio" data-reveal style="--delay: 200ms;">
         <p class="bio-text" style="white-space: pre-line;">
           {bioText}
         </p>
@@ -269,7 +269,7 @@ const valueCards = [
         </div>
       </section>
 
-      <section class="bio-section grid-area-window">
+      <section class="bio-section grid-area-window" data-reveal style="--delay: 400ms;">
         <InfoWindow />
       </section>
 
@@ -283,15 +283,15 @@ const valueCards = [
             noMargin
           />
           <div class="banner-empty-filler" aria-hidden="true">
-            <div class="symbol-circle"></div>
-            <div class="symbol-cross"></div>
+            <div class="symbol-circle anim-spin"></div>
+            <div class="symbol-cross anim-float"></div>
           </div>
         </div>
 
         <div class="value-cards-layout">
           {
-            valueCards.map((card) => (
-              <article class={`v-card v-card--${card.variant}`}>
+            valueCards.map((card, index) => (
+              <article class={`v-card v-card--${card.variant}`} data-reveal style={`--delay: ${100 + index * 150}ms;`}>
                 <header class="v-card__header" />
                 <div class="v-card__body">
                   <div class="v-card__number-banner">
@@ -314,8 +314,8 @@ const valueCards = [
               noMargin
             />
             <div class="banner-empty-filler" aria-hidden="true">
-              <div class="symbol-circle"></div>
-              <div class="symbol-cross"></div>
+              <div class="symbol-circle anim-spin"></div>
+              <div class="symbol-cross anim-float"></div>
             </div>
           </div>
           <div class="collab-dropdown-list">
@@ -329,7 +329,7 @@ const valueCards = [
                 const displayLabel = ENUM_MAP[catKey];
 
                 return (
-                  <details class="collab-dropdown" open>
+                  <details class="collab-dropdown" open data-reveal style="--delay: 150ms;">
                     <summary class="collab-cta">
                       <span class="collab-cta__text">{displayLabel}</span>
                       <PlayIcon class="collab-cta__icon collab-dropdown__icon" />
@@ -1043,6 +1043,12 @@ const valueCards = [
     color: var(--icon-color, var(--current-color));
     background-color: var(--card-bg, transparent);
     line-height: 1;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  }
+  .tool-card:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 10px 20px color-mix(in srgb, var(--current-color) 40%, transparent);
+    z-index: 10;
   }
   .tool-name {
     padding-bottom: 0.15em;
@@ -1243,6 +1249,54 @@ const valueCards = [
       margin-top: calc(0.5 * var(--avatar-size));
     }
   }
+
+  /* ==========================================================
+                        ANIMATIONS & EFFECTS
+     ========================================================== */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1),
+                transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition-delay: var(--delay, 0ms);
+    will-change: opacity, transform;
+  }
+  [data-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .v-card {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  }
+  .v-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  @keyframes anim-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .anim-spin {
+    animation: anim-spin 12s linear infinite;
+  }
+
+  @keyframes anim-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .anim-float {
+    animation: anim-float 4s ease-in-out infinite;
+  }
+
+  .avatar-container {
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .avatar-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
 </style>
 
 <script>
@@ -1379,5 +1433,18 @@ const valueCards = [
 
     // Init
     updateActiveNav();
+
+    // --- 3. REVEAL ANIMATIONS ---
+    const revealElements = document.querySelectorAll("[data-reveal]");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-revealed");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -50px 0px" });
+    
+    revealElements.forEach(el => observer.observe(el));
   });
 </script>
