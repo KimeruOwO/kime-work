@@ -209,10 +209,16 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
   };
 
   // --- SPLASH ---
-  // plays on every hard load / reload
+  // plays once per session (hard load / reload only)
   let hasNavigated = false;
+  const SPLASH_KEY = "kime-splash-played";
 
   const initSplash = async (): Promise<void> => {
+    if (sessionStorage.getItem(SPLASH_KEY)) {
+      document.getElementById("splash-screen")?.classList.add("gone");
+      return;
+    }
+
     const splash = document.getElementById(
       "splash-screen",
     ) as HTMLElement | null;
@@ -242,6 +248,8 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
       });
 
       anim.addEventListener("complete", () => {
+        sessionStorage.setItem(SPLASH_KEY, "1");
+
         const grid = buildGrid("999999");
         document.body.appendChild(grid);
         void grid.offsetHeight;
