@@ -634,7 +634,7 @@ const { page } = Astro.props;
     min-height: 50vh;
   }
   :global(.artwork-card[hidden]) {
-    display: none;
+    display: none !important;
   }
 
   /* Layout Split */
@@ -880,7 +880,6 @@ const { page } = Astro.props;
     height: auto;
     display: block;
     object-fit: cover;
-    content-visibility: auto;
   }
 
   .artwork-card {
@@ -889,11 +888,9 @@ const { page } = Astro.props;
   @keyframes artwork-card-in {
     from {
       opacity: 0;
-      transform: translateY(12px);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
     }
   }
 

@@ -22,8 +22,6 @@ const makePage = <T,>(data: T[]) => ({
 
 const videoPage = makePage(videos);
 const artworkPage = makePage(artworks);
-
-const initialMode: "motions" | "artwork" = "motions";
 ---
 
 <Layout title="Kimeyu Work">
@@ -36,16 +34,16 @@ const initialMode: "motions" | "artwork" = "motions";
         align="responsive"
       />
       <div class="switch-overlap">
-        <ModeSwitch activeMode={initialMode} />
+        <ModeSwitch activeMode="motions" />
       </div>
     </div>
   </Fragment>
 
-  <div class="spa-gallery-wrapper">
-    <div class="spa-panel" data-mode="motions">
+  <div class="spa-gallery-wrapper" id="spa-wrapper">
+    <div class="spa-panel" id="panel-motions">
       <MotionGallery page={videoPage} />
     </div>
-    <div class="spa-panel" data-mode="artwork" hidden>
+    <div class="spa-panel" id="panel-artwork">
       <ArtworkGallery page={artworkPage} />
     </div>
   </div>
@@ -54,139 +52,120 @@ const initialMode: "motions" | "artwork" = "motions";
 <style>
   @import "../../styles/works-hero.css";
 
-  .spa-panel[hidden] {
-    display: none;
-  }
-  .spa-panel {
-    animation: panel-fade-in 0.3s ease-out;
-  }
-  @keyframes panel-fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  .is-hidden {
+    display: none !important;
   }
 </style>
 
 <script>
+  const WRAPPER_ID = "spa-wrapper";
+  const PANEL_MOTIONS_ID = "panel-motions";
+  const PANEL_ARTWORK_ID = "panel-artwork";
   const EASING = "cubic-bezier(0.77, 0, 0.175, 1)";
-  const BAND_DUR = 500;
-  const STAGGER = 80;
+  const BAND_DUR = 400;
+  const STAGGER = 60;
   const BAND_COUNT = 4;
-  let activeOverlay: HTMLElement | null = null;
 
-  function switchMode(targetMode: string) {
+  let currentMode: string = "motions";
+  let animating = false;
+
+  function switchTo(target: string) {
+    if (animating || target === currentMode) return;
+    animating = true;
+
+    const wrapper = document.getElementById(WRAPPER_ID);
+    const motions = document.getElementById(PANEL_MOTIONS_ID);
+    const artwork = document.getElementById(PANEL_ARTWORK_ID);
+    if (!wrapper || !motions || !artwork) { animating = false; return; }
+
+    // Update pill UI
     const container = document.querySelector<HTMLElement>(".mode-switch-container");
-    const panels = document.querySelectorAll<HTMLElement>(".spa-panel");
-    const wrapper = document.querySelector<HTMLElement>(".spa-gallery-wrapper");
-
-    if (!container || !wrapper || panels.length === 0) return;
-
-    const currentMode = container.dataset.activeMode;
-    if (currentMode === targetMode) return;
-
-    // Cancel previous animation if running
-    if (activeOverlay) {
-      activeOverlay.remove();
-      activeOverlay = null;
+    if (container) {
+      container.dataset.activeMode = target;
+      container.querySelectorAll<HTMLElement>(".switch-btn").forEach((b) => {
+        const active = b.dataset.mode === target;
+        b.classList.toggle("is-active", active);
+        b.setAttribute("aria-pressed", active ? "true" : "false");
+      });
     }
 
-    // Update state immediately so duplicate clicks are ignored
-    container.dataset.activeMode = targetMode;
-    container.querySelectorAll<HTMLElement>(".switch-btn").forEach((btn) => {
-      const isActive = btn.dataset.mode === targetMode;
-      btn.classList.toggle("is-active", isActive);
-      btn.setAttribute("aria-pressed", isActive ? "true" : "false");
-    });
-
+    // Build overlay
     const rect = wrapper.getBoundingClientRect();
     const overlay = document.createElement("div");
     overlay.style.cssText = `position:absolute;top:0;left:0;width:100%;height:${rect.height}px;z-index:100;pointer-events:none;overflow:hidden;`;
-    activeOverlay = overlay;
 
     for (let i = 0; i < BAND_COUNT; i++) {
       const band = document.createElement("div");
-      const isPink = i % 2 === 0;
-      band.style.cssText = `position:absolute;top:${(i / BAND_COUNT) * 100}%;left:0;width:100%;height:${100 / BAND_COUNT + 1}%;background:${isPink ? "#fa729d" : "#29d0f6"};transform:translateX(-110%);will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden;`;
-      band.dataset.index = i.toString();
+      band.style.cssText = `position:absolute;top:${(i / BAND_COUNT) * 100}%;left:0;width:100%;height:${100 / BAND_COUNT + 1}%;background:${i % 2 === 0 ? "#fa729d" : "#29d0f6"};transform:translateX(-110%);will-change:transform;`;
       overlay.appendChild(band);
     }
 
     wrapper.style.position = "relative";
     wrapper.appendChild(overlay);
-
     const bands = Array.from(overlay.children) as HTMLElement[];
 
-    // Bands wipe in
-    bands.forEach((band, i) => {
+    // Wipe in
+    bands.forEach((b, i) => {
       setTimeout(() => {
-        band.style.transition = `transform ${BAND_DUR}ms ${EASING}`;
-        band.style.transform = "translateX(0)";
+        b.style.transition = `transform ${BAND_DUR}ms ${EASING}`;
+        b.style.transform = "translateX(0)";
       }, i * STAGGER);
     });
 
-    // Swap panels when bands cover
-    const swapTime = BAND_COUNT * STAGGER + BAND_DUR * 0.6;
+    // Swap
     setTimeout(() => {
-      if (activeOverlay !== overlay) return; // cancelled
-      panels.forEach((p) => {
-        p.hidden = p.dataset.mode !== targetMode;
-      });
-      history.pushState({ mode: targetMode }, "", targetMode === "motions" ? "/work/" : "/work/?mode=artwork");
-    }, swapTime);
+      if (target === "artwork") {
+        motions.classList.add("is-hidden");
+        artwork.classList.remove("is-hidden");
+      } else {
+        artwork.classList.add("is-hidden");
+        motions.classList.remove("is-hidden");
+      }
+      currentMode = target;
+      history.pushState({ mode: target }, "", target === "motions" ? "/work/" : "/work/?mode=artwork");
+    }, BAND_COUNT * STAGGER + BAND_DUR * 0.6);
 
-    // Bands wipe out
-    const outDelay = BAND_COUNT * STAGGER + BAND_DUR + 50;
-    bands.forEach((band, i) => {
-      setTimeout(() => {
-        band.style.transform = "translateX(110%)";
-      }, outDelay + i * STAGGER);
+    // Wipe out
+    const outStart = BAND_COUNT * STAGGER + BAND_DUR + 40;
+    bands.forEach((b, i) => {
+      setTimeout(() => { b.style.transform = "translateX(110%)"; }, outStart + i * STAGGER);
     });
 
-    // Cleanup
+    // Done
     setTimeout(() => {
-      if (activeOverlay === overlay) {
-        overlay.remove();
-        activeOverlay = null;
-      }
-    }, outDelay + BAND_COUNT * STAGGER + BAND_DUR + 100);
+      overlay.remove();
+      animating = false;
+    }, outStart + BAND_COUNT * STAGGER + BAND_DUR + 50);
   }
 
-  function initSPAToggle() {
-    document.querySelectorAll<HTMLElement>("[data-mode]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const mode = btn.dataset.mode;
-        const container = document.querySelector<HTMLElement>(".mode-switch-container");
-        if (!container) return;
+  // Attach click handlers to mode switch buttons
+  function bindSwitch() {
+    const container = document.querySelector<HTMLElement>(".mode-switch-container");
+    if (!container) return;
 
-        if (mode === "toggle") {
-          switchMode(container.dataset.activeMode === "motions" ? "artwork" : "motions");
-        } else if (mode === "motions" || mode === "artwork") {
-          switchMode(mode);
-        }
-      });
-    });
-
-    window.addEventListener("popstate", (e) => {
-      const mode = e.state?.mode || (new URLSearchParams(location.search).get("mode") === "artwork" ? "artwork" : "motions");
-      document.querySelectorAll<HTMLElement>(".spa-panel").forEach((p) => {
-        p.hidden = p.dataset.mode !== mode;
-      });
-      const container = document.querySelector<HTMLElement>(".mode-switch-container");
-      if (container) {
-        container.dataset.activeMode = mode;
-        container.querySelectorAll<HTMLElement>(".switch-btn").forEach((btn) => {
-          const isActive = btn.dataset.mode === mode;
-          btn.classList.toggle("is-active", isActive);
-          btn.setAttribute("aria-pressed", isActive ? "true" : "false");
-        });
+    const handler = (e: Event) => {
+      const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-mode]");
+      if (!btn || !container.contains(btn)) return;
+      const mode = btn.dataset.mode;
+      if (mode === "toggle") {
+        switchTo(currentMode === "motions" ? "artwork" : "motions");
+      } else if (mode === "motions" || mode === "artwork") {
+        switchTo(mode);
       }
-    });
+    };
+
+    container.addEventListener("click", handler);
   }
 
-  initSPAToggle();
+  bindSwitch();
 
-  // Restore mode from URL on load
-  const params = new URLSearchParams(location.search);
-  if (params.get("mode") === "artwork") {
-    switchMode("artwork");
+  // Hide artwork panel after custom elements have initialized
+  requestAnimationFrame(() => {
+    document.getElementById("panel-artwork")?.classList.add("is-hidden");
+  });
+
+  // Restore from URL
+  if (new URLSearchParams(location.search).get("mode") === "artwork") {
+    switchTo("artwork");
   }
 </script>
