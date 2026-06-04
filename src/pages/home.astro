@@ -476,7 +476,56 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   initQuoteReveal();
   document.addEventListener("astro:page-load", initQuoteReveal);
 
-  // Featured section handles its own internal scroll snap.
+  // Featured section: snap-to-card on wheel/touch, normal scroll everywhere else
+  const initFeaturedSnap = () => {
+    const cards = Array.from(document.querySelectorAll('.featured-sticky-card'));
+    if (!cards.length) return;
+
+    let isSnapping = false;
+    let snapTimeout = null;
+
+    const getCardInView = () => {
+      const vh = window.innerHeight;
+      for (const card of cards) {
+        const rect = card.getBoundingClientRect();
+        // Card is partially in view (more than 20% visible)
+        if (rect.top < vh * 0.8 && rect.bottom > vh * 0.2) {
+          return card;
+        }
+      }
+      return null;
+    };
+
+    const isNearFeatured = () => {
+      const section = document.querySelector('.featured-works-section');
+      if (!section) return false;
+      const rect = section.getBoundingClientRect();
+      return rect.top < window.innerHeight && rect.bottom > 0;
+    };
+
+    const snapToNearest = () => {
+      if (isSnapping || !isNearFeatured()) return;
+      const card = getCardInView();
+      if (!card) return;
+      const rect = card.getBoundingClientRect();
+      // Only snap if the card isn't already aligned (threshold: 40px)
+      if (Math.abs(rect.top) < 40) return;
+      isSnapping = true;
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => { isSnapping = false; }, 800);
+    };
+
+    const onScroll = () => {
+      clearTimeout(snapTimeout);
+      if (!isNearFeatured()) return;
+      snapTimeout = setTimeout(snapToNearest, 120);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+  };
+
+  initFeaturedSnap();
+  document.addEventListener('astro:page-load', initFeaturedSnap);
 </script>
 <style>
 
@@ -1439,14 +1488,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   .featured-works-section {
     position: relative;
     width: 100%;
-    height: 100vh;
-    overflow-y: auto;
-    scroll-snap-type: y mandatory;
-    scrollbar-width: none;
     z-index: 10;
-  }
-  .featured-works-section::-webkit-scrollbar {
-    display: none;
   }
 
   .featured-sticky-card {
@@ -1459,8 +1501,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
   }
 
   .fs-bg-watermark {
