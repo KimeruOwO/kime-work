@@ -1866,16 +1866,24 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
   .ow-svg-left {
     position: absolute;
-    left: -20px;
+    left: -2vw;
     top: 50%;
     transform: translateY(-50%);
+    width: 25vw;
+    max-width: 396px;
+    min-width: 100px;
+    z-index: 1;
   }
 
   .ow-svg-right {
     position: absolute;
-    right: -20px;
+    right: -2vw;
     top: 50%;
     transform: translateY(-50%);
+    width: 25vw;
+    max-width: 404px;
+    min-width: 100px;
+    z-index: 1;
   }
 
   .ow-svg-center {
@@ -1883,11 +1891,15 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100%;
+    width: 60vw;
     max-width: 931px;
+    min-width: 350px;
     pointer-events: none;
+    z-index: 1;
   }
 
+  .ow-svg-left svg,
+  .ow-svg-right svg,
   .ow-svg-center svg {
     width: 100%;
     height: auto;
@@ -1896,9 +1908,9 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
   .ow-title-wrap {
     position: relative;
-    z-index: 2;
+    z-index: 10;
     text-align: center;
-    margin-top: 40px; /* offset for center arch */
+    margin-top: clamp(20px, 4vw, 50px); /* Push text down so it doesn't overlap the arch */
   }
 
   .ow-eyebrow {
