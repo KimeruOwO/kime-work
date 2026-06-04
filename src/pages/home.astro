@@ -549,7 +549,10 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
         if (i === currentSlide) {
           child.classList.add('is-active');
         } else {
-          child.classList.remove('is-active');
+          // Delay removal so it doesn't snap out instantly while sliding away
+          setTimeout(() => {
+            child.classList.remove('is-active');
+          }, ANIM_DURATION);
         }
       });
 
@@ -557,10 +560,17 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       setTimeout(() => { isAnimating = false; }, ANIM_DURATION);
     };
 
-    // Initialize first slide as active
-    if (inner.children[0]) {
-      inner.children[0].classList.add('is-active');
-    }
+    // Use IntersectionObserver to trigger the first slide's animation only when it scrolls into view
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && currentSlide === 0) {
+          if (inner.children[0]) {
+            inner.children[0].classList.add('is-active');
+          }
+        }
+      });
+    }, { threshold: 0.3 });
+    observer.observe(section);
 
     const isFeaturedActive = () => {
       const r = section.getBoundingClientRect();
