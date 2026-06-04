@@ -209,23 +209,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
         </svg>
       </div>
       <div class="ow-center">
-        <div class="ow-svg-center" aria-hidden="true">
-          <svg width="931" height="125" viewBox="0 0 931 125" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="755.473" y="124.797" width="580.379" height="124.796" transform="rotate(-180 755.473 124.797)" fill="#FA729D"/>
-            <rect x="175.452" y="124.428" width="44.3069" height="37.2178" transform="rotate(-180 175.452 124.428)" fill="#FA729D"/>
-            <rect x="755.546" y="0.365234" width="44.3069" height="37.2178" fill="#FA729D"/>
-            <rect x="86.8417" y="124.428" width="42.5346" height="37.2178" transform="rotate(-180 86.8417 124.428)" fill="#FA729D"/>
-            <rect x="844.159" y="0.365234" width="42.5346" height="37.2178" fill="#FA729D"/>
-            <rect x="131.148" y="87.21" width="44.3069" height="47.8514" transform="rotate(-180 131.148 87.21)" fill="#FA729D"/>
-            <rect x="799.852" y="37.583" width="44.3069" height="47.8514" fill="#FA729D"/>
-            <rect x="44.3071" y="87.21" width="44.3069" height="47.8514" transform="rotate(-180 44.3071 87.21)" fill="#FA729D"/>
-            <rect x="886.693" y="37.583" width="44.3069" height="47.8514" fill="#FA729D"/>
-            <rect x="175.452" y="39.3584" width="44.3069" height="38.99" transform="rotate(-180 175.452 39.3584)" fill="#FA729D"/>
-            <rect x="755.546" y="85.4346" width="44.3069" height="38.99" fill="#FA729D"/>
-            <rect x="86.8417" y="39.3584" width="42.5346" height="38.99" transform="rotate(-180 86.8417 39.3584)" fill="#FA729D"/>
-            <rect x="844.159" y="85.4346" width="42.5346" height="38.99" fill="#FA729D"/>
-          </svg>
-        </div>
         <div class="ow-title-wrap">
           <div class="ow-eyebrow">— 全ての作品 —</div>
           <div class="ow-title">OTHER WORKS</div>
@@ -1886,21 +1869,8 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     z-index: 1;
   }
 
-  .ow-svg-center {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60vw;
-    max-width: 931px;
-    min-width: 350px;
-    pointer-events: none;
-    z-index: 1;
-  }
-
   .ow-svg-left svg,
-  .ow-svg-right svg,
-  .ow-svg-center svg {
+  .ow-svg-right svg {
     width: 100%;
     height: auto;
     display: block;
@@ -1910,7 +1880,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     position: relative;
     z-index: 10;
     text-align: center;
-    margin-top: clamp(20px, 4vw, 50px); /* Push text down so it doesn't overlap the arch */
+    margin-top: 0;
   }
 
   .ow-eyebrow {
