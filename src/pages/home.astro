@@ -1558,8 +1558,8 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   .featured-works-section {
     position: relative;
     width: 100%;
-    /* 3 featured slides only. Other Works is now outside this section. */
-    height: 300vh;
+    /* 3 slides × 100vh but buffer reduced: less dead scroll after card 3 */
+    height: 230vh;
     z-index: 10;
   }
 
@@ -1948,11 +1948,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     opacity: 0.9;
   }
 
-  /* 20px white gap before featured card 3 */
-  #fs-inner article:last-child {
-    border-top: 20px solid #F2F2F9;
-    box-sizing: border-box;
-  }
+
 
   /* Responsive Adjustments */
   @media (max-width: 1023px) {
@@ -2086,7 +2082,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: var(--base-white);
+    background-color: var(--color-primary);
     width: 100%;
     margin-bottom: -0.1em;
     overflow: hidden;
@@ -2104,7 +2100,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     min-width: 0;
     font-size: clamp(48px, 14vw, 200px);
     font-weight: 900;
-    color: var(--color-primary);
+    color: #F2F2F9;
     line-height: 0.90;
     padding-left: clamp(1px, 1vw, 40px);
     margin-top: calc(-1 * var(--spacing-4) - 0.1em);
