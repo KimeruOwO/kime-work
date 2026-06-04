@@ -547,9 +547,38 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
     const onWheel = (e) => {
       if (!isFeaturedActive()) return;
-      // Allow exit: on last slide going down, or first slide going up
-      if (currentSlide === SLIDE_COUNT - 1 && e.deltaY > 0) return;
-      if (currentSlide === 0 && e.deltaY < 0) return;
+
+      const r = section.getBoundingClientRect();
+
+      // Allow exit: on last slide going down, skip the dead space smoothly
+      if (currentSlide === SLIDE_COUNT - 1 && e.deltaY > 0) {
+        if (r.bottom > window.innerHeight + 5) {
+          e.preventDefault();
+          if (isAnimating) return;
+          isAnimating = true;
+          window.scrollTo({
+            top: window.scrollY + r.bottom - window.innerHeight,
+            behavior: 'smooth'
+          });
+          setTimeout(() => { isAnimating = false; }, 800);
+        }
+        return;
+      }
+      
+      // Allow exit: on first slide going up, skip the dead space smoothly
+      if (currentSlide === 0 && e.deltaY < 0) {
+        if (r.top < -5) {
+          e.preventDefault();
+          if (isAnimating) return;
+          isAnimating = true;
+          window.scrollTo({
+            top: window.scrollY + r.top,
+            behavior: 'smooth'
+          });
+          setTimeout(() => { isAnimating = false; }, 800);
+        }
+        return;
+      }
 
       e.preventDefault();
       if (isAnimating) return;
@@ -569,8 +598,32 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       const dy = touchY - e.changedTouches[0].clientY;
       if (Math.abs(dy) < 30 || isAnimating) return;
       const dir = dy > 0 ? 1 : -1;
-      if (currentSlide === SLIDE_COUNT - 1 && dir > 0) return;
-      if (currentSlide === 0 && dir < 0) return;
+      if (currentSlide === SLIDE_COUNT - 1 && dir > 0) {
+        const r = section.getBoundingClientRect();
+        if (r.bottom > window.innerHeight + 5) {
+          if (isAnimating) return;
+          isAnimating = true;
+          window.scrollTo({
+            top: window.scrollY + r.bottom - window.innerHeight,
+            behavior: 'smooth'
+          });
+          setTimeout(() => { isAnimating = false; }, 800);
+        }
+        return;
+      }
+      if (currentSlide === 0 && dir < 0) {
+        const r = section.getBoundingClientRect();
+        if (r.top < -5) {
+          if (isAnimating) return;
+          isAnimating = true;
+          window.scrollTo({
+            top: window.scrollY + r.top,
+            behavior: 'smooth'
+          });
+          setTimeout(() => { isAnimating = false; }, 800);
+        }
+        return;
+      }
       goTo(currentSlide + dir);
     };
 
@@ -1554,10 +1607,9 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   .featured-works-section {
     position: relative;
     width: 100%;
-    /* Reduced height and scroll-snap so wheel intercept triggers reliably */
-    height: 100vh;
+    /* Restored safe 300vh buffer so fast scrolls won't break the sticky effect */
+    height: 300vh;
     z-index: 10;
-    scroll-snap-align: start;
   }
 
   /* Sticky viewport — stays pinned to top of screen the whole time user scrolls
