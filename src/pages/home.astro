@@ -544,34 +544,36 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       currentSlide = Math.max(0, Math.min(SLIDE_COUNT - 1, index));
       inner.style.transform = `translateY(${-currentSlide * 100}%)`;
       
-      // Update .is-active class on slides for entrance animations
       Array.from(inner.children).forEach((child, i) => {
         if (i === currentSlide) {
-          child.classList.add('is-active');
+          // Wait 400ms for the container to mostly slide into place before animating the contents
+          setTimeout(() => {
+            child.classList.add('is-active');
 
-          // Slide 3 Decoding Effect
-          if (i === 2) {
-            const target = child.querySelector('.decode-target');
-            if (target && !target.dataset.decoding) {
-              target.dataset.decoding = 'true';
-              const originalText = target.getAttribute('data-decode-text') || '';
-              const chars = '!@#$%^&*XO<>[]{}?/';
-              let iterations = 0;
-              const interval = setInterval(() => {
-                target.innerText = originalText.split('').map((letter, index) => {
-                  if (letter === ' ') return ' ';
-                  if (index < iterations) return originalText[index];
-                  return chars[Math.floor(Math.random() * chars.length)];
-                }).join('');
-                if (iterations >= originalText.length) {
-                  clearInterval(interval);
-                  target.dataset.decoding = '';
-                  target.innerText = originalText;
-                }
-                iterations += 1/3;
-              }, 30);
+            // Slide 3 Decoding Effect
+            if (i === 2) {
+              const target = child.querySelector('.decode-target');
+              if (target && !target.dataset.decoding) {
+                target.dataset.decoding = 'true';
+                const originalText = target.getAttribute('data-decode-text') || '';
+                const chars = '!@#$%^&*XO<>[]{}?/';
+                let iterations = 0;
+                const interval = setInterval(() => {
+                  target.innerText = originalText.split('').map((letter, index) => {
+                    if (letter === ' ') return ' ';
+                    if (index < iterations) return originalText[index];
+                    return chars[Math.floor(Math.random() * chars.length)];
+                  }).join('');
+                  if (iterations >= originalText.length) {
+                    clearInterval(interval);
+                    target.dataset.decoding = '';
+                    target.innerText = originalText;
+                  }
+                  iterations += 1/3;
+                }, 30);
+              }
             }
-          }
+          }, 400);
 
         } else {
           // Delay removal so it doesn't snap out instantly while sliding away
@@ -1989,15 +1991,15 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     fill: transparent;
     transition: fill 0.4s ease 1s; /* Fill fades in after line draw */
   }
-  .featured-sticky-card:nth-child(2) .fs-play-paths { stroke: #FA729D; }
-  .featured-sticky-card:nth-child(2) .fs-play-tri   { stroke: #046277; }
+  .featured-sticky-card:nth-child(2) .fs-play-paths { stroke: #046277; }
+  .featured-sticky-card:nth-child(2) .fs-play-tri   { stroke: #FA729D; }
   .featured-sticky-card:nth-child(2).is-active .fs-play-paths {
     animation: lineDraw 1s ease 0.2s forwards;
-    fill: #FA729D;
+    fill: #046277;
   }
   .featured-sticky-card:nth-child(2).is-active .fs-play-tri {
     animation: lineDraw 1s ease 0.2s forwards;
-    fill: #046277;
+    fill: #FA729D;
   }
 
   /* SLIDE 3 CUSTOM ANIMATIONS (Pink Background, Glitch) */
