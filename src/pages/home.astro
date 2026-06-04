@@ -2525,5 +2525,15 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     background-size: var(--tile-w) var(--tile-h);
     background-repeat: repeat-x;
     background-position: 0 center;
+    animation: stripMoveRight 10s linear infinite;
+  }
+
+  @keyframes stripMoveRight {
+    0% {
+      background-position: 0 center;
+    }
+    100% {
+      background-position: var(--tile-w) center;
+    }
   }
 </style>
