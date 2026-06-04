@@ -128,10 +128,13 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       {
         featuredVideos.slice(0, 3).map((video, index) => (
           <article class="featured-sticky-card">
-            <div class="fs-bg-watermark" aria-hidden="true">FEATURED</div>
             
             <div class="fs-card-inner">
-              <div class="fs-info-col">
+              <!-- Watermark -->
+              <div class="fs-bg-watermark" aria-hidden="true">FEATURED</div>
+
+              <!-- Top Left: Tags -->
+              <div class="fs-top-left">
                 <div class="fs-tags">
                   <div class="fs-tag-motion">
                     <span class="fs-tag-text">{video.category?.name?.toUpperCase() || "MOTION GRAPHICS"}</span>
@@ -141,26 +144,33 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
                     {video.category?.visibility === "Private" ? "Private" : "Public"}
                   </div>
                 </div>
-                
-                <div class="fs-number">0{index + 1}</div>
-                
-                <div class="fs-title-wrap">
-                  <h4 class="fs-artist">{video.nameArtist}</h4>
-                  <h3 class="fs-title">{video.title}</h3>
-                </div>
               </div>
 
-              <div class="fs-thumb-col">
+              <!-- Center/Right: Video -->
+              <div class="fs-video-area">
                 <a href={`/work/motions/${video.slug}`} class="fs-thumb-link" aria-label={`Watch ${video.title}`}>
                   <div class="fs-thumb-frame">
                     <img src={video.thumbnail.url} alt={video.title} loading="lazy" class="fs-thumb-img" />
                   </div>
                   <div class="fs-play-btn">
-                    <span class="fs-play-arr">&laquo;</span>
+                    <div class="fs-play-arrows left">
+                      <div class="fs-play-arr"></div><div class="fs-play-arr"></div><div class="fs-play-arr"></div>
+                    </div>
                     <span class="fs-play-text">Play</span>
-                    <span class="fs-play-arr">&raquo;</span>
+                    <div class="fs-play-arrows right">
+                      <div class="fs-play-arr"></div><div class="fs-play-arr"></div><div class="fs-play-arr"></div>
+                    </div>
                   </div>
                 </a>
+              </div>
+
+              <!-- Bottom Left: Number & Titles -->
+              <div class="fs-bottom-left">
+                <div class="fs-number">0{index + 1}</div>
+                <div class="fs-titles">
+                  <h4 class="fs-artist">{video.nameArtist}</h4>
+                  <h3 class="fs-title">{video.title}</h3>
+                </div>
               </div>
             </div>
           </article>
@@ -1466,20 +1476,33 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     position: relative;
     z-index: 2;
     width: 100%;
-    max-width: 1600px;
-    padding: clamp(20px, 4vw, 60px);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 40px;
+    height: 100%;
+    max-width: 1920px;
+    margin: 0 auto;
   }
 
-  .fs-info-col {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    max-width: 500px;
+  /* Watermark behind the video, top-left of the video */
+  .fs-bg-watermark {
+    position: absolute;
+    top: 8%;
+    left: 10%;
+    font-family: 'Impact', var(--font-sans);
+    font-size: clamp(6rem, 20vw, 300px);
+    font-weight: 400;
+    line-height: 1;
     color: #F2F2F9;
+    white-space: nowrap;
+    z-index: 1;
+    pointer-events: none;
+    letter-spacing: 0.05em;
+  }
+
+  /* Tags at the very top left */
+  .fs-top-left {
+    position: absolute;
+    top: clamp(20px, 5%, 80px);
+    left: clamp(20px, 5%, 80px);
+    z-index: 5;
   }
 
   .fs-tags {
@@ -1487,7 +1510,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
-    margin-bottom: 20px;
   }
 
   .fs-tag-motion {
@@ -1523,49 +1545,20 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     padding: 4px 20px;
   }
 
-  .fs-number {
-    font-family: 'Impact', var(--font-sans);
-    font-size: clamp(8rem, 15vw, 300px);
-    line-height: 0.8;
-    color: #F2F2F9;
-    margin-bottom: 20px;
-    margin-left: -10px;
-  }
-
-  .fs-title-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .fs-artist {
-    font-family: var(--font-sans);
-    font-size: clamp(20px, 2.5vw, 40px);
-    font-weight: 700;
-    margin: 0;
-    line-height: 1.2;
-  }
-  .fs-title {
-    font-family: var(--font-sans);
-    font-size: clamp(24px, 3vw, 48px);
-    font-weight: 700;
-    margin: 0;
-    line-height: 1.2;
-  }
-
-  .fs-thumb-col {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    position: relative;
+  /* Video area taking up right side */
+  .fs-video-area {
+    position: absolute;
+    top: 15%; 
+    right: 5%;
+    width: 65%; 
+    height: 60%; 
+    z-index: 3;
   }
 
   .fs-thumb-link {
-    position: relative;
     display: block;
     width: 100%;
-    max-width: 1000px;
-    aspect-ratio: 16/9;
+    height: 100%;
     text-decoration: none;
     transition: transform 0.3s ease;
   }
@@ -1578,7 +1571,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     height: 100%;
     background: #FFFFFF;
     border: 4px solid #046277;
-    box-shadow: 0px 6px 0px #046277;
     overflow: hidden;
   }
   .fs-thumb-img {
@@ -1587,29 +1579,91 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     object-fit: cover;
   }
 
+  /* The new Play button from user CSS */
   .fs-play-btn {
     position: absolute;
-    bottom: -30px;
-    right: -30px;
+    bottom: clamp(-20px, -5%, -50px);
+    right: clamp(20px, 10%, 100px);
+    height: clamp(60px, 8vw, 110px);
     background: #FFFFFF;
     border: 4px solid #046277;
-    padding: 10px 40px;
     display: flex;
     align-items: center;
-    gap: 15px;
-    color: #FA729D;
-    font-family: 'Impact', var(--font-sans);
-    font-size: clamp(24px, 3vw, 48px);
-    box-shadow: 0px 6px 0px #046277;
-    transform: rotate(-5deg);
+    justify-content: center;
+    padding: 0 clamp(40px, 5vw, 80px);
+    gap: 20px;
     transition: transform 0.3s ease;
   }
   .fs-thumb-link:hover .fs-play-btn {
-    transform: rotate(0deg) scale(1.1);
+    transform: scale(1.1);
+  }
+  .fs-play-text {
+    font-family: 'Impact', var(--font-sans);
+    font-size: clamp(32px, 4vw, 48px);
+    color: #FA729D;
+    text-transform: uppercase;
+  }
+  .fs-play-arrows {
+    display: flex;
+    gap: 5px;
   }
   .fs-play-arr {
-    font-size: 1.2em;
-    line-height: 1;
+    width: clamp(15px, 2vw, 25px);
+    height: clamp(15px, 2vw, 25px);
+    border-top: 4px solid #FA729D;
+    border-right: 4px solid #FA729D;
+  }
+  .fs-play-arrows.left .fs-play-arr {
+    transform: rotate(-135deg);
+  }
+  .fs-play-arrows.right .fs-play-arr {
+    transform: rotate(45deg);
+  }
+
+  /* Bottom Left */
+  .fs-bottom-left {
+    position: absolute;
+    bottom: 5%;
+    left: clamp(20px, 5%, 80px);
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .fs-number {
+    font-family: 'Impact', var(--font-sans);
+    font-size: clamp(8rem, 15vw, 300px);
+    line-height: 0.8;
+    color: #F2F2F9;
+    margin-bottom: 20px;
+  }
+
+  .fs-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 90vw; 
+    max-width: 1500px;
+  }
+  .fs-artist {
+    font-family: var(--font-sans);
+    font-size: clamp(20px, 2.5vw, 40px);
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    color: #F2F2F9;
+  }
+  .fs-title {
+    font-family: var(--font-sans);
+    font-size: clamp(24px, 3vw, 48px);
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    color: #F2F2F9;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* OTHER WORKS BANNER */
@@ -1686,23 +1740,43 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   /* Responsive Adjustments */
   @media (max-width: 1023px) {
     .fs-card-inner {
-      flex-direction: column-reverse;
+      display: flex;
+      flex-direction: column;
       justify-content: center;
-      text-align: center;
-      padding-top: 100px;
+      padding-top: 150px; /* space for tags/watermark */
     }
-    .fs-info-col {
-      align-items: center;
-      margin-top: 20px;
+    .fs-top-left {
+      top: 20px;
+      left: 20px;
     }
-    .fs-tags {
-      align-items: center;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: center;
+    .fs-bg-watermark {
+      top: 100px;
+      left: 20px;
+    }
+    .fs-video-area {
+      position: relative;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 40vh;
+      padding: 0 5%;
+      margin-bottom: 20px;
+    }
+    .fs-bottom-left {
+      position: relative;
+      bottom: 0;
+      left: 0;
+      padding: 0 5%;
     }
     .fs-number {
-      margin-left: 0;
+      font-size: 6rem;
+      margin-bottom: 10px;
+    }
+    .fs-titles {
+      width: 100%;
+    }
+    .fs-title {
+      white-space: normal;
     }
     .fs-play-btn {
       right: 50%;
