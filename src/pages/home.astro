@@ -476,23 +476,9 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   initQuoteReveal();
   document.addEventListener("astro:page-load", initQuoteReveal);
 
-  // Home scroll snap layout setup
-  const enableHomeSnap = () => {
-    document.documentElement.classList.add("home-snap-layout");
-  };
-  const disableHomeSnap = () => {
-    document.documentElement.classList.remove("home-snap-layout");
-  };
-
-  enableHomeSnap();
-  document.addEventListener("astro:page-load", enableHomeSnap);
-  document.addEventListener("astro:before-preparation", disableHomeSnap);
+  // Featured section handles its own internal scroll snap.
 </script>
 <style>
-  :global(html.home-snap-layout) {
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
-  }
 
   /* ==============================================
      HERO SLIDER (Zero Layout Blueprint)
@@ -522,7 +508,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     display: flex;
     flex-direction: column;
     align-items: center;
-    scroll-snap-align: start;
   }
 
   .top-decor-banner,
@@ -1022,8 +1007,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     padding: clamp(var(--spacing-16), 15vw, var(--spacing-36)) var(--spacing-4);
     background-color: var(--hero-bg);
     width: 100%;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
   }
 
   .quote-wrapper {
@@ -1456,7 +1439,14 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   .featured-works-section {
     position: relative;
     width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
     z-index: 10;
+  }
+  .featured-works-section::-webkit-scrollbar {
+    display: none;
   }
 
   .featured-sticky-card {
@@ -1803,8 +1793,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     flex-direction: column;
     position: relative;
     z-index: 5;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
   }
 
   .contact-entry-ribbon {
