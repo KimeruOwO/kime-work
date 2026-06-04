@@ -165,7 +165,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
                     <div class="fs-title-play-row">
                       <div class="fs-titles">
                         <h4 class="fs-artist"><span class="mask-text">{video.nameArtist}</span></h4>
-                        <h3 class="fs-title"><span class="mask-text">{video.title}</span></h3>
+                        <h3 class="fs-title"><span class="mask-text decode-target" data-decode-text={video.title}>{video.title}</span></h3>
                       </div>
                       <a href={`/work/motions/${video.slug}`} class="fs-play-link" aria-label={`Watch ${video.title}`}>
                         <svg viewBox="155 115 215 55" class="fs-play-svg">
@@ -548,6 +548,31 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       Array.from(inner.children).forEach((child, i) => {
         if (i === currentSlide) {
           child.classList.add('is-active');
+
+          // Slide 3 Decoding Effect
+          if (i === 2) {
+            const target = child.querySelector('.decode-target');
+            if (target && !target.dataset.decoding) {
+              target.dataset.decoding = 'true';
+              const originalText = target.getAttribute('data-decode-text') || '';
+              const chars = '!@#$%^&*XO<>[]{}?/';
+              let iterations = 0;
+              const interval = setInterval(() => {
+                target.innerText = originalText.split('').map((letter, index) => {
+                  if (letter === ' ') return ' ';
+                  if (index < iterations) return originalText[index];
+                  return chars[Math.floor(Math.random() * chars.length)];
+                }).join('');
+                if (iterations >= originalText.length) {
+                  clearInterval(interval);
+                  target.dataset.decoding = '';
+                  target.innerText = originalText;
+                }
+                iterations += 1/3;
+              }, 30);
+            }
+          }
+
         } else {
           // Delay removal so it doesn't snap out instantly while sliding away
           setTimeout(() => {
@@ -1904,6 +1929,104 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   @keyframes buttonPop {
     0% { transform: scale(0.8); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* SLIDE 2 CUSTOM ANIMATIONS (White Background) */
+  @keyframes maskSlideLeft {
+    0% { transform: translateX(-110%); }
+    100% { transform: translateX(0); }
+  }
+  @keyframes sliceReveal {
+    0% { clip-path: polygon(0 50%, 100% 50%, 100% 50%, 0 50%); }
+    100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  }
+  @keyframes lineDraw {
+    0% { stroke-dashoffset: 1500; }
+    100% { stroke-dashoffset: 0; }
+  }
+  
+  .featured-sticky-card:nth-child(2) .fs-number .mask-text,
+  .featured-sticky-card:nth-child(2) .fs-artist .mask-text,
+  .featured-sticky-card:nth-child(2) .fs-title .mask-text {
+    transform: translateX(-110%); /* Override translateY */
+  }
+  .featured-sticky-card:nth-child(2).is-active .fs-number .mask-text {
+    animation: maskSlideLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0s forwards;
+  }
+  .featured-sticky-card:nth-child(2).is-active .fs-artist .mask-text {
+    animation: maskSlideLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  }
+  .featured-sticky-card:nth-child(2).is-active .fs-title .mask-text {
+    animation: maskSlideLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+  }
+
+  .featured-sticky-card:nth-child(2) .fs-thumb-frame::after {
+    display: none; /* No curtain */
+  }
+  .featured-sticky-card:nth-child(2) .fs-thumb-img {
+    clip-path: polygon(0 50%, 100% 50%, 100% 50%, 0 50%);
+    transform: scale(1.15); /* Keep scale for settle effect */
+  }
+  .featured-sticky-card:nth-child(2).is-active .fs-thumb-img {
+    animation: sliceReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards, imageSettle 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  }
+  
+  .featured-sticky-card:nth-child(2) .fs-play-link {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .featured-sticky-card:nth-child(2).is-active .fs-play-link {
+    animation: none; /* Override default buttonPop */
+    transform: scale(1);
+    opacity: 1;
+    transition-delay: 0.2s;
+  }
+  .featured-sticky-card:nth-child(2) .fs-play-paths,
+  .featured-sticky-card:nth-child(2) .fs-play-tri {
+    stroke-width: 2;
+    stroke-dasharray: 1500;
+    stroke-dashoffset: 1500;
+    fill: transparent;
+    transition: fill 0.4s ease 1s; /* Fill fades in after line draw */
+  }
+  .featured-sticky-card:nth-child(2) .fs-play-paths { stroke: #FA729D; }
+  .featured-sticky-card:nth-child(2) .fs-play-tri   { stroke: #046277; }
+  .featured-sticky-card:nth-child(2).is-active .fs-play-paths {
+    animation: lineDraw 1s ease 0.2s forwards;
+    fill: #FA729D;
+  }
+  .featured-sticky-card:nth-child(2).is-active .fs-play-tri {
+    animation: lineDraw 1s ease 0.2s forwards;
+    fill: #046277;
+  }
+
+  /* SLIDE 3 CUSTOM ANIMATIONS (Pink Background, Glitch) */
+  @keyframes glitch-image {
+    0% { transform: scale(1) translate(0); filter: drop-shadow(0 0 0 transparent); }
+    10% { transform: scale(1.02) translate(-5px, 2px); filter: drop-shadow(5px 0 0 cyan) drop-shadow(-5px 0 0 red); }
+    20% { transform: scale(1.01) translate(5px, -2px); filter: drop-shadow(-5px 0 0 cyan) drop-shadow(5px 0 0 red); }
+    30% { transform: scale(1) translate(0); filter: drop-shadow(0 0 0 transparent); }
+    40% { transform: scale(1.02) translate(-2px, 5px); filter: drop-shadow(3px 0 0 cyan) drop-shadow(-3px 0 0 red); }
+    50% { transform: scale(1) translate(0); filter: drop-shadow(0 0 0 transparent); }
+    100% { transform: scale(1) translate(0); filter: drop-shadow(0 0 0 transparent); }
+  }
+  @keyframes neonFlicker {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    15% { opacity: 0; }
+    25% { opacity: 1; }
+    35% { opacity: 0.3; }
+    45% { opacity: 1; }
+    60% { opacity: 0.8; }
+    100% { opacity: 1; }
+  }
+  .featured-sticky-card:nth-child(3).is-active .fs-thumb-img {
+    /* Override normal imageSettle, keep curtain reveal but image glitches */
+    animation: glitch-image 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+  }
+  .featured-sticky-card:nth-child(3).is-active .fs-play-link {
+    animation: neonFlicker 0.6s ease 0.4s forwards;
+    transform: scale(1);
   }
 
   /* Symmetrical styling: 2nd Featured Card has a white background */
