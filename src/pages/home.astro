@@ -168,7 +168,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
                         <h3 class="fs-title">{video.title}</h3>
                       </div>
                       <a href={`/work/motions/${video.slug}`} class="fs-play-link" aria-label={`Watch ${video.title}`}>
-                        <svg viewBox="0 94 499 91" class="fs-play-svg">
+                        <svg viewBox="155 115 215 55" class="fs-play-svg">
                           <defs>
                             <pattern id="fs-play-pattern" patternContentUnits="objectBoundingBox" width="1" height="1">
                               <use href="#fs-play-image" transform="matrix(0.00051226 0 0 0.00280899 -0.00278366 0)"/>
@@ -1749,6 +1749,8 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     display: flex;
     align-items: center;
     gap: clamp(20px, 4vw, 50px);
+    width: 90vw;
+    max-width: 1500px;
   }
 
   .fs-play-link {
@@ -1797,8 +1799,8 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 90vw; 
-    max-width: 1500px;
+    flex: 1;
+    min-width: 0;
   }
   .fs-artist {
     font-family: var(--font-sans);
