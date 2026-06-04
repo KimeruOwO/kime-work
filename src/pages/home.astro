@@ -476,9 +476,24 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   initQuoteReveal();
   document.addEventListener("astro:page-load", initQuoteReveal);
 
-  // Featured section behaves as a normal static layout block.
+  // Home scroll snap layout setup
+  const enableHomeSnap = () => {
+    document.documentElement.classList.add("home-snap-layout");
+  };
+  const disableHomeSnap = () => {
+    document.documentElement.classList.remove("home-snap-layout");
+  };
+
+  enableHomeSnap();
+  document.addEventListener("astro:page-load", enableHomeSnap);
+  document.addEventListener("astro:before-preparation", disableHomeSnap);
 </script>
 <style>
+  :global(html.home-snap-layout) {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+
   /* ==============================================
      HERO SLIDER (Zero Layout Blueprint)
      ============================================== */
@@ -507,6 +522,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     display: flex;
     flex-direction: column;
     align-items: center;
+    scroll-snap-align: start;
   }
 
   .top-decor-banner,
@@ -1006,6 +1022,8 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     padding: clamp(var(--spacing-16), 15vw, var(--spacing-36)) var(--spacing-4);
     background-color: var(--hero-bg);
     width: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 
   .quote-wrapper {
@@ -1451,20 +1469,20 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 
   .fs-bg-watermark {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 5%;
+    right: 5%;
     font-family: 'Impact', var(--font-sans);
-    font-size: clamp(8rem, 25vw, 300px);
+    font-size: clamp(6rem, 20vw, 300px);
     font-weight: 400;
     line-height: 1;
     color: #F2F2F9;
     white-space: nowrap;
-    opacity: 0.8;
     z-index: 1;
     pointer-events: none;
     letter-spacing: 0.05em;
@@ -1477,22 +1495,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     height: 100%;
     max-width: 1920px;
     margin: 0 auto;
-  }
-
-  /* Watermark behind the video, top-left of the video */
-  .fs-bg-watermark {
-    position: absolute;
-    top: 8%;
-    left: 10%;
-    font-family: 'Impact', var(--font-sans);
-    font-size: clamp(6rem, 20vw, 300px);
-    font-weight: 400;
-    line-height: 1;
-    color: #F2F2F9;
-    white-space: nowrap;
-    z-index: 1;
-    pointer-events: none;
-    letter-spacing: 0.05em;
   }
 
   /* Tags at the very top left */
@@ -1675,6 +1677,8 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     align-items: center;
     justify-content: center;
     z-index: 10;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
   .fs-other-works-btn {
     width: 90%;
@@ -1748,7 +1752,8 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     }
     .fs-bg-watermark {
       top: 100px;
-      left: 20px;
+      right: 20px;
+      left: auto;
     }
     .fs-video-area {
       position: relative;
@@ -1798,6 +1803,8 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     flex-direction: column;
     position: relative;
     z-index: 5;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 
   .contact-entry-ribbon {
