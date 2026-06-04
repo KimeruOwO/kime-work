@@ -186,8 +186,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
     <!-- OTHER WORKS BANNER (after featured, outside snap zone) -->
     <a href="/work/" class="ow-banner-section" aria-label="View Other Works">
-      <svg width="100%" viewBox="0 0 1920 1071" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-        <rect y="196" width="1915" height="875" fill="#FA729D"/>
+      <svg width="100%" viewBox="0 0 1920 266" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
         <rect x="1536" y="266.001" width="1181" height="69.9999" transform="rotate(-180 1536 266.001)" fill="#F2F2F9"/>
         <path d="M806 249.001C795.374 249.001 787 240.812 787 231.001C787 221.19 795.374 213.001 806 213.001C816.626 213.001 825 221.19 825 231.001C825 240.812 816.626 249.001 806 249.001Z" fill="#7AE6FA" stroke="#046277" stroke-width="6"/>
         <path d="M878.5 249.001C868.216 249.001 860 240.876 860 231.001C860 221.126 868.216 213.001 878.5 213.001C888.784 213.001 897 221.126 897 231.001C897 240.876 888.784 249.001 878.5 249.001Z" fill="#7AE6FA" stroke="#046277" stroke-width="6"/>
@@ -1814,10 +1813,18 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     text-decoration: none;
     position: relative;
     z-index: 9;
+    background: #FA729D; /* fills transparent area of SVG above y=196 */
+    overflow: hidden;    /* clips SVG overflow (pixel clusters that extend past edges) */
     transition: opacity 0.2s ease;
   }
   .ow-banner-section:hover {
     opacity: 0.92;
+  }
+
+  /* 20px white gap before featured card 3 */
+  #fs-inner article:last-child {
+    border-top: 20px solid #F2F2F9;
+    box-sizing: border-box;
   }
 
   /* Responsive Adjustments */
