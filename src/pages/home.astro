@@ -161,11 +161,11 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
                   <!-- Bottom Left: Number & Titles & Play -->
                   <div class="fs-bottom-left">
-                    <div class="fs-number">0{index + 1}</div>
+                    <div class="fs-number"><span class="mask-text">0{index + 1}</span></div>
                     <div class="fs-title-play-row">
                       <div class="fs-titles">
-                        <h4 class="fs-artist">{video.nameArtist}</h4>
-                        <h3 class="fs-title">{video.title}</h3>
+                        <h4 class="fs-artist"><span class="mask-text">{video.nameArtist}</span></h4>
+                        <h3 class="fs-title"><span class="mask-text">{video.title}</span></h3>
                       </div>
                       <a href={`/work/motions/${video.slug}`} class="fs-play-link" aria-label={`Watch ${video.title}`}>
                         <svg viewBox="155 115 215 55" class="fs-play-svg">
@@ -543,9 +543,24 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     const goTo = (index) => {
       currentSlide = Math.max(0, Math.min(SLIDE_COUNT - 1, index));
       inner.style.transform = `translateY(${-currentSlide * 100}%)`;
+      
+      // Update .is-active class on slides for entrance animations
+      Array.from(inner.children).forEach((child, i) => {
+        if (i === currentSlide) {
+          child.classList.add('is-active');
+        } else {
+          child.classList.remove('is-active');
+        }
+      });
+
       isAnimating = true;
       setTimeout(() => { isAnimating = false; }, ANIM_DURATION);
     };
+
+    // Initialize first slide as active
+    if (inner.children[0]) {
+      inner.children[0].classList.add('is-active');
+    }
 
     const isFeaturedActive = () => {
       const r = section.getBoundingClientRect();
@@ -555,6 +570,12 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
     const onWheel = (e) => {
       if (!isFeaturedActive()) return;
+
+      // If we are currently animating a slide change, block all wheel events!
+      if (isAnimating) {
+        e.preventDefault();
+        return;
+      }
 
       const r = section.getBoundingClientRect();
 
@@ -581,8 +602,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       }
 
       e.preventDefault();
-      if (isAnimating) return;
-
       wheelDelta += e.deltaY;
       if (Math.abs(wheelDelta) < DELTA_THRESHOLD) return;
       const dir = wheelDelta > 0 ? 1 : -1;
@@ -623,9 +642,13 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
     // Reset when scrolled back above the section
     const onScroll = () => {
-      if (section.getBoundingClientRect().top > 10) {
+      if (section.getBoundingClientRect().top > 10 && currentSlide !== 0) {
         currentSlide = 0;
         inner.style.transform = 'translateY(0)';
+        Array.from(inner.children).forEach((child, i) => {
+          if (i === 0) child.classList.add('is-active');
+          else child.classList.remove('is-active');
+        });
       }
     };
 
@@ -1736,11 +1759,29 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     background: #FFFFFF;
     border: 4px solid #046277;
     overflow: hidden;
+    position: relative;
+  }
+  
+  .fs-thumb-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #046277;
+    transform-origin: top;
+    z-index: 2;
+  }
+  
+  .featured-sticky-card.is-active .fs-thumb-frame::after {
+    animation: curtainReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
   }
   .fs-thumb-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transform: scale(1.15);
+  }
+  .featured-sticky-card.is-active .fs-thumb-img {
+    animation: imageSettle 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
   }
 
   /* The new Play button from user CSS */
@@ -1757,6 +1798,10 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     width: clamp(200px, 20vw, 300px);
     transition: transform 0.3s ease;
     margin-top: 10px;
+    opacity: 0;
+  }
+  .featured-sticky-card.is-active .fs-play-link {
+    animation: buttonPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
   }
   
   .fs-play-link:hover {
@@ -1789,6 +1834,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     line-height: 0.8;
     color: #F2F2F9;
     margin-bottom: 20px;
+    overflow: hidden;
   }
 
   .fs-titles {
@@ -1805,6 +1851,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     margin: 0;
     line-height: 1.2;
     color: #F2F2F9;
+    overflow: hidden;
   }
   .fs-title {
     font-family: var(--font-sans);
@@ -1818,9 +1865,44 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     text-overflow: ellipsis;
   }
 
+  .mask-text {
+    display: inline-block;
+    transform: translateY(110%);
+  }
+  .featured-sticky-card.is-active .fs-number .mask-text {
+    animation: maskSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0s forwards;
+  }
+  .featured-sticky-card.is-active .fs-artist .mask-text {
+    animation: maskSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  }
+  .featured-sticky-card.is-active .fs-title .mask-text {
+    animation: maskSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+  }
+
+  @keyframes maskSlideUp {
+    0% { transform: translateY(110%); }
+    100% { transform: translateY(0); }
+  }
+  @keyframes curtainReveal {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(0); }
+  }
+  @keyframes imageSettle {
+    0% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  @keyframes buttonPop {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
   /* Symmetrical styling: 2nd Featured Card has a white background */
   .featured-sticky-card:nth-child(2) {
     background: #F2F2F9;
+  }
+  
+  .featured-sticky-card:nth-child(2) .fs-thumb-frame::after {
+    background: #FA729D;
   }
   
   .featured-sticky-card:nth-child(2) .fs-bg-watermark,
