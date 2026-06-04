@@ -1820,6 +1820,33 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     text-overflow: ellipsis;
   }
 
+  /* Symmetrical styling: 2nd Featured Card has a white background */
+  .featured-sticky-card:nth-child(2) {
+    background: #F2F2F9;
+  }
+  
+  .featured-sticky-card:nth-child(2) .fs-bg-watermark,
+  .featured-sticky-card:nth-child(2) .fs-number,
+  .featured-sticky-card:nth-child(2) .fs-artist,
+  .featured-sticky-card:nth-child(2) .fs-title {
+    color: #FA729D;
+  }
+
+  .featured-sticky-card:nth-child(2) .fs-tag-motion {
+    background: #FA729D;
+    color: #F2F2F9;
+  }
+
+  .featured-sticky-card:nth-child(2) .fs-checker-icon {
+    background-color: #F2F2F9;
+  }
+
+  .featured-sticky-card:nth-child(2) .fs-play-paths { fill: #FA729D; }
+  .featured-sticky-card:nth-child(2) .fs-play-tri   { fill: #F2F2F9; }
+  
+  .featured-sticky-card:nth-child(2) .fs-play-link:hover .fs-play-paths { fill: #F2F2F9; }
+  .featured-sticky-card:nth-child(2) .fs-play-link:hover .fs-play-tri   { fill: #FA729D; }
+
   /* OTHER WORKS BANNER */
   /* ==============================================
      OTHER WORKS SECTION
