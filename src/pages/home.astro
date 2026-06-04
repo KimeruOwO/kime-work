@@ -545,32 +545,24 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
       const r = section.getBoundingClientRect();
 
-      // Allow exit: on last slide going down, skip the dead space smoothly
+      // Allow exit: on last slide going down, skip the dead space instantly
       if (currentSlide === SLIDE_COUNT - 1 && e.deltaY > 0) {
         if (r.bottom > window.innerHeight + 5) {
-          e.preventDefault();
-          if (isAnimating) return;
-          isAnimating = true;
           window.scrollTo({
             top: window.scrollY + r.bottom - window.innerHeight,
-            behavior: 'smooth'
+            behavior: 'auto'
           });
-          setTimeout(() => { isAnimating = false; }, 800);
         }
         return;
       }
       
-      // Allow exit: on first slide going up, skip the dead space smoothly
+      // Allow exit: on first slide going up, skip the dead space instantly
       if (currentSlide === 0 && e.deltaY < 0) {
         if (r.top < -5) {
-          e.preventDefault();
-          if (isAnimating) return;
-          isAnimating = true;
           window.scrollTo({
             top: window.scrollY + r.top,
-            behavior: 'smooth'
+            behavior: 'auto'
           });
-          setTimeout(() => { isAnimating = false; }, 800);
         }
         return;
       }
@@ -596,26 +588,20 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       if (currentSlide === SLIDE_COUNT - 1 && dir > 0) {
         const r = section.getBoundingClientRect();
         if (r.bottom > window.innerHeight + 5) {
-          if (isAnimating) return;
-          isAnimating = true;
           window.scrollTo({
             top: window.scrollY + r.bottom - window.innerHeight,
-            behavior: 'smooth'
+            behavior: 'auto'
           });
-          setTimeout(() => { isAnimating = false; }, 800);
         }
         return;
       }
       if (currentSlide === 0 && dir < 0) {
         const r = section.getBoundingClientRect();
         if (r.top < -5) {
-          if (isAnimating) return;
-          isAnimating = true;
           window.scrollTo({
             top: window.scrollY + r.top,
-            behavior: 'smooth'
+            behavior: 'auto'
           });
-          setTimeout(() => { isAnimating = false; }, 800);
         }
         return;
       }
