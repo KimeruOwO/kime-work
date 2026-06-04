@@ -559,6 +559,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     let currentSlide = 0;
     let isAnimating = false;
     let wheelDelta = 0;
+    let activeSince = 0;
 
     const goTo = (index) => {
       currentSlide = Math.max(0, Math.min(SLIDE_COUNT - 1, index));
@@ -622,11 +623,23 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     const isFeaturedActive = () => {
       const r = section.getBoundingClientRect();
       // section's sticky viewport is pinned to top
-      return r.top <= 1 && r.bottom >= window.innerHeight - 1;
+      const active = r.top <= 1 && r.bottom >= window.innerHeight - 1;
+      if (active && activeSince === 0) {
+        activeSince = Date.now();
+      } else if (!active) {
+        activeSince = 0;
+      }
+      return active;
     };
 
     const onWheel = (e) => {
       if (!isFeaturedActive()) return;
+
+      // Give an 800ms cooldown after the section becomes active to absorb scroll momentum from scrolling down the page
+      if (Date.now() - activeSince < 800) {
+        e.preventDefault();
+        return;
+      }
 
       // If we are currently animating a slide change, block all wheel events!
       if (isAnimating) {
@@ -671,6 +684,11 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     const onTouchStart = (e) => { touchY = e.touches[0].clientY; };
     const onTouchEnd = (e) => {
       if (!isFeaturedActive()) return;
+
+      if (Date.now() - activeSince < 800) {
+        return;
+      }
+
       const dy = touchY - e.changedTouches[0].clientY;
       if (Math.abs(dy) < 30 || isAnimating) return;
       const dir = dy > 0 ? 1 : -1;
