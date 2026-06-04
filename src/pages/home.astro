@@ -123,79 +123,85 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
       </div>
     </div>
 
-    <!-- FEATURED SECTION (FULLSCREEN FLOW) -->
-    <section class="featured-works-section" aria-label="Featured Works">
-      {
-        featuredVideos.slice(0, 3).map((video, index) => (
-          <article class="featured-sticky-card">
-            
-            <div class="fs-card-inner">
-              <!-- Watermark -->
-              <div class="fs-bg-watermark" aria-hidden="true">FEATURED</div>
+    <!-- FEATURED SECTION (nim.design style: fixed viewport + translateY) -->
+    <section class="featured-works-section" aria-label="Featured Works" id="featured-works-section">
+      <!-- This viewport is position:sticky and clips the slides -->
+      <div class="fs-viewport">
+        <!-- translateY'd by JS -->
+        <div class="fs-inner" id="fs-inner">
+          {
+            featuredVideos.slice(0, 3).map((video, index) => (
+              <article class="featured-sticky-card">
+                
+                <div class="fs-card-inner">
+                  <!-- Watermark -->
+                  <div class="fs-bg-watermark" aria-hidden="true">FEATURED</div>
 
-              <!-- Top Left: Tags -->
-              <div class="fs-top-left">
-                <div class="fs-tags">
-                  <div class="fs-tag-motion">
-                    <span class="fs-tag-text">{video.category?.name?.toUpperCase() || "MOTION GRAPHICS"}</span>
-                    <div class="fs-checker-icon"></div>
-                  </div>
-                  <div class="fs-tag-status">
-                    {video.category?.visibility === "Private" ? "Private" : "Public"}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Center/Right: Video -->
-              <div class="fs-video-area">
-                <a href={`/work/motions/${video.slug}`} class="fs-thumb-link" aria-label={`Watch ${video.title}`}>
-                  <div class="fs-thumb-frame">
-                    <img src={video.thumbnail.url} alt={video.title} loading="lazy" class="fs-thumb-img" />
-                  </div>
-                  <div class="fs-play-btn">
-                    <div class="fs-play-arrows left">
-                      <div class="fs-play-arr"></div><div class="fs-play-arr"></div><div class="fs-play-arr"></div>
-                    </div>
-                    <span class="fs-play-text">Play</span>
-                    <div class="fs-play-arrows right">
-                      <div class="fs-play-arr"></div><div class="fs-play-arr"></div><div class="fs-play-arr"></div>
+                  <!-- Top Left: Tags -->
+                  <div class="fs-top-left">
+                    <div class="fs-tags">
+                      <div class="fs-tag-motion">
+                        <span class="fs-tag-text">{video.category?.name?.toUpperCase() || "MOTION GRAPHICS"}</span>
+                        <div class="fs-checker-icon"></div>
+                      </div>
+                      <div class="fs-tag-status">
+                        {video.category?.visibility === "Private" ? "Private" : "Public"}
+                      </div>
                     </div>
                   </div>
-                </a>
-              </div>
 
-              <!-- Bottom Left: Number & Titles -->
-              <div class="fs-bottom-left">
-                <div class="fs-number">0{index + 1}</div>
-                <div class="fs-titles">
-                  <h4 class="fs-artist">{video.nameArtist}</h4>
-                  <h3 class="fs-title">{video.title}</h3>
+                  <!-- Center/Right: Video -->
+                  <div class="fs-video-area">
+                    <a href={`/work/motions/${video.slug}`} class="fs-thumb-link" aria-label={`Watch ${video.title}`}>
+                      <div class="fs-thumb-frame">
+                        <img src={video.thumbnail.url} alt={video.title} loading="lazy" class="fs-thumb-img" />
+                      </div>
+                      <div class="fs-play-btn">
+                        <div class="fs-play-arrows left">
+                          <div class="fs-play-arr"></div><div class="fs-play-arr"></div><div class="fs-play-arr"></div>
+                        </div>
+                        <span class="fs-play-text">Play</span>
+                        <div class="fs-play-arrows right">
+                          <div class="fs-play-arr"></div><div class="fs-play-arr"></div><div class="fs-play-arr"></div>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+
+                  <!-- Bottom Left: Number & Titles -->
+                  <div class="fs-bottom-left">
+                    <div class="fs-number">0{index + 1}</div>
+                    <div class="fs-titles">
+                      <h4 class="fs-artist">{video.nameArtist}</h4>
+                      <h3 class="fs-title">{video.title}</h3>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </article>
-        ))
-      }
+              </article>
+            ))
+          }
 
-      <!-- OTHER WORKS BANNER -->
-      <div class="fs-other-works-wrapper">
-        <a href="/work/" class="fs-other-works-btn">
-          <div class="fs-ow-decor-left">
-            <span class="fs-ow-dot"></span>
-            <span class="fs-ow-dot"></span>
-            <span class="fs-ow-dot"></span>
-            <span class="fs-ow-dot"></span>
-            <span class="fs-ow-dot pink"></span>
+          <!-- OTHER WORKS BANNER (last slide) -->
+          <div class="fs-other-works-wrapper">
+            <a href="/work/" class="fs-other-works-btn">
+              <div class="fs-ow-decor-left">
+                <span class="fs-ow-dot"></span>
+                <span class="fs-ow-dot"></span>
+                <span class="fs-ow-dot"></span>
+                <span class="fs-ow-dot"></span>
+                <span class="fs-ow-dot pink"></span>
+              </div>
+              <div class="fs-ow-center">
+                <h2 class="fs-ow-text">OTHER WORKS</h2>
+              </div>
+              <div class="fs-ow-decor-right">
+                <div class="fs-ow-diamond"></div>
+                <div class="fs-ow-diamond"></div>
+                <div class="fs-ow-diamond"></div>
+              </div>
+            </a>
           </div>
-          <div class="fs-ow-center">
-            <h2 class="fs-ow-text">OTHER WORKS</h2>
-          </div>
-          <div class="fs-ow-decor-right">
-            <div class="fs-ow-diamond"></div>
-            <div class="fs-ow-diamond"></div>
-            <div class="fs-ow-diamond"></div>
-          </div>
-        </a>
+        </div>
       </div>
     </section>
 
@@ -476,51 +482,72 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   initQuoteReveal();
   document.addEventListener("astro:page-load", initQuoteReveal);
 
-  // Featured section: snap-to-card on wheel/touch, normal scroll everywhere else
+  // Featured section: nim.design style — intercept wheel, translateY the fs-inner container
   const initFeaturedSnap = () => {
-    const cards = Array.from(document.querySelectorAll('.featured-sticky-card'));
-    if (!cards.length) return;
+    const section = document.getElementById('featured-works-section');
+    const inner = document.getElementById('fs-inner');
+    if (!section || !inner) return;
 
-    let isSnapping = false;
-    let snapTimeout = null;
+    const SLIDE_COUNT = inner.children.length; // 3 cards + 1 other-works
+    const ANIM_DURATION = 700;
+    const DELTA_THRESHOLD = 60;
+    let currentSlide = 0;
+    let isAnimating = false;
+    let wheelDelta = 0;
 
-    const getCardInView = () => {
-      const vh = window.innerHeight;
-      for (const card of cards) {
-        const rect = card.getBoundingClientRect();
-        // Card is partially in view (more than 20% visible)
-        if (rect.top < vh * 0.8 && rect.bottom > vh * 0.2) {
-          return card;
-        }
-      }
-      return null;
+    const goTo = (index) => {
+      currentSlide = Math.max(0, Math.min(SLIDE_COUNT - 1, index));
+      inner.style.transform = `translateY(${-currentSlide * 100}%)`;
+      isAnimating = true;
+      setTimeout(() => { isAnimating = false; }, ANIM_DURATION);
     };
 
-    const isNearFeatured = () => {
-      const section = document.querySelector('.featured-works-section');
-      if (!section) return false;
-      const rect = section.getBoundingClientRect();
-      return rect.top < window.innerHeight && rect.bottom > 0;
+    const isFeaturedActive = () => {
+      const r = section.getBoundingClientRect();
+      // section's sticky viewport is pinned to top
+      return r.top <= 1 && r.bottom >= window.innerHeight - 1;
     };
 
-    const snapToNearest = () => {
-      if (isSnapping || !isNearFeatured()) return;
-      const card = getCardInView();
-      if (!card) return;
-      const rect = card.getBoundingClientRect();
-      // Only snap if the card isn't already aligned (threshold: 40px)
-      if (Math.abs(rect.top) < 40) return;
-      isSnapping = true;
-      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setTimeout(() => { isSnapping = false; }, 800);
+    const onWheel = (e) => {
+      if (!isFeaturedActive()) return;
+      // Allow exit: on last slide going down, or first slide going up
+      if (currentSlide === SLIDE_COUNT - 1 && e.deltaY > 0) return;
+      if (currentSlide === 0 && e.deltaY < 0) return;
+
+      e.preventDefault();
+      if (isAnimating) return;
+
+      wheelDelta += e.deltaY;
+      if (Math.abs(wheelDelta) < DELTA_THRESHOLD) return;
+      const dir = wheelDelta > 0 ? 1 : -1;
+      wheelDelta = 0;
+      goTo(currentSlide + dir);
     };
 
+    // Touch
+    let touchY = 0;
+    const onTouchStart = (e) => { touchY = e.touches[0].clientY; };
+    const onTouchEnd = (e) => {
+      if (!isFeaturedActive()) return;
+      const dy = touchY - e.changedTouches[0].clientY;
+      if (Math.abs(dy) < 30 || isAnimating) return;
+      const dir = dy > 0 ? 1 : -1;
+      if (currentSlide === SLIDE_COUNT - 1 && dir > 0) return;
+      if (currentSlide === 0 && dir < 0) return;
+      goTo(currentSlide + dir);
+    };
+
+    // Reset when scrolled back above the section
     const onScroll = () => {
-      clearTimeout(snapTimeout);
-      if (!isNearFeatured()) return;
-      snapTimeout = setTimeout(snapToNearest, 120);
+      if (section.getBoundingClientRect().top > 10) {
+        currentSlide = 0;
+        inner.style.transform = 'translateY(0)';
+      }
     };
 
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
     window.addEventListener('scroll', onScroll, { passive: true });
   };
 
@@ -1485,17 +1512,41 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   /* ==============================================
      FEATURED WORKS SECTION (FULLSCREEN FLOW)
      ============================================== */
+  /* The outer section is tall enough to hold scroll "weight" (4 slides × 100vh).
+     But the actual scroll is hijacked by JS when the sticky viewport is active. */
   .featured-works-section {
     position: relative;
     width: 100%;
+    /* 4 slides: 3 featured + 1 other-works. Gives browser enough scroll room 
+       before releasing to the next section. JS intercepts wheel events here. */
+    height: 400vh;
     z-index: 10;
+  }
+
+  /* Sticky viewport — stays pinned to top of screen the whole time user scrolls
+     through the section's 400vh scroll space */
+  .fs-viewport {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* The slides container. JS sets transform: translateY(-N * 100%) to advance slides */
+  .fs-inner {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.7s cubic-bezier(0.76, 0, 0.24, 1);
+    will-change: transform;
   }
 
   .featured-sticky-card {
     position: relative;
     width: 100%;
     height: 100vh;
-    min-height: 800px;
+    min-height: 600px;
     background: #FA729D;
     display: flex;
     align-items: center;
