@@ -1977,69 +1977,51 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
   
   .featured-sticky-card:nth-child(2) .fs-number .mask-text,
+  .featured-sticky-card:nth-child(3) .fs-number .mask-text,
   .featured-sticky-card:nth-child(2) .fs-artist .mask-text,
-  .featured-sticky-card:nth-child(2) .fs-title .mask-text {
+  .featured-sticky-card:nth-child(3) .fs-artist .mask-text,
+  .featured-sticky-card:nth-child(2) .fs-title .mask-text,
+  .featured-sticky-card:nth-child(3) .fs-title .mask-text {
     transform: translateX(-110%); /* Override translateY */
   }
-  .featured-sticky-card:nth-child(2).is-active .fs-number .mask-text {
+  .featured-sticky-card:nth-child(2).is-active .fs-number .mask-text,
+  .featured-sticky-card:nth-child(3).is-active .fs-number .mask-text {
     animation: maskSlideLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0s forwards;
   }
-  .featured-sticky-card:nth-child(2).is-active .fs-artist .mask-text {
+  .featured-sticky-card:nth-child(2).is-active .fs-artist .mask-text,
+  .featured-sticky-card:nth-child(3).is-active .fs-artist .mask-text {
     animation: maskSlideLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
   }
-  .featured-sticky-card:nth-child(2).is-active .fs-title .mask-text {
+  .featured-sticky-card:nth-child(2).is-active .fs-title .mask-text,
+  .featured-sticky-card:nth-child(3).is-active .fs-title .mask-text {
     animation: maskSlideLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
   }
 
-  .featured-sticky-card:nth-child(2) .fs-thumb-frame::after {
+  .featured-sticky-card:nth-child(2) .fs-thumb-frame::after,
+  .featured-sticky-card:nth-child(3) .fs-thumb-frame::after {
     display: none; /* No curtain */
   }
-  .featured-sticky-card:nth-child(2) .fs-thumb-img {
+  .featured-sticky-card:nth-child(2) .fs-thumb-img,
+  .featured-sticky-card:nth-child(3) .fs-thumb-img {
     clip-path: polygon(0 50%, 100% 50%, 100% 50%, 0 50%);
     transform: scale(1.15); /* Keep scale for settle effect */
   }
-  .featured-sticky-card:nth-child(2).is-active .fs-thumb-img {
+  .featured-sticky-card:nth-child(2).is-active .fs-thumb-img,
+  .featured-sticky-card:nth-child(3).is-active .fs-thumb-img {
     animation: sliceReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards, imageSettle 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
   }
   
-  .featured-sticky-card:nth-child(2) .fs-play-link {
+  .featured-sticky-card:nth-child(2) .fs-play-link,
+  .featured-sticky-card:nth-child(3) .fs-play-link {
     opacity: 0;
     transition: opacity 0.3s ease;
   }
-  .featured-sticky-card:nth-child(2).is-active .fs-play-link {
+  .featured-sticky-card:nth-child(2).is-active .fs-play-link,
+  .featured-sticky-card:nth-child(3).is-active .fs-play-link {
     animation: buttonPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
     transform: scale(1);
     opacity: 1;
     transition-delay: 0.2s;
-  }
-
-  /* SLIDE 3 CUSTOM ANIMATIONS (Pink Background, Glitch) */
-  @keyframes glitch-image {
-    0% { transform: scale(1) translate(0); filter: drop-shadow(0 0 0 transparent); }
-    10% { transform: scale(1.02) translate(-5px, 2px); filter: drop-shadow(5px 0 0 cyan) drop-shadow(-5px 0 0 red); }
-    20% { transform: scale(1.01) translate(5px, -2px); filter: drop-shadow(-5px 0 0 cyan) drop-shadow(5px 0 0 red); }
-    30% { transform: scale(1) translate(0); filter: drop-shadow(0 0 0 transparent); }
-    40% { transform: scale(1.02) translate(-2px, 5px); filter: drop-shadow(3px 0 0 cyan) drop-shadow(-3px 0 0 red); }
-    50% { transform: scale(1) translate(0); filter: drop-shadow(0 0 0 transparent); }
-    100% { transform: scale(1) translate(0); filter: drop-shadow(0 0 0 transparent); }
-  }
-  @keyframes neonFlicker {
-    0% { opacity: 0; }
-    10% { opacity: 1; }
-    15% { opacity: 0; }
-    25% { opacity: 1; }
-    35% { opacity: 0.3; }
-    45% { opacity: 1; }
-    60% { opacity: 0.8; }
-    100% { opacity: 1; }
-  }
-  .featured-sticky-card:nth-child(3).is-active .fs-thumb-img {
-    /* Override normal imageSettle, keep curtain reveal but image glitches */
-    animation: glitch-image 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
-  }
-  .featured-sticky-card:nth-child(3).is-active .fs-play-link {
-    animation: neonFlicker 0.6s ease 0.4s forwards;
-    transform: scale(1);
   }
 
   /* Symmetrical styling: 2nd Featured Card has a white background */
