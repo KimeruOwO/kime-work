@@ -221,7 +221,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
           {
             featuredVideos.slice(0, 3).map((video, index) => (
               <div class="fs-mobile-card">
-                <a href={/work/motions/} class="fs-mobile-card-inner" aria-label={Watch }>
+                <a href={`/work/motions/${video.slug}`} class="fs-mobile-card-inner" aria-label={`Watch ${video.title}`}>
                   <img src={video.thumbnail.url} alt={video.title} loading="lazy" class="fs-mobile-thumb" />
                   <div class="fs-mobile-overlay">
                     <div class="fs-mobile-tags">
