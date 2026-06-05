@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from "../layouts/Layout.astro";
 import KimeSplash from "../components/KimeSplash.astro";
 import CyberRibbon from "../components/CyberRibbon.astro";
@@ -213,65 +213,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
         </div>
       </div>
     </section>
-
-    <!-- MOBILE HUD PLAYLIST -->
-    <section class="fs-hud-mobile" aria-label="Featured Works" id="featured-works-section">
-      <div class="fs-hud-header">
-        <span class="fs-hud-glitch">sys.load(FEATURED_WORKS);</span>
-      </div>
-      <div class="fs-hud-list">
-        {featuredVideos.slice(0, 3).map((video, index) => (
-          <a href={`/work/motions/${video.slug}`} class={`fs-hud-card ${index === 1 ? 'fs-hud-card-alt' : ''}`} aria-label={`Watch ${video.title}`}>
-            <div class="fs-hud-thumb-box">
-              <div class="hud-bracket tl"></div>
-              <div class="hud-bracket tr"></div>
-              <div class="hud-bracket bl"></div>
-              <div class="hud-bracket br"></div>
-              <img src={video.thumbnail.url} alt={video.title} loading="lazy" class="fs-hud-thumb" />
-            </div>
-            
-            <div class="fs-hud-info">
-              <div class="fs-hud-meta">
-                <span class="fs-hud-tag">[{video.category?.name?.toUpperCase() || "MOTION"}]</span>
-                <span class="fs-hud-num">FILE_0{index + 1}</span>
-              </div>
-              <h3 class="fs-hud-title">{video.title}</h3>
-              <p class="fs-hud-artist">{video.nameArtist}</p>
-              <div class="fs-hud-progress">
-                <div class="fs-hud-bar"></div>
-              </div>
-            </div>
-
-            <div class="fs-hud-play">
-              {index === 1 ? (
-                <svg viewBox="0 0 499 277" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                  <rect y="94" width="499" height="91" fill="url(#pattern0_2846_950)"/>
-                  <path d="M158.969 120.055H168.906C171.594 120.055 173.656 120.266 175.094 120.688C176.547 121.109 177.633 121.719 178.352 122.516C179.086 123.312 179.578 124.281 179.828 125.422C180.094 126.547 180.227 128.297 180.227 130.672V133.977C180.227 136.398 179.977 138.164 179.477 139.273C178.977 140.383 178.055 141.234 176.711 141.828C175.383 142.422 173.641 142.719 171.484 142.719H168.836V158H158.969V120.055ZM168.836 126.547V136.203C169.117 136.219 169.359 136.227 169.562 136.227C170.469 136.227 171.094 136.008 171.438 135.57C171.797 135.117 171.977 134.188 171.977 132.781V129.664C171.977 128.367 171.773 127.523 171.367 127.133C170.961 126.742 170.117 126.547 168.836 126.547ZM192.531 120.055V158H182.781V120.055H192.531ZM204.414 138.945H195.531V136.859C195.531 134.453 195.805 132.602 196.352 131.305C196.914 129.992 198.031 128.836 199.703 127.836C201.375 126.836 203.547 126.336 206.219 126.336C209.422 126.336 211.836 126.906 213.461 128.047C215.086 129.172 216.062 130.562 216.391 132.219C216.719 133.859 216.883 137.25 216.883 142.391V158H207.672V155.234C207.094 156.344 206.344 157.18 205.422 157.742C204.516 158.289 203.43 158.562 202.164 158.562C200.508 158.562 198.984 158.102 197.594 157.18C196.219 156.242 195.531 154.203 195.531 151.062V148.508C195.531 146.18 195.898 144.594 196.633 143.75C197.367 142.906 199.188 141.922 202.094 140.797C205.203 139.578 206.867 138.758 207.086 138.336C207.305 137.914 207.414 137.055 207.414 135.758C207.414 134.133 207.289 133.078 207.039 132.594C206.805 132.094 206.406 131.844 205.844 131.844C205.203 131.844 204.805 132.055 204.648 132.477C204.492 132.883 204.414 133.953 204.414 135.688V138.945ZM207.414 143.211C205.898 144.32 205.016 145.25 204.766 146C204.531 146.75 204.414 147.828 204.414 149.234C204.414 150.844 204.516 151.883 204.719 152.352C204.938 152.82 205.359 153.055 205.984 153.055C206.578 153.055 206.961 152.875 207.133 152.516C207.32 152.141 207.414 151.172 207.414 149.609V143.211ZM239.969 126.898L237.25 149.398C236.828 152.961 236.469 155.391 236.172 156.688C235.891 157.984 235.414 159.055 234.742 159.898C234.07 160.742 233.133 161.359 231.93 161.75C230.742 162.156 228.836 162.359 226.211 162.359H220.469V157.391C221.938 157.391 222.883 157.32 223.305 157.18C223.727 157.023 223.938 156.688 223.938 156.172C223.938 155.922 223.742 154.836 223.352 152.914L218.172 126.898H226.773L229.867 147.875L231.367 126.898H239.969Z" fill="#F2F2F9"/>
-                  <rect x="317.323" y="166.107" width="33.7807" height="33.7807" transform="rotate(-135 317.323 166.107)" fill="#F2F2F9"/>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M337.173 161.734L356.686 142.221L337.173 122.708L328.426 122.708L347.939 142.221L328.426 161.734L337.173 161.734Z" fill="#F2F2F9"/>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M345.487 161.734L365 142.221L345.487 122.708L336.74 122.708L356.253 142.221L336.74 161.734L345.487 161.734Z" fill="#F2F2F9"/>
-                  <path d="M329.771 142.389L311.352 153.024L311.352 131.755L329.771 142.389Z" fill="#FA729D"/>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M268.676 133.146L260 141.822L268.676 150.498L272.566 150.498L263.89 141.822L272.566 133.146L268.676 133.146Z" fill="#F2F2F9"/>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M273.905 133.146L265.229 141.822L273.905 150.498L277.795 150.498L269.119 141.822L277.795 133.146L273.905 133.146Z" fill="#F2F2F9"/>
-                </svg>
-              ) : (
-                <svg viewBox="0 0 499 277" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                  <rect y="94" width="499" height="91" fill="url(#pattern0_2846_951)"/>
-                  <path d="M158.969 120.055H168.906C171.594 120.055 173.656 120.266 175.094 120.688C176.547 121.109 177.633 121.719 178.352 122.516C179.086 123.312 179.578 124.281 179.828 125.422C180.094 126.547 180.227 128.297 180.227 130.672V133.977C180.227 136.398 179.977 138.164 179.477 139.273C178.977 140.383 178.055 141.234 176.711 141.828C175.383 142.422 173.641 142.719 171.484 142.719H168.836V158H158.969V120.055ZM168.836 126.547V136.203C169.117 136.219 169.359 136.227 169.562 136.227C170.469 136.227 171.094 136.008 171.438 135.57C171.797 135.117 171.977 134.188 171.977 132.781V129.664C171.977 128.367 171.773 127.523 171.367 127.133C170.961 126.742 170.117 126.547 168.836 126.547ZM192.531 120.055V158H182.781V120.055H192.531ZM204.414 138.945H195.531V136.859C195.531 134.453 195.805 132.602 196.352 131.305C196.914 129.992 198.031 128.836 199.703 127.836C201.375 126.836 203.547 126.336 206.219 126.336C209.422 126.336 211.836 126.906 213.461 128.047C215.086 129.172 216.062 130.562 216.391 132.219C216.719 133.859 216.883 137.25 216.883 142.391V158H207.672V155.234C207.094 156.344 206.344 157.18 205.422 157.742C204.516 158.289 203.43 158.562 202.164 158.562C200.508 158.562 198.984 158.102 197.594 157.18C196.219 156.242 195.531 154.203 195.531 151.062V148.508C195.531 146.18 195.898 144.594 196.633 143.75C197.367 142.906 199.188 141.922 202.094 140.797C205.203 139.578 206.867 138.758 207.086 138.336C207.305 137.914 207.414 137.055 207.414 135.758C207.414 134.133 207.289 133.078 207.039 132.594C206.805 132.094 206.406 131.844 205.844 131.844C205.203 131.844 204.805 132.055 204.648 132.477C204.492 132.883 204.414 133.953 204.414 135.688V138.945ZM207.414 143.211C205.898 144.32 205.016 145.25 204.766 146C204.531 146.75 204.414 147.828 204.414 149.234C204.414 150.844 204.516 151.883 204.719 152.352C204.938 152.82 205.359 153.055 205.984 153.055C206.578 153.055 206.961 152.875 207.133 152.516C207.32 152.141 207.414 151.172 207.414 149.609V143.211ZM239.969 126.898L237.25 149.398C236.828 152.961 236.469 155.391 236.172 156.688C235.891 157.984 235.414 159.055 234.742 159.898C234.07 160.742 233.133 161.359 231.93 161.75C230.742 162.156 228.836 162.359 226.211 162.359H220.469V157.391C221.938 157.391 222.883 157.32 223.305 157.18C223.727 157.023 223.938 156.688 223.938 156.172C223.938 155.922 223.742 154.836 223.352 152.914L218.172 126.898H226.773L229.867 147.875L231.367 126.898H239.969Z" fill="#FA729D"/>
-                  <rect x="317.323" y="166.107" width="33.7807" height="33.7807" transform="rotate(-135 317.323 166.107)" fill="#FA729D"/>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M337.173 161.734L356.686 142.221L337.173 122.708L328.426 122.708L347.939 142.221L328.426 161.734L337.173 161.734Z" fill="#FA729D"/>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M345.487 161.734L365 142.221L345.487 122.708L336.74 122.708L356.253 142.221L336.74 161.734L345.487 161.734Z" fill="#FA729D"/>
-                  <path d="M329.771 142.389L311.352 153.024L311.352 131.755L329.771 142.389Z" fill="#F2F2F9"/>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M268.676 133.146L260 141.822L268.676 150.498L272.566 150.498L263.89 141.822L272.566 133.146L268.676 133.146Z" fill="#FA729D"/>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M273.905 133.146L265.229 141.822L273.905 150.498L277.795 150.498L269.119 141.822L277.795 133.146L273.905 133.146Z" fill="#FA729D"/>
-                </svg>
-              )}
-            </div>
-          </a>
-        ))}
-      </div>
-    </section>
-    <!-- MOBILE HUD PLAYLIST END -->
 
     <!-- OTHER WORKS BANNER -->
     <a href="/work/" class="ow-section" aria-label="View Other Works">
@@ -2915,230 +2856,121 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
 
   /* ==============================================
-     MOBILE HUD PLAYLIST OPTIMIZATIONS
+     MOBILE OPTIMIZATIONS
      ============================================== */
-
-  /* Hide desktop section entirely on mobile */
   @media (max-width: 1024px) {
+    /* 1. Disable scroll-jacking wrapper */
     .featured-works-section {
-      display: none !important;
+      height: auto !important;
+      padding: 40px 0;
     }
-  }
-
-  /* Mobile HUD Section (hidden on desktop) */
-  .fs-hud-mobile {
-    display: none;
-  }
-
-  @media (max-width: 1024px) {
-    .fs-hud-mobile {
+    .fs-viewport {
+      position: relative;
+      height: auto;
+      overflow: visible;
+    }
+    .fs-inner {
+      height: auto;
       display: flex;
       flex-direction: column;
-      width: 100%;
-      padding: 24px 16px;
-      box-sizing: border-box;
-      background: #0D0D11; /* Dark HUD bg */
-      position: relative;
+      gap: 32px;
+      transform: none !important;
     }
-
-    /* Subtle grid pattern background */
-    .fs-hud-mobile::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-      background-size: 20px 20px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .fs-hud-header {
-      position: relative;
-      z-index: 1;
-      margin-bottom: 16px;
-      font-family: var(--font-mono, monospace);
-      font-size: 11px;
-      color: #00F0FF; /* Cyan */
-      letter-spacing: 0.1em;
-      border-bottom: 1px solid rgba(0, 240, 255, 0.3);
-      padding-bottom: 4px;
-      width: max-content;
-    }
-
-    .fs-hud-glitch {
-      display: inline-block;
-      animation: hud-flicker 3s infinite alternate;
-    }
-
-    @keyframes hud-flicker {
-      0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
-        opacity: 1;
-      }
-      20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
-        opacity: 0.2;
-      }
-    }
-
-    .fs-hud-list {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .fs-hud-card {
-      display: flex;
-      align-items: stretch;
-      gap: 12px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 8px;
-      border-radius: 2px;
-      text-decoration: none;
-      transition: background 0.3s, transform 0.2s;
-    }
-
-    .fs-hud-card:active {
-      transform: scale(0.98);
-      background: rgba(255,255,255,0.08);
-    }
-
-    .fs-hud-card-alt {
-      background: #F2F2F9;
-      border-color: #FA729D;
-    }
-
-    .fs-hud-thumb-box {
-      width: 74px;
-      height: 74px;
-      flex-shrink: 0;
-      position: relative;
-      background: #000;
-    }
-
-    .fs-hud-thumb {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.8;
-      filter: contrast(1.1) grayscale(0.2);
-    }
-
-    /* Brackets corners for HUD */
-    .hud-bracket {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border: 1px solid #FA729D;
-      z-index: 2;
-    }
-    .hud-bracket.tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
-    .hud-bracket.tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
-    .hud-bracket.bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
-    .hud-bracket.br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
-
-    .fs-hud-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-width: 0; /* for text truncation */
-    }
-
-    .fs-hud-meta {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 4px;
-      font-family: var(--font-mono, monospace);
-      font-size: 9px;
-      letter-spacing: 0.05em;
-      color: rgba(255,255,255,0.5);
-    }
-
-    .fs-hud-card-alt .fs-hud-meta {
-      color: rgba(0,0,0,0.5);
-    }
-
-    .fs-hud-tag {
-      color: #FA729D;
-    }
-
-    .fs-hud-title {
-      font-family: var(--font-sans);
-      font-weight: 700;
-      font-size: 14px;
-      color: #FFF;
-      margin: 0 0 2px 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .fs-hud-card-alt .fs-hud-title {
-      color: #111;
-    }
-
-    .fs-hud-artist {
-      font-family: var(--font-sans);
-      font-size: 11px;
-      color: rgba(255,255,255,0.7);
-      margin: 0 0 6px 0;
-    }
-
-    .fs-hud-card-alt .fs-hud-artist {
-      color: rgba(0,0,0,0.7);
-    }
-
-    .fs-hud-progress {
-      width: 100%;
-      height: 2px;
-      background: rgba(255,255,255,0.1);
-      position: relative;
+    .featured-sticky-card {
+      height: auto;
+      min-height: auto;
+      border-radius: 20px;
+      margin: 0 16px;
+      width: calc(100% - 32px);
+      padding: 24px 16px 32px 16px;
     }
     
-    .fs-hud-card-alt .fs-hud-progress {
-      background: rgba(0,0,0,0.1);
+    /* Fix for Part 2 blending into the white background */
+    .featured-sticky-card:nth-child(2) {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0,0,0,0.05);
     }
 
-    .fs-hud-bar {
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
-      width: 40%;
-      background: #00F0FF;
-      animation: hud-progress 5s infinite;
-    }
-
-    .fs-hud-card-alt .fs-hud-bar {
-      background: #FA729D;
-    }
-
-    @keyframes hud-progress {
-      0% { width: 0%; opacity: 1; }
-      90% { width: 100%; opacity: 1; }
-      95% { width: 100%; opacity: 0; }
-      100% { width: 0%; opacity: 0; }
-    }
-
-    .fs-hud-play {
+    /* 2. Re-arrange interior layout */
+    .fs-card-inner {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      width: 60px;
-      flex-shrink: 0;
+      gap: 20px;
     }
-
-    /* Scale the 499x277 SVG down to fit the 60px slot */
-    .fs-hud-play svg {
+    .fs-bg-watermark {
+      font-size: clamp(3rem, 15vw, 6rem);
+      top: 10px;
+      right: 10px;
+      opacity: 0.15;
+    }
+    .fs-top-left {
+      position: relative;
+      top: 0; left: 0;
+      width: 100%;
+    }
+    .fs-video-area {
+      position: relative;
+      right: 0;
+      width: 100%;
+      height: auto;
+    }
+    .fs-bottom-left {
+      position: relative;
+      bottom: 0; left: 0;
+      width: 100%;
+      align-items: center;
+      text-align: center;
+      padding-top: 10px;
+    }
+    .fs-title-play-row {
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+    }
+    .fs-number {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 60px;
+      opacity: 0.1;
+      z-index: 0;
+    }
+    .fs-title {
+      font-size: clamp(20px, 6vw, 28px);
+      position: relative;
+      z-index: 1;
+      white-space: normal; /* Fix text overflow */
+      word-break: break-word;
+      line-height: 1.3;
+    }
+    .fs-artist {
+      font-size: clamp(14px, 4vw, 18px);
+      position: relative;
+      z-index: 1;
+      white-space: normal;
+      line-height: 1.4;
+    }
+    /* Let the mask wrap if needed */
+    .fs-title .mask-text, .fs-artist .mask-text {
+      white-space: normal;
+    }
+    
+    .fs-play-link {
+      width: 80%;
+      max-width: 220px;
+      margin-top: 12px;
+    }
+    .fs-play-svg {
       width: 100%;
       height: auto;
       display: block;
     }
 
-    /* Other Works banner mobile fix */
+    /* 3. Other Works SVGs */
     .ow-svg-left, .ow-svg-right {
       display: none;
     }
