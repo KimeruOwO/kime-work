@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from "../layouts/Layout.astro";
 import KimeSplash from "../components/KimeSplash.astro";
 import CyberRibbon from "../components/CyberRibbon.astro";
@@ -211,6 +211,56 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
             ))
           }
         </div>
+      </div>
+    </section>
+
+    <!-- MOBILE-ONLY: Light Pop Mini-Player -->
+    <section class="fs-light-mobile" aria-label="Featured Works" id="featured-works-section">
+      <div class="fs-light-list">
+        {featuredVideos.slice(0, 3).map((video, index) => (
+          <a href={`/work/motions/${video.slug}`} class={`fs-light-card ${index === 1 ? 'fs-light-card-alt' : ''}`} aria-label={`Watch ${video.title}`}>
+            <div class="fs-light-thumb-box">
+              <img src={video.thumbnail.url} alt={video.title} loading="lazy" class="fs-light-thumb" />
+              <div class="fs-light-ring"></div>
+            </div>
+            
+            <div class="fs-light-info">
+              <div class="fs-light-meta">
+                <span class="fs-light-tag">{video.category?.name?.toUpperCase() || "MOTION"}</span>
+                <span class="fs-light-num">0{index + 1}</span>
+              </div>
+              <h3 class="fs-light-title">{video.title}</h3>
+              <p class="fs-light-artist">{video.nameArtist}</p>
+            </div>
+
+            <div class="fs-light-play">
+              {index === 1 ? (
+                <svg viewBox="0 0 499 277" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <rect y="94" width="499" height="91" fill="url(#pattern0_2846_950)"/>
+                  <path d="M158.969 120.055H168.906C171.594 120.055 173.656 120.266 175.094 120.688C176.547 121.109 177.633 121.719 178.352 122.516C179.086 123.312 179.578 124.281 179.828 125.422C180.094 126.547 180.227 128.297 180.227 130.672V133.977C180.227 136.398 179.977 138.164 179.477 139.273C178.977 140.383 178.055 141.234 176.711 141.828C175.383 142.422 173.641 142.719 171.484 142.719H168.836V158H158.969V120.055ZM168.836 126.547V136.203C169.117 136.219 169.359 136.227 169.562 136.227C170.469 136.227 171.094 136.008 171.438 135.57C171.797 135.117 171.977 134.188 171.977 132.781V129.664C171.977 128.367 171.773 127.523 171.367 127.133C170.961 126.742 170.117 126.547 168.836 126.547ZM192.531 120.055V158H182.781V120.055H192.531ZM204.414 138.945H195.531V136.859C195.531 134.453 195.805 132.602 196.352 131.305C196.914 129.992 198.031 128.836 199.703 127.836C201.375 126.836 203.547 126.336 206.219 126.336C209.422 126.336 211.836 126.906 213.461 128.047C215.086 129.172 216.062 130.562 216.391 132.219C216.719 133.859 216.883 137.25 216.883 142.391V158H207.672V155.234C207.094 156.344 206.344 157.18 205.422 157.742C204.516 158.289 203.43 158.562 202.164 158.562C200.508 158.562 198.984 158.102 197.594 157.18C196.219 156.242 195.531 154.203 195.531 151.062V148.508C195.531 146.18 195.898 144.594 196.633 143.75C197.367 142.906 199.188 141.922 202.094 140.797C205.203 139.578 206.867 138.758 207.086 138.336C207.305 137.914 207.414 137.055 207.414 135.758C207.414 134.133 207.289 133.078 207.039 132.594C206.805 132.094 206.406 131.844 205.844 131.844C205.203 131.844 204.805 132.055 204.648 132.477C204.492 132.883 204.414 133.953 204.414 135.688V138.945ZM207.414 143.211C205.898 144.32 205.016 145.25 204.766 146C204.531 146.75 204.414 147.828 204.414 149.234C204.414 150.844 204.516 151.883 204.719 152.352C204.938 152.82 205.359 153.055 205.984 153.055C206.578 153.055 206.961 152.875 207.133 152.516C207.32 152.141 207.414 151.172 207.414 149.609V143.211ZM239.969 126.898L237.25 149.398C236.828 152.961 236.469 155.391 236.172 156.688C235.891 157.984 235.414 159.055 234.742 159.898C234.07 160.742 233.133 161.359 231.93 161.75C230.742 162.156 228.836 162.359 226.211 162.359H220.469V157.391C221.938 157.391 222.883 157.32 223.305 157.18C223.727 157.023 223.938 156.688 223.938 156.172C223.938 155.922 223.742 154.836 223.352 152.914L218.172 126.898H226.773L229.867 147.875L231.367 126.898H239.969Z" fill="#F2F2F9"/>
+                  <rect x="317.323" y="166.107" width="33.7807" height="33.7807" transform="rotate(-135 317.323 166.107)" fill="#F2F2F9"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M337.173 161.734L356.686 142.221L337.173 122.708L328.426 122.708L347.939 142.221L328.426 161.734L337.173 161.734Z" fill="#F2F2F9"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M345.487 161.734L365 142.221L345.487 122.708L336.74 122.708L356.253 142.221L336.74 161.734L345.487 161.734Z" fill="#F2F2F9"/>
+                  <path d="M329.771 142.389L311.352 153.024L311.352 131.755L329.771 142.389Z" fill="#FA729D"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M268.676 133.146L260 141.822L268.676 150.498L272.566 150.498L263.89 141.822L272.566 133.146L268.676 133.146Z" fill="#F2F2F9"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M273.905 133.146L265.229 141.822L273.905 150.498L277.795 150.498L269.119 141.822L277.795 133.146L273.905 133.146Z" fill="#F2F2F9"/>
+                </svg>
+              ) : (
+                <svg viewBox="0 0 499 277" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <rect y="94" width="499" height="91" fill="url(#pattern0_2846_951)"/>
+                  <path d="M158.969 120.055H168.906C171.594 120.055 173.656 120.266 175.094 120.688C176.547 121.109 177.633 121.719 178.352 122.516C179.086 123.312 179.578 124.281 179.828 125.422C180.094 126.547 180.227 128.297 180.227 130.672V133.977C180.227 136.398 179.977 138.164 179.477 139.273C178.977 140.383 178.055 141.234 176.711 141.828C175.383 142.422 173.641 142.719 171.484 142.719H168.836V158H158.969V120.055ZM168.836 126.547V136.203C169.117 136.219 169.359 136.227 169.562 136.227C170.469 136.227 171.094 136.008 171.438 135.57C171.797 135.117 171.977 134.188 171.977 132.781V129.664C171.977 128.367 171.773 127.523 171.367 127.133C170.961 126.742 170.117 126.547 168.836 126.547ZM192.531 120.055V158H182.781V120.055H192.531ZM204.414 138.945H195.531V136.859C195.531 134.453 195.805 132.602 196.352 131.305C196.914 129.992 198.031 128.836 199.703 127.836C201.375 126.836 203.547 126.336 206.219 126.336C209.422 126.336 211.836 126.906 213.461 128.047C215.086 129.172 216.062 130.562 216.391 132.219C216.719 133.859 216.883 137.25 216.883 142.391V158H207.672V155.234C207.094 156.344 206.344 157.18 205.422 157.742C204.516 158.289 203.43 158.562 202.164 158.562C200.508 158.562 198.984 158.102 197.594 157.18C196.219 156.242 195.531 154.203 195.531 151.062V148.508C195.531 146.18 195.898 144.594 196.633 143.75C197.367 142.906 199.188 141.922 202.094 140.797C205.203 139.578 206.867 138.758 207.086 138.336C207.305 137.914 207.414 137.055 207.414 135.758C207.414 134.133 207.289 133.078 207.039 132.594C206.805 132.094 206.406 131.844 205.844 131.844C205.203 131.844 204.805 132.055 204.648 132.477C204.492 132.883 204.414 133.953 204.414 135.688V138.945ZM207.414 143.211C205.898 144.32 205.016 145.25 204.766 146C204.531 146.75 204.414 147.828 204.414 149.234C204.414 150.844 204.516 151.883 204.719 152.352C204.938 152.82 205.359 153.055 205.984 153.055C206.578 153.055 206.961 152.875 207.133 152.516C207.32 152.141 207.414 151.172 207.414 149.609V143.211ZM239.969 126.898L237.25 149.398C236.828 152.961 236.469 155.391 236.172 156.688C235.891 157.984 235.414 159.055 234.742 159.898C234.07 160.742 233.133 161.359 231.93 161.75C230.742 162.156 228.836 162.359 226.211 162.359H220.469V157.391C221.938 157.391 222.883 157.32 223.305 157.18C223.727 157.023 223.938 156.688 223.938 156.172C223.938 155.922 223.742 154.836 223.352 152.914L218.172 126.898H226.773L229.867 147.875L231.367 126.898H239.969Z" fill="#FA729D"/>
+                  <rect x="317.323" y="166.107" width="33.7807" height="33.7807" transform="rotate(-135 317.323 166.107)" fill="#FA729D"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M337.173 161.734L356.686 142.221L337.173 122.708L328.426 122.708L347.939 142.221L328.426 161.734L337.173 161.734Z" fill="#FA729D"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M345.487 161.734L365 142.221L345.487 122.708L336.74 122.708L356.253 142.221L336.74 161.734L345.487 161.734Z" fill="#FA729D"/>
+                  <path d="M329.771 142.389L311.352 153.024L311.352 131.755L329.771 142.389Z" fill="#F2F2F9"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M268.676 133.146L260 141.822L268.676 150.498L272.566 150.498L263.89 141.822L272.566 133.146L268.676 133.146Z" fill="#FA729D"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M273.905 133.146L265.229 141.822L273.905 150.498L277.795 150.498L269.119 141.822L277.795 133.146L273.905 133.146Z" fill="#FA729D"/>
+                </svg>
+              )}
+            </div>
+            <div class="fs-light-checker" aria-hidden="true"></div>
+          </a>
+        ))}
       </div>
     </section>
 
@@ -2856,121 +2906,192 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   }
 
   /* ==============================================
-     MOBILE OPTIMIZATIONS
+     MOBILE OPTIMIZATIONS (LIGHT POP TECH)
      ============================================== */
+
+  /* Hide desktop section entirely on mobile */
   @media (max-width: 1024px) {
-    /* 1. Disable scroll-jacking wrapper */
     .featured-works-section {
-      height: auto !important;
-      padding: 40px 0;
+      display: none !important;
     }
-    .fs-viewport {
-      position: relative;
-      height: auto;
-      overflow: visible;
-    }
-    .fs-inner {
-      height: auto;
+  }
+
+  /* Mobile HUD Section (hidden on desktop) */
+  .fs-light-mobile {
+    display: none;
+  }
+
+  @media (max-width: 1024px) {
+    .fs-light-mobile {
       display: flex;
       flex-direction: column;
-      gap: 32px;
-      transform: none !important;
-    }
-    .featured-sticky-card {
-      height: auto;
-      min-height: auto;
-      border-radius: 20px;
-      margin: 0 16px;
-      width: calc(100% - 32px);
-      padding: 24px 16px 32px 16px;
-    }
-    
-    /* Fix for Part 2 blending into the white background */
-    .featured-sticky-card:nth-child(2) {
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-      border: 1px solid rgba(0,0,0,0.05);
+      width: 100%;
+      padding: var(--spacing-8) var(--spacing-4);
+      background: var(--bg-primary);
+      position: relative;
     }
 
-    /* 2. Re-arrange interior layout */
-    .fs-card-inner {
+    .fs-light-list {
       display: flex;
       flex-direction: column;
+      gap: var(--spacing-4);
+    }
+
+    .fs-light-card {
+      display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 20px;
-    }
-    .fs-bg-watermark {
-      font-size: clamp(3rem, 15vw, 6rem);
-      top: 10px;
-      right: 10px;
-      opacity: 0.15;
-    }
-    .fs-top-left {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-2xl);
+      box-shadow: 0 4px 12px rgba(4, 98, 119, 0.05);
       position: relative;
-      top: 0; left: 0;
-      width: 100%;
+      overflow: hidden;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid rgba(4, 98, 119, 0.05);
     }
-    .fs-video-area {
+
+    .fs-light-card:active {
+      transform: scale(0.97);
+      box-shadow: 0 1px 4px rgba(4, 98, 119, 0.05);
+    }
+
+    /* Active Track (Part 2) styling */
+    .fs-light-card-alt {
+      background: #FFF5F8; /* Super soft pink */
+      border: 1px solid rgba(250, 114, 157, 0.2); /* Soft primary */
+      box-shadow: 0 4px 16px rgba(250, 114, 157, 0.1);
+    }
+
+    .fs-light-thumb-box {
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      margin: var(--spacing-3);
       position: relative;
-      right: 0;
-      width: 100%;
-      height: auto;
     }
-    .fs-bottom-left {
-      position: relative;
-      bottom: 0; left: 0;
+
+    .fs-light-thumb {
       width: 100%;
-      align-items: center;
-      text-align: center;
-      padding-top: 10px;
+      height: 100%;
+      border-radius: var(--radius-lg);
+      object-fit: cover;
+      /* Soft shadow for the thumbnail itself */
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .fs-title-play-row {
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      width: 100%;
-    }
-    .fs-number {
+
+    /* Decorative ring around thumbnail */
+    .fs-light-ring {
       position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 60px;
-      opacity: 0.1;
-      z-index: 0;
-    }
-    .fs-title {
-      font-size: clamp(20px, 6vw, 28px);
-      position: relative;
-      z-index: 1;
-      white-space: normal; /* Fix text overflow */
-      word-break: break-word;
-      line-height: 1.3;
-    }
-    .fs-artist {
-      font-size: clamp(14px, 4vw, 18px);
-      position: relative;
-      z-index: 1;
-      white-space: normal;
-      line-height: 1.4;
-    }
-    /* Let the mask wrap if needed */
-    .fs-title .mask-text, .fs-artist .mask-text {
-      white-space: normal;
+      top: -4px; left: -4px; right: -4px; bottom: -4px;
+      border: 1px dashed rgba(92, 225, 230, 0.5); /* Cyan dashed */
+      border-radius: calc(var(--radius-lg) + 4px);
+      pointer-events: none;
     }
     
-    .fs-play-link {
-      width: 80%;
-      max-width: 220px;
-      margin-top: 12px;
+    .fs-light-card-alt .fs-light-ring {
+      border-color: rgba(250, 114, 157, 0.4); /* Pink dashed */
     }
-    .fs-play-svg {
+
+    .fs-light-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0; /* allows text truncation */
+      padding: var(--spacing-3) 0;
+    }
+
+    .fs-light-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+      margin-bottom: 2px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+    }
+
+    .fs-light-tag {
+      color: var(--color-primary);
+      background: rgba(250, 114, 157, 0.1);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+    }
+
+    .fs-light-card-alt .fs-light-tag {
+      color: var(--color-secondary-dark);
+      background: rgba(92, 225, 230, 0.15);
+    }
+
+    .fs-light-num {
+      color: var(--text-primary);
+      opacity: 0.4;
+    }
+
+    .fs-light-title {
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-weight: 800;
+      font-size: 1rem;
+      line-height: 1.2;
+      margin: 0 0 2px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fs-light-artist {
+      color: var(--text-primary);
+      opacity: 0.6;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fs-light-play {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 54px;
+      flex-shrink: 0;
+      margin-right: var(--spacing-3);
+    }
+
+    .fs-light-play svg {
       width: 100%;
       height: auto;
       display: block;
+      /* Optional: subtle pulse animation to invite click */
+      animation: fs-pulse 3s infinite alternate;
     }
 
-    /* 3. Other Works SVGs */
+    @keyframes fs-pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+
+    /* Subtle checker pattern at the bottom of the card */
+    .fs-light-checker {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: var(--checker-cell);
+      background-image: var(--checker-mask-uri);
+      background-size: var(--checker-cell) var(--checker-cell);
+      opacity: 0.05;
+      background-color: var(--color-secondary-dark); /* Colorizes the mask */
+    }
+    
+    .fs-light-card-alt .fs-light-checker {
+      background-color: var(--color-primary);
+      opacity: 0.08;
+    }
+
+    /* Other Works banner mobile fix */
     .ow-svg-left, .ow-svg-right {
       display: none;
     }
