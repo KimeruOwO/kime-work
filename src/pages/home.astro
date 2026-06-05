@@ -3092,15 +3092,14 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     }
 
     /* Other Works banner mobile fix */
+    .ow-section {
+      height: clamp(100px, 20vw, 150px);
+    }
     .ow-svg-left, .ow-svg-right {
       display: none;
     }
-    .ow-center {
+    .ow-new-center-wrap {
       width: 90vw;
-    }
-    .ow-center-svg {
-      width: 100%;
-      height: auto;
     }
   }
 </style>
