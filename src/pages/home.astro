@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from "../layouts/Layout.astro";
 import KimeSplash from "../components/KimeSplash.astro";
 import CyberRibbon from "../components/CyberRibbon.astro";
@@ -2500,38 +2500,69 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     gap: clamp(8px, 1.5vw, 14px);
   }
 
-  .contact-instructions li {
+  .contact-instructions li:not(.instruction-strong) {
     display: flex;
-    align-items: flex-start;
-    gap: clamp(10px, 1.5vw, 16px);
+    align-items: center;
+    gap: clamp(16px, 2vw, 24px);
+    background: rgba(255, 255, 255, 0.06);
+    padding: clamp(12px, 1.5vw, 16px) clamp(16px, 2vw, 24px);
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease;
+  }
+
+  .contact-instructions li:not(.instruction-strong):hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateX(8px);
+  }
+
+  .contact-instructions li:not(.instruction-strong)::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: var(--color-secondary);
+    z-index: 1;
   }
 
   .instr-num {
     flex-shrink: 0;
-    font-size: clamp(11px, 1.2vw, 14px);
-    font-weight: 900;
-    color: var(--color-secondary-bright);
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: var(--radius-sm);
-    padding: 2px 8px;
-    line-height: 1.4;
-    font-family: var(--font-mono);
-    letter-spacing: 0.05em;
-    margin-top: 3px;
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.15);
+    font-family: 'Impact', var(--font-sans);
+    letter-spacing: 0.02em;
+    margin: 0;
+    line-height: 1;
+    position: relative;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+
+  .contact-instructions li:not(.instruction-strong):hover .instr-num {
+    color: var(--color-secondary);
+    text-shadow: 0 0 12px rgba(92, 225, 230, 0.4);
   }
 
   .instr-text {
     flex: 1;
+    font-weight: 500;
+    color: var(--base-white);
+    font-size: clamp(14px, 1.4vw, 18px);
+    line-height: 1.5;
   }
 
   .instruction-strong {
     font-weight: 900;
-    font-size: clamp(17px, 2vw, 24px);
-    color: var(--base-white);
-    margin-bottom: clamp(4px, 1vw, 8px);
-    padding-bottom: clamp(8px, 1.5vw, 14px);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+    font-size: clamp(14px, 1.6vw, 18px);
+    color: var(--text-primary);
+    background: var(--color-secondary);
+    padding: clamp(8px, 1vw, 12px) clamp(16px, 2vw, 24px);
+    clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+    margin-bottom: clamp(12px, 1.5vw, 20px);
+    display: inline-flex;
+    align-self: flex-start;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   /* =========================================
