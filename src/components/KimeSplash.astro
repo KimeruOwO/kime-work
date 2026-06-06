@@ -1,9 +1,14 @@
 ---
 import KimeyuIcon from "./icons/KimeyuIcon.astro";
+import LanguagePicker from "./LanguagePicker.astro";
 import { fetchSiteProfile } from "../lib/hygraph";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 
 const profileData = await fetchSiteProfile().catch(() => null);
 const cmsVideoUrl = profileData?.splashVideo?.url;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <section class="kime-splash" aria-label="Splash Screen">
@@ -36,22 +41,25 @@ const cmsVideoUrl = profileData?.splashVideo?.url;
       <span class="sr-only">Kimeyu Art Direction</span>
       <KimeyuIcon />
     </h1>
+    <div class="kime-splash__lang">
+      <LanguagePicker />
+    </div>
   </div>
 
   <!-- Bottom Left: Details and Navigation -->
   <div class="kime-splash__bottom">
     <!-- Skills List -->
     <ul class="kime-splash__skills">
-      <li>ART DIRECTION &bull;</li>
-      <li>MOTION GRAPHICS &bull;</li>
-      <li>ILLUSTRATION &bull;</li>
+      <li>{t('splash.artDirection')} &bull;</li>
+      <li>{t('splash.motionGraphics')} &bull;</li>
+      <li>{t('splash.illustration')} &bull;</li>
     </ul>
 
     <!-- Navigation Bar -->
     <nav class="kime-splash__nav">
       <div class="kime-splash__links">
-        <a href="/about" class="splash-btn splash-btn--pill">ABOUT</a>
-        <a href="/work/" class="splash-btn splash-btn--pill">WORKS</a>
+        <a href={`/${lang === 'en' ? '' : lang + '/'}about`} class="splash-btn splash-btn--pill">{t('splash.about')}</a>
+        <a href={`/${lang === 'en' ? '' : lang + '/'}work/`} class="splash-btn splash-btn--pill">{t('splash.works')}</a>
       </div>
       <button
         class="splash-btn splash-btn--continue"
@@ -77,7 +85,7 @@ const cmsVideoUrl = profileData?.splashVideo?.url;
           <!-- Small Chevron (Further away) -->
           <path class="chevron-small" d="M37 6 L 43 12 L 37 18 L 41 18 L 47 12 L 41 6 Z"></path>
         </svg>
-        <span class="splash-btn-text">CONTINUE</span>
+        <span class="splash-btn-text">{t('splash.continue')}</span>
       </button>
     </nav>
   </div>
@@ -199,6 +207,9 @@ const cmsVideoUrl = profileData?.splashVideo?.url;
   .kime-splash__top {
     position: relative;
     z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .kime-splash__logo {

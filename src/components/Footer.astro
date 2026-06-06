@@ -5,6 +5,10 @@ import YouTubeIcon from "./icons/YouTubeIcon.astro";
 import PixivIcon from "./icons/PixivIcon.astro";
 import { getSocialLinks } from "../lib/socials";
 import { fetchSiteProfile } from "../lib/hygraph";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const iconMap: Record<string, any> = {
   facebook: FacebookIcon,
@@ -38,7 +42,7 @@ const dynamicSocials = getSocialLinks(profileData);
   </div>
 
   <div class="footer-banner">
-    <p class="footer-copyright">©2026 KIMEYU ALL RIGHTS RESERVED</p>
+    <p class="footer-copyright">{t('footer.copyright')}</p>
   </div>
 </footer>
 

@@ -1,0 +1,68 @@
+---
+import { languages } from '../i18n/ui';
+import { getRouteFromUrl, getLangFromUrl, getRelativeLocaleUrl } from '../i18n/utils';
+
+const currentLang = getLangFromUrl(Astro.url);
+const currentRoute = getRouteFromUrl(Astro.url) || '/';
+---
+
+<div class="lang-picker">
+  <ul class="lang-list">
+    {Object.entries(languages).map(([lang, label]) => (
+      <li>
+        <a 
+          href={getRelativeLocaleUrl(lang as any, currentRoute)}
+          class={`lang-btn ${currentLang === lang ? 'active' : ''}`}
+          aria-current={currentLang === lang ? 'page' : undefined}
+        >
+          {label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .lang-picker {
+    position: relative;
+    z-index: 100;
+  }
+  
+  .lang-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .lang-btn {
+    text-decoration: none;
+    color: var(--base-white);
+    font-size: 14px;
+    font-weight: 800;
+    font-family: var(--font-sans);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    display: inline-block;
+    transition: all 0.2s ease;
+    opacity: 0.7;
+  }
+
+  .lang-btn:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .lang-btn.active {
+    opacity: 1;
+    background: var(--color-secondary);
+    color: var(--text-primary);
+    box-shadow: 0 2px 8px rgba(92, 225, 230, 0.4);
+  }
+</style>

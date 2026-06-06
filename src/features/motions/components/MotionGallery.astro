@@ -4,19 +4,22 @@ import type { Video } from "../../../lib/hygraph";
 import SectionHeader from "../../../components/SectionHeader.astro";
 import FilterMenu from "../../../components/FilterMenu.astro";
 import MotionCard from "./MotionCard.astro";
+import { getLangFromUrl, useTranslations } from "../../../i18n/utils";
 
 interface Props {
   page: Page<Video>;
 }
 
 const { page } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <div class="works-content">
   <motion-gallery-manager>
     <section class="gallery-view" id="works-gallery">
       <SectionHeader
-        title="MOTIONS"
+        title={t('works.motion')}
         subtitle="モーションプロジェクト"
         subtitleOrientation="stacked"
         align="responsive"
@@ -58,7 +61,7 @@ const { page } = Astro.props;
             <FilterMenu
               groupName="motions-filter"
               options={[
-                { label: "ALL MOTIONS", value: "all" },
+                { label: t('works.all'), value: "all" },
                 { label: "MUSIC VIDEOS // MVs", value: "musicvideos//mvs" },
                 { label: "DEBUT // TRAILER", value: "debut//trailer" },
               ]}

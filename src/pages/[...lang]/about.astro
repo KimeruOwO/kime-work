@@ -2,26 +2,38 @@
 import { Picture } from "astro:assets";
 import type { ImageMetadata } from "astro";
 
-import Layout from "../layouts/Layout.astro";
-import SectionHeader from "../components/SectionHeader.astro";
-import PageDecorBanner from "../components/PageDecorBanner.astro";
-import InfoWindow from "../components/InfoWindow.astro";
-import PlayIcon from "../components/icons/PlayIcon.astro";
-import { fetchExperiences } from "../lib/hygraph";
+import Layout from "../../layouts/Layout.astro";
+import SectionHeader from "../../components/SectionHeader.astro";
+import PageDecorBanner from "../../components/PageDecorBanner.astro";
+import InfoWindow from "../../components/InfoWindow.astro";
+import PlayIcon from "../../components/icons/PlayIcon.astro";
+import { fetchExperiences } from "../../lib/hygraph";
 
-import kimeyuPFP from "../assets/images/kimeyu.jpg";
-import { fetchSiteProfile, fetchAboutPageConfig } from "../lib/hygraph";
+import kimeyuPFP from "../../assets/images/kimeyu.jpg";
+import { languages, defaultLang, showDefaultLang } from '../../i18n/ui';
+import { useTranslations } from '../../i18n/utils';
+import { fetchSiteProfile, fetchAboutPageConfig } from "../../lib/hygraph";
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang: lang === defaultLang && !showDefaultLang ? undefined : lang }
+  }));
+}
+
+const { lang } = Astro.params;
+const currentLang = lang || defaultLang;
+const t = useTranslations(currentLang as keyof typeof languages);
 
 // ==========================================================
 // DATA & CONFIG
 // ==========================================================
 
 const [profileData, aboutPageConfig] = await Promise.all([
-  fetchSiteProfile().catch((err) => {
+  fetchSiteProfile().catch((err: any) => {
     console.error("Failed to fetch site profile:", err.message);
     return null;
   }),
-  fetchAboutPageConfig().catch((err) => {
+  fetchAboutPageConfig().catch((err: any) => {
     console.error("Failed to fetch about page config:", err.message);
     return null;
   })
@@ -52,7 +64,7 @@ const defaultQuote = "Curiosity in motion, stories in rhythm.";
 const bioText = aboutPageConfig?.bioText || defaultBio;
 const bioQuote = aboutPageConfig?.bioQuote || defaultQuote;
 
-let experiencesData = await fetchExperiences().catch((err) => {
+let experiencesData = await fetchExperiences().catch((err: any) => {
   console.error("Failed to fetch experiences:", err.message);
   return [];
 });
@@ -136,10 +148,10 @@ const valueCards = [
 <Layout title="Kimeyu Work - About">
   <Fragment slot="banner">
     <div class="banner-headers">
-      <SectionHeader title="ABOUT ME" isBanner={true} align="responsive" />
+      <SectionHeader title={t('about.aboutMe')} isBanner={true} align="responsive" />
       <SectionHeader
-        title="ABOUT"
-        subtitle="プロフィール"
+        title={t('about.profile')}
+        subtitle={t('about.profile.sub')}
         subtitleOrientation="horizontal"
         align="responsive"
       />
@@ -149,21 +161,21 @@ const valueCards = [
   <div class="page-layout wrapper banner-spacing">
     <nav class="sidebar-nav">
       <PageDecorBanner
-        text="ABOUT ME"
+        text={t('about.aboutMe')}
         href="#about-me"
         variant="secondary"
         compact
         checkerPosition="end"
       />
       <PageDecorBanner
-        text="VALUE"
+        text={t('about.value')}
         href="#value"
         variant="secondary"
         compact
         checkerPosition="end"
       />
       <PageDecorBanner
-        text="EXPERIENCES"
+        text={t('about.experience')}
         href="#experiences"
         variant="secondary"
         compact
@@ -175,7 +187,7 @@ const valueCards = [
       <!-- ================= SECTION: HERO ================= -->
       <PageDecorBanner
         id="banner-about-me"
-        text="ABOUT ME"
+        text={t('about.aboutMe')}
         variant="secondary"
       />
 
@@ -225,7 +237,7 @@ const valueCards = [
           <div class="tools-section__head">
             <PageDecorBanner
               id="banner-creative-tools"
-              text="TOOLS FOCUS"
+              text={t('about.tools')}
               compact
               checkerPosition="both"
             />
@@ -278,7 +290,7 @@ const valueCards = [
         <div class="value-header-row">
           <PageDecorBanner
             id="banner-value"
-            text="VALUE"
+            text={t('about.value')}
             variant="secondary"
             noMargin
           />
@@ -309,7 +321,7 @@ const valueCards = [
           <div class="value-header-row">
             <PageDecorBanner
               id="banner-experiences"
-              text="Experiences and Collaboration"
+              text={t('about.experience')}
               variant="secondary"
               noMargin
             />

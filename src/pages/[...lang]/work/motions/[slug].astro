@@ -1,16 +1,23 @@
 ---
-import Layout from "../../../layouts/Layout.astro";
-import SectionHeader from "../../../components/SectionHeader.astro";
-import SwitchIcon from "../../../components/icons/SwitchIcon.astro";
-import { fetchVideos } from "../../../lib/hygraph";
-import type { Video } from "../../../lib/hygraph";
+import Layout from "../../../../layouts/Layout.astro";
+import SectionHeader from "../../../../components/SectionHeader.astro";
+import SwitchIcon from "../../../../components/icons/SwitchIcon.astro";
+import { languages, defaultLang, showDefaultLang } from '../../../../i18n/ui';
+import { useTranslations } from '../../../../i18n/utils';
+import { fetchVideos } from "../../../../lib/hygraph";
+import type { Video } from "../../../../lib/hygraph";
 
 export async function getStaticPaths() {
   const videos = await fetchVideos();
-  return videos.map((video) => ({
-    params: { slug: video.slug },
-    props: { video },
-  }));
+  return Object.keys(languages).flatMap((lang) =>
+    videos.map((video: Video) => ({
+      params: {
+        lang: lang === defaultLang && !showDefaultLang ? undefined : lang,
+        slug: video.slug,
+      },
+      props: { video },
+    }))
+  );
 }
 
 interface Props {
@@ -18,6 +25,10 @@ interface Props {
 }
 
 const { video } = Astro.props;
+
+const { lang } = Astro.params;
+const currentLang = lang || defaultLang;
+const t = useTranslations(currentLang as keyof typeof languages);
 
 const getYoutubeId = (url: string | null | undefined) => {
   if (!url) return null;
@@ -48,12 +59,12 @@ const thumbUrl = ytId
     </div>
 
     <div class="detail-container wrapper">
-      <a href="/work/" class="back-link">
+      <a href={`/${currentLang === defaultLang && !showDefaultLang ? '' : currentLang + '/'}work/`} class="back-link">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
           <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"
           ></path>
         </svg>
-        BACK TO GALLERY
+        {t('motion.back')}
       </a>
 
       <!-- 3. MAIN SPLIT LAYOUT -->
@@ -179,7 +190,7 @@ const thumbUrl = ytId
           <div class="preview-stack">
             {
               video.imagePreview?.length > 0 ? (
-                video.imagePreview.map((img) => (
+                video.imagePreview.map((img: any) => (
                   <div class="preview-img-box">
                     <img
                       src={img.url}
@@ -207,7 +218,7 @@ const thumbUrl = ytId
         <>
           <SectionHeader title="PROJECT DETAILS" align="left" />
           <div class="details-stack wrapper">
-            {video.imageEmbed.map((embedImg) => (
+            {video.imageEmbed.map((embedImg: any) => (
               <img
                 src={embedImg.url}
                 alt="Project Detail View"

@@ -1,0 +1,37 @@
+---
+import { languages, defaultLang, showDefaultLang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  const paths = Object.keys(languages).map((lang) => {
+    return { params: { lang: lang === defaultLang && !showDefaultLang ? undefined : lang } };
+  });
+  return paths;
+}
+
+const { lang } = Astro.params;
+const resolvedLang = lang || defaultLang;
+const redirectPath = resolvedLang === defaultLang && !showDefaultLang ? '/home' : `/${resolvedLang}/home`;
+---
+
+<!doctype html>
+<html lang={resolvedLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content={`0;url=${redirectPath}`} />
+    <title>Loading...</title>
+    <script define:vars={{ redirectPath }}>
+      window.location.replace(redirectPath);
+    </script>
+    <style is:inline>
+      body {
+        background-color: #f4f5f8;
+        margin: 0;
+        padding: 0;
+        opacity: 0;
+        visibility: hidden;
+        display: none;
+      }
+    </style>
+  </head>
+  <body> </body>
+</html>

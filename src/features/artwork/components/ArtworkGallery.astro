@@ -3,18 +3,21 @@ import type { Page } from "astro";
 import type { Artwork } from "../../../lib/hygraph";
 import SectionHeader from "../../../components/SectionHeader.astro";
 import FilterMenu from "../../../components/FilterMenu.astro";
+import { getLangFromUrl, useTranslations } from "../../../i18n/utils";
 
 interface Props {
   page: Page<Artwork>;
 }
 
 const { page } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <div class="works-content">
   <artwork-gallery-manager>
     <section class="gallery-view" id="works-gallery">
-      <SectionHeader title="ARTWORK" subtitle="作品" align="responsive" />
+      <SectionHeader title={t('works.artwork')} subtitle="作品" align="responsive" />
 
       <div class="wrapper artwork-wrapper">
         <div class="gallery-layout-split">
@@ -88,7 +91,7 @@ const { page } = Astro.props;
             <FilterMenu
               groupName="artwork-filter"
               options={[
-                { label: "ALL LABELS", value: "all" },
+                { label: t('works.all'), value: "all" },
                 { label: "ILLUSTRATION", value: "illustration" },
                 { label: "GRAPHICS DESIGN", value: "graphics-design" },
               ]}
