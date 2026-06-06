@@ -48,22 +48,23 @@ const t = useTranslations(lang);
               <div class="sidebar-group filter-group">
                 <button
                   class="s-btn filter-btn vertical-text active"
-                  data-value="all">ALL</button
+                  data-value="all">{t('works.all')}</button
                 >
                 <button
                   class="s-btn filter-btn vertical-text"
-                  data-value="featured">FEATURED</button
+                  data-value="featured">{t('works.featured')}</button
                 >
               </div>
             </div>
           </aside>
           <div class="gallery-main">
             <FilterMenu
+              title={t('works.filter')}
               groupName="motions-filter"
               options={[
                 { label: t('works.all'), value: "all" },
-                { label: "MUSIC VIDEOS // MVs", value: "musicvideos//mvs" },
-                { label: "DEBUT // TRAILER", value: "debut//trailer" },
+                { label: t('works.musicVideo'), value: "musicvideos//mvs" },
+                { label: t('works.debut'), value: "debut//trailer" },
               ]}
             />
 

@@ -151,7 +151,7 @@ const thumbUrl = ytId
           </div>
 
           <section class="description-section">
-            <h3 class="desc-heading">DESCRIPTION</h3>
+            <h3 class="desc-heading">{t('motion.description')}</h3>
             {
               video.descAbout && (
                 <div class="desc-text text-about">{video.descAbout}</div>
@@ -184,7 +184,7 @@ const thumbUrl = ytId
 
         <aside class="sidebar-col">
           <header class="sidebar-header">
-            <h3>IMAGE PREVIEW <span class="icon-sq"></span></h3>
+            <h3>{t('motion.imagePreview')} <span class="icon-sq"></span></h3>
           </header>
 
           <div class="preview-stack">
@@ -216,7 +216,7 @@ const thumbUrl = ytId
     {
       video.imageEmbed?.length > 0 && (
         <>
-          <SectionHeader title="PROJECT DETAILS" align="left" />
+          <SectionHeader title={t('motion.projectDetails')} align="left" />
           <div class="details-stack wrapper">
             {video.imageEmbed.map((embedImg: any) => (
               <img

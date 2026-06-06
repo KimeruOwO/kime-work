@@ -103,9 +103,9 @@ if (experiencesData.length === 0) {
 }
 
 const ENUM_MAP: Record<string, string> = {
-  PROFESSIONAL: "Professional Collaborations",
-  CHARITY: "Community & Charity",
-  INDEPENDENT: "Independent Projects",
+  PROFESSIONAL: t('about.collab.professional'),
+  CHARITY: t('about.collab.charity'),
+  INDEPENDENT: t('about.collab.independent'),
 };
 
 
@@ -276,8 +276,8 @@ const valueCards = [
           <strong>{bioQuote}</strong>
         </p>
         <div class="bio-badges">
-          <div class="info-badge">DIRECTION</div>
-          <div class="info-badge">MOTION DESIGN</div>
+          <div class="info-badge">{t('about.badge.direction')}</div>
+          <div class="info-badge">{t('about.badge.motion')}</div>
         </div>
       </section>
 

@@ -289,8 +289,14 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
 
     const fromPath = e.from?.pathname ?? "";
     const toPath = e.to?.pathname ?? "";
-    isModeSwitchNav =
-      fromPath.startsWith("/work/") && toPath.startsWith("/work/");
+    
+    const stripLang = (p: string) => p.replace(/^\/(?:en|ja|vi)(?=\/|$)/, "");
+    const fromRoute = stripLang(fromPath);
+    const toRoute = stripLang(toPath);
+    
+    const isLangSwitch = fromPath !== toPath && fromRoute === toRoute;
+    isModeSwitchNav = isLangSwitch || (fromRoute.startsWith("/work/") && toRoute.startsWith("/work/"));
+    
     if (isModeSwitchNav) return;
 
     navGrid?.remove();

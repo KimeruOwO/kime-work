@@ -77,11 +77,11 @@ const t = useTranslations(lang);
               <div class="sidebar-group filter-group">
                 <button
                   class="s-btn filter-btn vertical-text active"
-                  data-value="all">ALL</button
+                  data-value="all">{t('works.all')}</button
                 >
                 <button
                   class="s-btn filter-btn vertical-text"
-                  data-value="featured">FEATURED</button
+                  data-value="featured">{t('works.featured')}</button
                 >
               </div>
             </div>
@@ -89,11 +89,12 @@ const t = useTranslations(lang);
 
           <div class="gallery-main">
             <FilterMenu
+              title={t('works.filter')}
               groupName="artwork-filter"
               options={[
                 { label: t('works.all'), value: "all" },
-                { label: "ILLUSTRATION", value: "illustration" },
-                { label: "GRAPHICS DESIGN", value: "graphics-design" },
+                { label: t('works.artwork'), value: "artwork" },
+                { label: t('works.illustration'), value: "illustration" },
               ]}
             />
 
