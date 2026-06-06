@@ -29,7 +29,9 @@ const makePage = <T,>(data: T[]) => ({
   lastPage: 1,
   size: data.length,
   total: data.length,
-  start: 0, end: allArtworks.length - 1, url: { current: "/work/", prev: undefined, next: undefined },
+  start: 0,
+  end: Math.max(0, data.length - 1),
+  url: { current: "/work/", prev: undefined, next: undefined, first: undefined, last: undefined },
 });
 
 const videoPage = makePage(videos);
