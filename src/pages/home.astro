@@ -76,15 +76,6 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   <div class="contact-page-wrapper">
     <KimeSplash />
 
-    <!-- TOP RIBBON (ASCII generated SVG) -->
-    <CyberRibbon />
-
-    <div class="decor-ribbon" aria-hidden="true" style="margin-bottom: 2rem;">
-      <div class="film-strip-bg">
-        <div class="banner-strip" style="transform: translateY(-50%);"></div>
-      </div>
-    </div>
-
     <!-- Kimeyu Core Slogan -->
     <section class="contact-quote-block" aria-label="Kimeyu Slogan">
       <div class="quote-wrapper">
@@ -1304,7 +1295,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: clamp(var(--spacing-16), 15vw, var(--spacing-36)) var(--spacing-4);
+    padding: clamp(var(--spacing-8), 10vw, var(--spacing-16)) var(--spacing-4);
     background-color: var(--hero-bg);
     width: 100%;
   }
@@ -2094,6 +2085,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   /* OTHER WORKS SECTION */
   .ow-section {
     display: flex;
+    margin: clamp(40px, 5vw, 80px) 0;
     justify-content: center;
     align-items: center;
     width: 100%;
