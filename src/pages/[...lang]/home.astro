@@ -1942,7 +1942,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   /* Bottom Left */
   .fs-bottom-left {
     position: absolute;
-    bottom: clamp(10px, 2vh, 20px);
+    bottom: calc(-1 * clamp(20px, 3vw, 50px));
     left: clamp(20px, 5%, 80px);
     z-index: 4;
     display: flex;
