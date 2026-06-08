@@ -50,7 +50,7 @@ export const ui = {
     'about.badge.motion': 'MOTION DESIGN',
     
     'works.title': 'WORKS',
-    'works.filter': 'Filter by Category',
+    'works.filter': 'Filter',
     'works.all': 'ALL',
     'works.motion': 'MOTION',
     'works.artwork': 'ARTWORK',
