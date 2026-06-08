@@ -2,7 +2,7 @@
 import KimeyuIcon from "./icons/KimeyuIcon.astro";
 import LanguagePicker from "./LanguagePicker.astro";
 import { fetchSiteProfile } from "../lib/hygraph";
-import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { getLangFromUrl, useTranslations, getRelativeLocaleUrl } from "../i18n/utils";
 
 const profileData = await fetchSiteProfile().catch(() => null);
 const cmsVideoUrl = profileData?.splashVideo?.url;
@@ -58,8 +58,8 @@ const t = useTranslations(lang);
     <!-- Navigation Bar -->
     <nav class="kime-splash__nav">
       <div class="kime-splash__links">
-        <a href={`/${lang === 'en' ? '' : lang + '/'}about`} class="splash-btn splash-btn--pill">{t('splash.about')}</a>
-        <a href={`/${lang === 'en' ? '' : lang + '/'}work/`} class="splash-btn splash-btn--pill">{t('splash.works')}</a>
+        <a href={getRelativeLocaleUrl(lang, 'about')} class="splash-btn splash-btn--pill">{t('splash.about')}</a>
+        <a href={getRelativeLocaleUrl(lang, 'work/')} class="splash-btn splash-btn--pill">{t('splash.works')}</a>
       </div>
       <button
         class="splash-btn splash-btn--continue"

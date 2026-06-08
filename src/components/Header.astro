@@ -1,15 +1,16 @@
 ---
 import KimeLogo from "./icons/KimeLogo.astro";
 import KimeyuIcon from "./icons/KimeyuIcon.astro";
-import { getRouteFromUrl } from '../i18n/utils';
+import LanguagePicker from "./LanguagePicker.astro";
+import { getRouteFromUrl, getLangFromUrl, getRelativeLocaleUrl } from '../i18n/utils';
 
+const currentLang = getLangFromUrl(Astro.url);
 const rawPath = getRouteFromUrl(Astro.url) || "/";
 const currentPath =
   rawPath.length > 1 && rawPath.endsWith("/") ? rawPath.slice(0, -1) : rawPath;
 
 const isAbout = currentPath === "/about";
 const isHome = currentPath === "/home" || currentPath === "/";
-
 const isWorks = currentPath.startsWith("/work");
 ---
 
@@ -18,7 +19,7 @@ const isWorks = currentPath.startsWith("/work");
   !isHome && (
     <header class="cyber-header">
       <a
-        href="/home"
+        href={getRelativeLocaleUrl(currentLang, 'home')}
         class="cyber-header__logo-link"
         aria-label="Home"
         data-astro-prefetch="hover"
@@ -32,7 +33,7 @@ const isWorks = currentPath.startsWith("/work");
 
       <nav class="cyber-header__nav">
         <a
-          href="/home"
+          href={getRelativeLocaleUrl(currentLang, 'home')}
           class="cyber-header__nav-btn"
           aria-current={isHome ? "page" : undefined}
           data-astro-prefetch="hover"
@@ -41,7 +42,7 @@ const isWorks = currentPath.startsWith("/work");
         </a>
 
         <a
-          href="/work/"
+          href={getRelativeLocaleUrl(currentLang, 'work/')}
           class="cyber-header__nav-btn"
           aria-current={isWorks ? "page" : undefined}
           data-astro-prefetch="hover"
@@ -51,13 +52,17 @@ const isWorks = currentPath.startsWith("/work");
         </a>
 
         <a
-          href="/about"
+          href={getRelativeLocaleUrl(currentLang, 'about')}
           class="cyber-header__nav-btn"
           aria-current={isAbout ? "page" : undefined}
           data-astro-prefetch="hover"
         >
           ABOUT
         </a>
+
+        <div class="cyber-header__lang">
+          <LanguagePicker />
+        </div>
       </nav>
     </header>
   )
@@ -182,6 +187,12 @@ const isWorks = currentPath.startsWith("/work");
     align-items: center;
     background-color: var(--bg-secondary);
     min-height: var(--spacing-12);
+  }
+
+  .cyber-header__lang {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
   }
 
   .cyber-header__right::before {
