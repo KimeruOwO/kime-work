@@ -1225,16 +1225,15 @@ const valueCards = [
       grid-area: hero;
       align-items: flex-start;
       --avatar-overlap: calc(0.5 * var(--avatar-size));
-      min-width: 0;
+      position: relative;
+      z-index: 1;
     }
 
     .info-banner {
-      width: 100%;
+      width: auto;
       align-items: flex-start;
       padding: clamp(var(--spacing-8), 5vw, var(--spacing-4)) var(--spacing-20)
         var(--spacing-8) calc(var(--avatar-size) + var(--spacing-6));
-      box-sizing: border-box;
-      z-index: auto;
     }
 
     .info-banner::before {
@@ -1262,6 +1261,8 @@ const valueCards = [
     .grid-area-window {
       grid-area: window;
       margin-top: calc(0.5 * var(--avatar-size));
+      position: relative;
+      z-index: 2;
     }
   }
 
