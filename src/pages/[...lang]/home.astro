@@ -380,6 +380,9 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
 
 
+    <!-- STRAIGHT BANNER STRIP (REVERSED) -->
+    <div class="contact-straight-strip-wrapper contact-straight-strip-wrapper--top" aria-hidden="true"></div>
+
     <!-- CONTACT SECTION -->
     <section class="contact-entry-section">
 
@@ -2742,6 +2745,19 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     animation: stripMoveRight 10s linear infinite;
   }
 
+  .contact-straight-strip-wrapper--top {
+    animation: stripMoveLeft 10s linear infinite;
+  }
+
+  @keyframes stripMoveLeft {
+    0% {
+      background-position: 0 center;
+    }
+    100% {
+      background-position: calc(-1 * var(--tile-w)) center;
+    }
+  }
+
   @keyframes stripMoveRight {
     0% {
       background-position: 0 center;
@@ -2935,6 +2951,19 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     background-repeat: repeat-x;
     background-position: 0 center;
     animation: stripMoveRight 10s linear infinite;
+  }
+
+  .contact-straight-strip-wrapper--top {
+    animation: stripMoveLeft 10s linear infinite;
+  }
+
+  @keyframes stripMoveLeft {
+    0% {
+      background-position: 0 center;
+    }
+    100% {
+      background-position: calc(-1 * var(--tile-w)) center;
+    }
   }
 
   @keyframes stripMoveRight {
