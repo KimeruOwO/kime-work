@@ -1169,7 +1169,7 @@ const valueCards = [
   @media (min-width: 1200px) {
     .page-content {
       display: grid;
-      grid-template-columns: minmax(0, 3.5fr) minmax(0, 6.5fr);
+      grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
       grid-template-areas:
         "banner      banner"
         "hero        window"
@@ -1228,12 +1228,11 @@ const valueCards = [
     }
 
     .info-banner {
-      width: auto;
-      max-width: 100%;
+      width: 100%;
       box-sizing: border-box;
       align-items: flex-start;
       padding: clamp(var(--spacing-8), 5vw, var(--spacing-4)) var(--spacing-6)
-        var(--spacing-8) calc(var(--avatar-size) + var(--spacing-6));
+        var(--spacing-8) calc(var(--avatar-size) + var(--spacing-4));
     }
 
     .info-banner::before {
