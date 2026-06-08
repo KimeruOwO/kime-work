@@ -15,34 +15,34 @@ export const ui = {
     'splash.illustration': 'ILLUSTRATION',
     'splash.about': 'ABOUT',
     'splash.works': 'WORKS',
-    'splash.continue': 'CONTINUE',
+    'splash.continue': 'ENTER', // Đổi Continue -> Enter (thường dùng cho web portfolio)
     
     'home.slogan.builtOn': 'BUILT ON',
     'home.slogan.rhythm': 'RHYTHM',
     'home.slogan.drivenBy': 'DRIVEN BY',
     'home.slogan.precision': 'PRECISION',
     
-    'home.pickupWorks': 'PICK UP',
-    'home.pickupWorks.sub': 'ピックアップ作品',
+    'home.pickupWorks': 'SELECTED WORKS', // Pick up không tự nhiên trong tiếng Anh, Selected Works chuẩn hơn
+    'home.pickupWorks.sub': 'Highlights', // Đã sửa lỗi để tiếng Nhật ở bản EN
     'home.featuredWorks': 'FEATURED WORKS',
     'home.otherWorks': 'OTHER WORKS',
     
     'home.contact': 'CONTACT',
-    'home.contact.sub': 'コンタクト',
-    'home.contact.instruction': 'Please include as much information as possible',
-    'home.contact.step1': 'Details of your request',
-    'home.contact.step2': 'Desired delivery date',
-    'home.contact.step3': 'Budget (to the extent known)',
-    'home.contact.step4': 'Contact method — Discord, Facebook, email, etc. (include your ID, profile link, username)',
-    'home.contact.step5': 'And any other remarks.',
+    'home.contact.sub': 'Get in touch',
+    'home.contact.instruction': 'Please provide the following details for your inquiry:', // Lịch sự và chuyên nghiệp hơn
+    'home.contact.step1': 'Project details',
+    'home.contact.step2': 'Expected deadline',
+    'home.contact.step3': 'Estimated budget',
+    'home.contact.step4': 'Preferred contact method (Discord, Email, etc., include your ID/handle)',
+    'home.contact.step5': 'Additional notes',
     
     'about.aboutMe': 'ABOUT ME',
     'about.profile': 'PROFILE',
-    'about.profile.sub': 'プロフィール',
+    'about.profile.sub': 'Biography',
     'about.skills': 'SKILLS',
-    'about.tools': 'TOOLS FOCUS',
-    'about.value': 'VALUE',
-    'about.experience': 'Experiences and Collaboration',
+    'about.tools': 'SOFTWARE & TOOLS',
+    'about.value': 'VALUES',
+    'about.experience': 'Experience & Collaborations',
     'about.collab.professional': 'Professional Collaborations',
     'about.collab.charity': 'Community & Charity',
     'about.collab.independent': 'Independent Projects',
@@ -59,15 +59,15 @@ export const ui = {
     'works.newest': 'Newest',
     'works.oldest': 'Oldest',
     'works.featured': 'FEATURED',
-    'works.musicVideo': 'MUSIC VIDEOS // MVs',
-    'works.debut': 'DEBUT // TRAILER',
+    'works.musicVideo': 'MUSIC VIDEOS',
+    'works.debut': 'TRAILERS & DEBUTS',
     
     'motion.back': 'Back to Works',
     'motion.client': 'Client:',
     'motion.role': 'Role:',
     'motion.date': 'Date:',
     'motion.description': 'DESCRIPTION',
-    'motion.imagePreview': 'IMAGE PREVIEW',
+    'motion.imagePreview': 'PREVIEW',
     'motion.projectDetails': 'PROJECT DETAILS',
     
     'footer.copyright': '©2026 KIMEYU ALL RIGHTS RESERVED'
@@ -78,12 +78,12 @@ export const ui = {
     'splash.illustration': 'イラストレーション',
     'splash.about': 'アバウト',
     'splash.works': 'ワークス',
-    'splash.continue': '続ける',
+    'splash.continue': 'サイトへ進む', // Tự nhiên hơn chữ "続ける" (Continue kiểu máy móc)
     
-    'home.slogan.builtOn': '構築された',
+    'home.slogan.builtOn': '基盤にあるのは', // Dịch thoát ý: Nền tảng là nhịp điệu
     'home.slogan.rhythm': 'リズム',
-    'home.slogan.drivenBy': '駆動される',
-    'home.slogan.precision': '精度',
+    'home.slogan.drivenBy': '突き動かすのは', // Động lực thúc đẩy là sự chính xác
+    'home.slogan.precision': '精緻さ',
     
     'home.pickupWorks': 'PICK UP',
     'home.pickupWorks.sub': 'ピックアップ作品',
@@ -91,24 +91,24 @@ export const ui = {
     'home.otherWorks': 'OTHER WORKS',
     
     'home.contact': 'CONTACT',
-    'home.contact.sub': 'コンタクト',
-    'home.contact.instruction': 'できるだけ詳しい情報を含めてください',
-    'home.contact.step1': 'ご依頼の詳細',
+    'home.contact.sub': 'お問い合わせ',
+    'home.contact.instruction': 'お問い合わせの際は、以下の情報をご記載ください。', // Chuẩn văn phong business Nhật
+    'home.contact.step1': 'プロジェクトの詳細',
     'home.contact.step2': '希望納期',
-    'home.contact.step3': 'ご予算（わかる範囲で）',
-    'home.contact.step4': '連絡方法 — Discord、Facebook、メールなど（ID、プロフィールリンク、ユーザー名を含めてください）',
-    'home.contact.step5': 'その他ご要望など',
+    'home.contact.step3': '想定ご予算',
+    'home.contact.step4': 'ご希望の連絡手段（Discord、メール等のIDやリンク）',
+    'home.contact.step5': 'その他・備考',
     
-    'about.aboutMe': 'アバウトミー',
+    'about.aboutMe': 'ABOUT ME', // Giữ tiếng Anh ở tiêu đề chính sẽ sang hơn Katakana
     'about.profile': 'PROFILE',
     'about.profile.sub': 'プロフィール',
     'about.skills': 'SKILLS',
     'about.tools': '使用ツール',
     'about.value': '価値観',
-    'about.experience': '経歴とコラボレーション',
-    'about.collab.professional': 'プロフェッショナルなコラボレーション',
-    'about.collab.charity': 'コミュニティとチャリティー',
-    'about.collab.independent': '自主プロジェクト',
+    'about.experience': '実績・コラボレーション', // Dùng chữ Thực tích (実績) thay vì Kinh nghiệm sẽ đúng ngữ cảnh portfolio hơn
+    'about.collab.professional': 'プロフェッショナル案件',
+    'about.collab.charity': 'コミュニティ・チャリティ',
+    'about.collab.independent': '自主制作プロジェクト',
     'about.badge.direction': 'ディレクション',
     'about.badge.motion': 'モーションデザイン',
     
@@ -123,16 +123,16 @@ export const ui = {
     'works.newest': '新しい順',
     'works.oldest': '古い順',
     'works.featured': '注目',
-    'works.musicVideo': 'ミュージックビデオ // MVs',
-    'works.debut': 'デビュー // トレイラー',
+    'works.musicVideo': 'ミュージックビデオ',
+    'works.debut': 'デビュー / トレイラー',
     
     'motion.back': '作品一覧へ戻る',
     'motion.client': 'クライアント:',
     'motion.role': '役割:',
     'motion.date': '日付:',
     'motion.description': '説明',
-    'motion.imagePreview': '画像プレビュー',
-    'motion.projectDetails': 'プロジェクトの詳細',
+    'motion.imagePreview': 'プレビュー',
+    'motion.projectDetails': 'プロジェクト詳細',
     
     'footer.copyright': '©2026 KIMEYU ALL RIGHTS RESERVED'
   },
@@ -142,37 +142,37 @@ export const ui = {
     'splash.illustration': 'MINH HỌA',
     'splash.about': 'GIỚI THIỆU',
     'splash.works': 'DỰ ÁN',
-    'splash.continue': 'TIẾP TỤC',
+    'splash.continue': 'KHÁM PHÁ', // Hay hơn từ "Tiếp tục"
     
-    'home.slogan.builtOn': 'KIẾN TẠO TRÊN',
+    'home.slogan.builtOn': 'KIẾN TẠO TỪ',
     'home.slogan.rhythm': 'NHỊP ĐIỆU',
-    'home.slogan.drivenBy': 'THÚC ĐẨY BỞI',
-    'home.slogan.precision': 'SỰ CHUẨN XÁC',
+    'home.slogan.drivenBy': 'DẪN DẮT BỞI',
+    'home.slogan.precision': 'SỰ TINH CHUẨN', // Tinh chuẩn nghe "nghệ" và chuyên môn hơn "chuẩn xác"
     
-    'home.pickupWorks': 'PICK UP',
-    'home.pickupWorks.sub': 'DỰ ÁN NỔI BẬT',
-    'home.featuredWorks': 'FEATURED WORKS',
-    'home.otherWorks': 'OTHER WORKS',
+    'home.pickupWorks': 'SELECTED WORKS',
+    'home.pickupWorks.sub': 'DỰ ÁN TIÊU BIỂU',
+    'home.featuredWorks': 'DỰ ÁN NỔI BẬT',
+    'home.otherWorks': 'DỰ ÁN KHÁC',
     
     'home.contact': 'CONTACT',
     'home.contact.sub': 'LIÊN HỆ',
-    'home.contact.instruction': 'Vui lòng cung cấp thông tin càng chi tiết càng tốt',
-    'home.contact.step1': 'Chi tiết yêu cầu của bạn',
-    'home.contact.step2': 'Ngày giao hàng mong muốn',
-    'home.contact.step3': 'Ngân sách (trong khoảng dự kiến)',
-    'home.contact.step4': 'Phương thức liên lạc — Discord, Facebook, email, v.v. (kèm theo ID, link profile, username)',
-    'home.contact.step5': 'Và bất kỳ ghi chú nào khác.',
+    'home.contact.instruction': 'Vui lòng cung cấp các thông tin sau để tiện trao đổi:',
+    'home.contact.step1': 'Chi tiết dự án / Yêu cầu',
+    'home.contact.step2': 'Thời hạn mong muốn (Deadline)',
+    'home.contact.step3': 'Ngân sách dự kiến',
+    'home.contact.step4': 'Kênh liên lạc (Discord, Email... kèm ID/Link)',
+    'home.contact.step5': 'Ghi chú thêm (nếu có)',
     
     'about.aboutMe': 'GIỚI THIỆU',
     'about.profile': 'PROFILE',
     'about.profile.sub': 'HỒ SƠ CÁ NHÂN',
     'about.skills': 'SKILLS',
-    'about.tools': 'CÔNG CỤ',
+    'about.tools': 'CÔNG CỤ SỬ DỤNG',
     'about.value': 'GIÁ TRỊ',
-    'about.experience': 'Kinh nghiệm và Hợp tác',
-    'about.collab.professional': 'Hợp tác chuyên nghiệp',
+    'about.experience': 'Kinh Nghiệm & Hợp Tác',
+    'about.collab.professional': 'Dự án Thương mại', // Chuyên nghiệp hơn "Hợp tác chuyên nghiệp"
     'about.collab.charity': 'Cộng đồng & Từ thiện',
-    'about.collab.independent': 'Dự án độc lập',
+    'about.collab.independent': 'Dự án Độc lập',
     'about.badge.direction': 'CHỈ ĐẠO',
     'about.badge.motion': 'THIẾT KẾ CHUYỂN ĐỘNG',
     
@@ -186,15 +186,15 @@ export const ui = {
     'works.newest': 'Mới nhất',
     'works.oldest': 'Cũ nhất',
     'works.featured': 'NỔI BẬT',
-    'works.musicVideo': 'VIDEO ÂM NHẠC // MVs',
-    'works.debut': 'DEBUT // TRAILER',
+    'works.musicVideo': 'VIDEO ÂM NHẠC',
+    'works.debut': 'DEBUT / TRAILER',
     
-    'motion.back': 'Trở lại danh sách dự án',
+    'motion.back': 'Trở lại danh sách',
     'motion.client': 'Khách hàng:',
     'motion.role': 'Vai trò:',
-    'motion.date': 'Ngày tháng:',
+    'motion.date': 'Thời gian:',
     'motion.description': 'MÔ TẢ',
-    'motion.imagePreview': 'ẢNH XEM TRƯỚC',
+    'motion.imagePreview': 'XEM TRƯỚC',
     'motion.projectDetails': 'CHI TIẾT DỰ ÁN',
     
     'footer.copyright': '©2026 KIMEYU ALL RIGHTS RESERVED'
