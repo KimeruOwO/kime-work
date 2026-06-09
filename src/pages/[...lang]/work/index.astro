@@ -57,7 +57,7 @@ const artworkPage = makePage(artworks);
     <div class="spa-panel" id="panel-motions">
       <MotionGallery page={videoPage} />
     </div>
-    <div class="spa-panel" id="panel-artwork">
+    <div class="spa-panel is-hidden" id="panel-artwork">
       <ArtworkGallery page={artworkPage} />
     </div>
   </div>
@@ -80,30 +80,67 @@ const artworkPage = makePage(artworks);
   const STAGGER = 60;
   const BAND_COUNT = 4;
 
-  let currentMode: string = "motions";
+  let currentMode = "motions";
   let animating = false;
+  let overlayEl: HTMLElement | null = null;
+  let pendingTimers: number[] = [];
+
+  function clearTimers() {
+    for (const id of pendingTimers) clearTimeout(id);
+    pendingTimers = [];
+  }
+
+  function schedule(fn: () => void, delay: number) {
+    pendingTimers.push(window.setTimeout(fn, delay));
+  }
+
+  function cancelPendingAnimation() {
+    clearTimers();
+    if (overlayEl) {
+      overlayEl.remove();
+      overlayEl = null;
+    }
+    animating = false;
+  }
+
+  function applyPanelState(mode: string) {
+    const motions = document.getElementById(PANEL_MOTIONS_ID);
+    const artwork = document.getElementById(PANEL_ARTWORK_ID);
+    if (!motions || !artwork) return;
+
+    if (mode === "artwork") {
+      motions.classList.add("is-hidden");
+      artwork.classList.remove("is-hidden");
+    } else {
+      artwork.classList.add("is-hidden");
+      motions.classList.remove("is-hidden");
+    }
+  }
+
+  function updatePillUI(target: string) {
+    const container = document.querySelector<HTMLElement>(".mode-switch-container");
+    if (!container) return;
+    container.dataset.activeMode = target;
+    container.querySelectorAll<HTMLElement>(".switch-btn").forEach((b) => {
+      const active = b.dataset.mode === target;
+      b.classList.toggle("is-active", active);
+      b.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+  }
 
   function switchTo(target: string) {
-    if (animating || target === currentMode) return;
+    if (target === currentMode && !animating) return;
+
+    if (animating) {
+      cancelPendingAnimation();
+    }
     animating = true;
 
     const wrapper = document.getElementById(WRAPPER_ID);
-    const motions = document.getElementById(PANEL_MOTIONS_ID);
-    const artwork = document.getElementById(PANEL_ARTWORK_ID);
-    if (!wrapper || !motions || !artwork) { animating = false; return; }
+    if (!wrapper) { animating = false; return; }
 
-    // Update pill UI
-    const container = document.querySelector<HTMLElement>(".mode-switch-container");
-    if (container) {
-      container.dataset.activeMode = target;
-      container.querySelectorAll<HTMLElement>(".switch-btn").forEach((b) => {
-        const active = b.dataset.mode === target;
-        b.classList.toggle("is-active", active);
-        b.setAttribute("aria-pressed", active ? "true" : "false");
-      });
-    }
+    updatePillUI(target);
 
-    // Build overlay
     const rect = wrapper.getBoundingClientRect();
     const overlay = document.createElement("div");
     overlay.style.cssText = `position:absolute;top:0;left:0;width:100%;height:${rect.height}px;z-index:100;pointer-events:none;overflow:hidden;`;
@@ -116,49 +153,46 @@ const artworkPage = makePage(artworks);
 
     wrapper.style.position = "relative";
     wrapper.appendChild(overlay);
+    overlayEl = overlay;
     const bands = Array.from(overlay.children) as HTMLElement[];
 
     // Wipe in
     bands.forEach((b, i) => {
-      setTimeout(() => {
+      schedule(() => {
         b.style.transition = `transform ${BAND_DUR}ms ${EASING}`;
         b.style.transform = "translateX(0)";
       }, i * STAGGER);
     });
 
-    // Swap
-    setTimeout(() => {
-      if (target === "artwork") {
-        motions.classList.add("is-hidden");
-        artwork.classList.remove("is-hidden");
-      } else {
-        artwork.classList.add("is-hidden");
-        motions.classList.remove("is-hidden");
-      }
+    // Swap — after wipe-in fully covers screen
+    const swapTime = (BAND_COUNT - 1) * STAGGER + BAND_DUR;
+    schedule(() => {
+      applyPanelState(target);
       currentMode = target;
-      const basePath = window.location.pathname;
-      history.pushState({ mode: target }, "", target === "motions" ? basePath : basePath + "?mode=artwork");
-    }, BAND_COUNT * STAGGER + BAND_DUR * 0.6);
+      const basePath = window.location.pathname.replace(/\/$/, "");
+      history.pushState({ mode: target }, "", target === "motions" ? basePath || "/" : (basePath || "") + "?mode=artwork");
+    }, swapTime);
 
     // Wipe out
-    const outStart = BAND_COUNT * STAGGER + BAND_DUR + 40;
+    const outStart = swapTime + 40;
     bands.forEach((b, i) => {
-      setTimeout(() => { b.style.transform = "translateX(110%)"; }, outStart + i * STAGGER);
+      schedule(() => { b.style.transform = "translateX(110%)"; }, outStart + i * STAGGER);
     });
 
     // Done
-    setTimeout(() => {
+    schedule(() => {
       overlay.remove();
+      if (overlayEl === overlay) overlayEl = null;
+      pendingTimers = [];
       animating = false;
     }, outStart + BAND_COUNT * STAGGER + BAND_DUR + 50);
   }
 
-  // Attach click handlers to mode switch buttons
   function bindSwitch() {
     const container = document.querySelector<HTMLElement>(".mode-switch-container");
     if (!container) return;
 
-    const handler = (e: Event) => {
+    container.addEventListener("click", (e: Event) => {
       const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-mode]");
       if (!btn || !container.contains(btn)) return;
       const mode = btn.dataset.mode;
@@ -167,20 +201,24 @@ const artworkPage = makePage(artworks);
       } else if (mode === "motions" || mode === "artwork") {
         switchTo(mode);
       }
-    };
-
-    container.addEventListener("click", handler);
+    });
   }
 
-  bindSwitch();
+  function init() {
+    cancelPendingAnimation();
+    currentMode = "motions";
 
-  // Hide artwork panel after custom elements have initialized
-  requestAnimationFrame(() => {
-    document.getElementById("panel-artwork")?.classList.add("is-hidden");
-  });
+    applyPanelState("motions");
+    updatePillUI("motions");
+    bindSwitch();
 
-  // Restore from URL
-  if (new URLSearchParams(location.search).get("mode") === "artwork") {
-    switchTo("artwork");
+    if (new URLSearchParams(location.search).get("mode") === "artwork") {
+      applyPanelState("artwork");
+      updatePillUI("artwork");
+      currentMode = "artwork";
+    }
   }
+
+  init();
+  document.addEventListener("astro:page-load", init);
 </script>
