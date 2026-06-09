@@ -182,7 +182,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 </svg>
                       )}
                       <div class="label">
-                        {video.category?.visibility === "Private" ? "Private Commercial" : "Public"}
+                        {video.category?.visibility === "Private" ? "Private" : "Public"}
                       </div>
                     </div>
                     <div class="fs-number"><span class="mask-text">0{index + 1}</span></div>
@@ -1905,6 +1905,11 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     top: 0;
     height: 100%;
     z-index: 1;
+    cursor: pointer;
+    transition: opacity 0.25s ease;
+  }
+  .fs-play-overlay:hover {
+    opacity: 0.7;
   }
   .fs-play-overlay--play {
     left: 0;
@@ -2084,12 +2089,16 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: clamp(100px, 10vw, 160px);
+    height: clamp(80px, 8vw, 120px);
     background: #F2F2F9;
     text-decoration: none;
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    transition: height 0.3s ease;
+  }
+  .ow-section:hover {
+    height: clamp(90px, 9vw, 140px);
   }
 
   .ow-svg-left {
@@ -2965,6 +2974,32 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
     }
   }
 
+  @media (min-width: 2000px) {
+    .fs-play-link-group {
+      width: clamp(350px, 20vw, 500px);
+    }
+    .fs-bottom-left {
+      bottom: calc(-1 * clamp(30px, 4vw, 70px));
+      left: clamp(30px, 6%, 120px);
+    }
+    .ow-new-center-wrap {
+      max-width: 500px;
+    }
+    .ow-title {
+      font-size: clamp(30px, 2vw, 48px);
+    }
+  }
+
+  @media (min-width: 2560px) {
+    .fs-play-link-group {
+      width: clamp(400px, 15vw, 550px);
+    }
+    .fs-bottom-left {
+      bottom: calc(-1 * clamp(40px, 3vw, 80px));
+      left: clamp(40px, 5%, 160px);
+    }
+  }
+
   /* Mobile HUD Section V2 */
   .fs-pop-mobile {
     display: none;
@@ -3148,7 +3183,7 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 
     /* Other Works banner mobile fix (KEEP THIS SO IT DOESN'T BREAK) */
     .ow-section {
-      height: clamp(100px, 20vw, 150px);
+      height: clamp(80px, 16vw, 120px);
     }
     .ow-svg-left, .ow-svg-right {
       display: none;
