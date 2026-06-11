@@ -42,7 +42,7 @@ export const ui = {
     'about.skills': 'SKILLS',
     'about.tools': 'SOFTWARE & TOOLS',
     'about.value': 'VALUES',
-    'about.experience': 'Experience & Collaborations',
+    'about.experience': 'Experience',
     'about.collab.professional': 'Professional Collaborations',
     'about.collab.charity': 'Community & Charity',
     'about.collab.independent': 'Independent Projects',
@@ -169,7 +169,7 @@ export const ui = {
     'about.skills': 'SKILLS',
     'about.tools': 'CÔNG CỤ SỬ DỤNG',
     'about.value': 'GIÁ TRỊ',
-    'about.experience': 'Kinh Nghiệm & Hợp Tác',
+    'about.experience': 'Kinh Nghiệm',
     'about.collab.professional': 'Dự án Thương mại', // Chuyên nghiệp hơn "Hợp tác chuyên nghiệp"
     'about.collab.charity': 'Cộng đồng & Từ thiện',
     'about.collab.independent': 'Dự án Độc lập',
