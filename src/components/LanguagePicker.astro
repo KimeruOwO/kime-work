@@ -65,4 +65,15 @@ const currentRoute = getRouteFromUrl(Astro.url) || '/';
     color: var(--text-primary);
     box-shadow: 0 2px 8px rgba(92, 225, 230, 0.4);
   }
+
+  @media (max-width: 380px) {
+    .lang-list {
+      gap: 4px;
+      padding: 3px;
+    }
+    .lang-btn {
+      font-size: 12px;
+      padding: 4px 10px;
+    }
+  }
 </style>
