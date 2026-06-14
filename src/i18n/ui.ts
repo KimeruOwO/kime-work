@@ -11,25 +11,25 @@ export const showDefaultLang = false;
 export const ui = {
   en: {
     'splash.artDirection': 'ART DIRECTION',
-    'splash.motionGraphics': 'MOTION GRAPHICS',
-    'splash.illustration': 'ILLUSTRATION',
+    'splash.motionGraphics': 'MOTION',
+    'splash.illustration': 'ILLUST',
     'splash.about': 'ABOUT',
     'splash.works': 'WORKS',
-    'splash.continue': 'ENTER', // Đổi Continue -> Enter (thường dùng cho web portfolio)
+    'splash.continue': 'ENTER',
     
     'home.slogan.builtOn': 'BUILT ON',
     'home.slogan.rhythm': 'RHYTHM',
     'home.slogan.drivenBy': 'DRIVEN BY',
     'home.slogan.precision': 'PRECISION',
     
-    'home.pickupWorks': 'SELECTED WORKS', // Pick up không tự nhiên trong tiếng Anh, Selected Works chuẩn hơn
-    'home.pickupWorks.sub': 'Highlights', // Đã sửa lỗi để tiếng Nhật ở bản EN
+    'home.pickupWorks': 'SELECTED WORKS',
+    'home.pickupWorks.sub': 'Highlights',
     'home.featuredWorks': 'FEATURED WORKS',
     'home.otherWorks': 'OTHER WORKS',
     
     'home.contact': 'CONTACT',
     'home.contact.sub': 'Get in touch',
-    'home.contact.instruction': 'Please provide the following details for your inquiry:', // Lịch sự và chuyên nghiệp hơn
+    'home.contact.instruction': 'Please provide the following details for your inquiry:',
     'home.contact.step1': 'Project details',
     'home.contact.step2': 'Expected deadline',
     'home.contact.step3': 'Estimated budget',
@@ -42,10 +42,10 @@ export const ui = {
     'about.skills': 'SKILLS',
     'about.tools': 'SOFTWARE & TOOLS',
     'about.value': 'VALUES',
-    'about.experience': 'Experience',
-    'about.collab.professional': 'Professional Collaborations',
-    'about.collab.charity': 'Community & Charity',
-    'about.collab.independent': 'Independent Projects',
+    'about.experience': 'EXPERIENCE',
+    'about.collab.professional': 'PROFESSIONAL',
+    'about.collab.charity': 'COMMUNITY',
+    'about.collab.independent': 'INDEPENDENT',
     'about.badge.direction': 'DIRECTION',
     'about.badge.motion': 'MOTION DESIGN',
     
@@ -70,19 +70,36 @@ export const ui = {
     'motion.imagePreview': 'PREVIEW',
     'motion.projectDetails': 'PROJECT DETAILS',
     
+    'nav.home': 'HOME',
+    'nav.works': 'WORKS',
+    'nav.about': 'ABOUT',
+
+    'pagination.prev': 'PREVIOUS',
+    'pagination.next': 'NEXT',
+
+    'modeSwitch.title': 'MODE SWITCH',
+    'modeSwitch.motions': 'MOTIONS',
+    'modeSwitch.artwork': 'ARTWORK',
+
+    'info.title': 'INFORMATION',
+    'info.mission': '// MISSION //',
+    'info.aboutName': '// ABOUT THE NAME "KIMEYU" //',
+
+    'lightbox.preview': 'PREVIEW',
+
     'footer.copyright': '©2026 KIMEYU ALL RIGHTS RESERVED'
   },
   ja: {
-    'splash.artDirection': 'アートディレクション',
-    'splash.motionGraphics': 'モーショングラフィックス',
-    'splash.illustration': 'イラストレーション',
+    'splash.artDirection': 'ART DIRECTION',
+    'splash.motionGraphics': 'MOTION',
+    'splash.illustration': 'ILLUST',
     'splash.about': 'アバウト',
     'splash.works': 'ワークス',
-    'splash.continue': 'サイトへ進む', // Tự nhiên hơn chữ "続ける" (Continue kiểu máy móc)
+    'splash.continue': 'サイトへ進む',
     
-    'home.slogan.builtOn': '基盤にあるのは', // Dịch thoát ý: Nền tảng là nhịp điệu
+    'home.slogan.builtOn': '基盤にあるのは',
     'home.slogan.rhythm': 'リズム',
-    'home.slogan.drivenBy': '突き動かすのは', // Động lực thúc đẩy là sự chính xác
+    'home.slogan.drivenBy': '突き動かすのは',
     'home.slogan.precision': '精緻さ',
     
     'home.pickupWorks': 'PICK UP',
@@ -92,23 +109,23 @@ export const ui = {
     
     'home.contact': 'CONTACT',
     'home.contact.sub': 'お問い合わせ',
-    'home.contact.instruction': 'お問い合わせの際は、以下の情報をご記載ください。', // Chuẩn văn phong business Nhật
+    'home.contact.instruction': 'お問い合わせの際は、以下の情報をご記載ください。',
     'home.contact.step1': 'プロジェクトの詳細',
     'home.contact.step2': '希望納期',
     'home.contact.step3': '想定ご予算',
     'home.contact.step4': 'ご希望の連絡手段（Discord、メール等のIDやリンク）',
     'home.contact.step5': 'その他・備考',
     
-    'about.aboutMe': 'ABOUT ME', // Giữ tiếng Anh ở tiêu đề chính sẽ sang hơn Katakana
+    'about.aboutMe': 'ABOUT ME',
     'about.profile': 'PROFILE',
     'about.profile.sub': 'プロフィール',
     'about.skills': 'SKILLS',
     'about.tools': '使用ツール',
     'about.value': '価値観',
-    'about.experience': '実績・コラボレーション', // Dùng chữ Thực tích (実績) thay vì Kinh nghiệm sẽ đúng ngữ cảnh portfolio hơn
-    'about.collab.professional': 'プロフェッショナル案件',
-    'about.collab.charity': 'コミュニティ・チャリティ',
-    'about.collab.independent': '自主制作プロジェクト',
+    'about.experience': 'コラボ実績',
+    'about.collab.professional': 'プロフェッショナル',
+    'about.collab.charity': 'コミュニティ',
+    'about.collab.independent': '自主制作',
     'about.badge.direction': 'ディレクション',
     'about.badge.motion': 'モーションデザイン',
     
@@ -134,20 +151,37 @@ export const ui = {
     'motion.imagePreview': 'プレビュー',
     'motion.projectDetails': 'プロジェクト詳細',
     
+    'nav.home': 'HOME',
+    'nav.works': 'WORKS',
+    'nav.about': 'ABOUT',
+
+    'pagination.prev': 'PREVIOUS',
+    'pagination.next': 'NEXT',
+
+    'modeSwitch.title': 'MODE SWITCH',
+    'modeSwitch.motions': 'MOTIONS',
+    'modeSwitch.artwork': 'ARTWORK',
+
+    'info.title': 'INFORMATION',
+    'info.mission': '// MISSION //',
+    'info.aboutName': '// ABOUT THE NAME "KIMEYU" //',
+
+    'lightbox.preview': 'PREVIEW',
+
     'footer.copyright': '©2026 KIMEYU ALL RIGHTS RESERVED'
   },
   vi: {
-    'splash.artDirection': 'CHỈ ĐẠO NGHỆ THUẬT',
-    'splash.motionGraphics': 'ĐỒ HỌA CHUYỂN ĐỘNG',
-    'splash.illustration': 'MINH HỌA',
+    'splash.artDirection': 'ART DIRECTION',
+    'splash.motionGraphics': 'MOTION',
+    'splash.illustration': 'ILLUST',
     'splash.about': 'GIỚI THIỆU',
     'splash.works': 'DỰ ÁN',
-    'splash.continue': 'KHÁM PHÁ', // Hay hơn từ "Tiếp tục"
+    'splash.continue': 'KHÁM PHÁ',
     
     'home.slogan.builtOn': 'KIẾN TẠO TỪ',
     'home.slogan.rhythm': 'NHỊP ĐIỆU',
     'home.slogan.drivenBy': 'DẪN DẮT BỞI',
-    'home.slogan.precision': 'SỰ TINH CHUẨN', // Tinh chuẩn nghe "nghệ" và chuyên môn hơn "chuẩn xác"
+    'home.slogan.precision': 'SỰ TINH CHUẨN',
     
     'home.pickupWorks': 'SELECTED WORKS',
     'home.pickupWorks.sub': 'DỰ ÁN TIÊU BIỂU',
@@ -169,12 +203,12 @@ export const ui = {
     'about.skills': 'SKILLS',
     'about.tools': 'CÔNG CỤ SỬ DỤNG',
     'about.value': 'GIÁ TRỊ',
-    'about.experience': 'Kinh Nghiệm',
-    'about.collab.professional': 'Dự án Thương mại', // Chuyên nghiệp hơn "Hợp tác chuyên nghiệp"
-    'about.collab.charity': 'Cộng đồng & Từ thiện',
-    'about.collab.independent': 'Dự án Độc lập',
+    'about.experience': 'KINH NGHIỆM',
+    'about.collab.professional': 'THƯƠNG MẠI',
+    'about.collab.charity': 'CỘNG ĐỒNG',
+    'about.collab.independent': 'ĐỘC LẬP',
     'about.badge.direction': 'CHỈ ĐẠO',
-    'about.badge.motion': 'THIẾT KẾ CHUYỂN ĐỘNG',
+    'about.badge.motion': 'MOTION',
     
     'works.title': 'WORKS',
     'works.filter': 'Lọc theo danh mục',
@@ -197,6 +231,23 @@ export const ui = {
     'motion.imagePreview': 'XEM TRƯỚC',
     'motion.projectDetails': 'CHI TIẾT DỰ ÁN',
     
+    'nav.home': 'HOME',
+    'nav.works': 'WORKS',
+    'nav.about': 'ABOUT',
+
+    'pagination.prev': 'PREVIOUS',
+    'pagination.next': 'NEXT',
+
+    'modeSwitch.title': 'MODE SWITCH',
+    'modeSwitch.motions': 'MOTIONS',
+    'modeSwitch.artwork': 'ARTWORK',
+
+    'info.title': 'INFORMATION',
+    'info.mission': '// MISSION //',
+    'info.aboutName': '// ABOUT THE NAME "KIMEYU" //',
+
+    'lightbox.preview': 'PREVIEW',
+
     'footer.copyright': '©2026 KIMEYU ALL RIGHTS RESERVED'
   },
 } as const;

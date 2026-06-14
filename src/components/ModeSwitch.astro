@@ -3,17 +3,20 @@
 import SwitchIcon from "./icons/SwitchIcon.astro";
 import VideoIcon from "./icons/VideoIcon.astro";
 import ArtworkIcon from "./icons/ArtworkIcon.astro";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 
 interface Props {
   activeMode: "motions" | "artwork";
 }
 
 const { activeMode } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <div class="mode-switch-section">
   <header class="mode-switch-header">
-    <h2 class="mode-switch-title">MODE SWITCH</h2>
+    <h2 class="mode-switch-title">{t('modeSwitch.title')}</h2>
   </header>
 
   <div class="mode-switch-container" data-active-mode={activeMode}>
@@ -26,7 +29,7 @@ const { activeMode } = Astro.props;
       data-mode="motions"
       aria-pressed={activeMode === "motions" ? "true" : "false"}
     >
-      <span>MOTIONS</span>
+      <span>{t('modeSwitch.motions')}</span>
       <VideoIcon width="20" height="20" />
     </button>
 
@@ -47,7 +50,7 @@ const { activeMode } = Astro.props;
       data-mode="artwork"
       aria-pressed={activeMode === "artwork" ? "true" : "false"}
     >
-      <span>ARTWORK</span>
+      <span>{t('modeSwitch.artwork')}</span>
       <ArtworkIcon width="20" height="20" />
     </button>
   </div>

@@ -152,6 +152,8 @@ const {
         font-size: clamp(var(--text-sm), 3vw, var(--text-base));
         letter-spacing: 0.05em;
         padding: 0 var(--spacing-4);
+        white-space: nowrap;
+        min-width: max-content;
     }
 
     .filter-group::after {
@@ -249,6 +251,10 @@ const {
         .filter-group__label,
         .filter-group::after {
             width: clamp(120px, 15vw, 180px);
+        }
+
+        .filter-group__label {
+            min-width: max-content;
         }
     }
 </style>

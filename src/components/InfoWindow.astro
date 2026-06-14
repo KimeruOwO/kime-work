@@ -5,6 +5,10 @@ import YouTubeIcon from "./icons/YouTubeIcon.astro";
 import PixivIcon from "./icons/PixivIcon.astro";
 import { getSocialLinks } from "../lib/socials";
 import { fetchSiteProfile, fetchAboutPageConfig } from "../lib/hygraph";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const iconMap: Record<string, any> = {
   facebook: FacebookIcon,
@@ -37,7 +41,7 @@ const aboutNameParagraphs = aboutPageConfig?.aboutNameText
 
 <retro-window class="retro-window">
   <header class="retro-window__header">
-    <h2 class="retro-window__title">INFORMATION</h2>
+    <h2 class="retro-window__title">{t('info.title')}</h2>
 
     <div class="retro-window__socials-wrapper">
       <button
@@ -86,7 +90,7 @@ const aboutNameParagraphs = aboutPageConfig?.aboutNameText
   <div class="retro-window__body">
     <section class="info-section">
       <div class="info-section__title-row">
-        <h3 class="info-section__heading">// MISSION //</h3>
+        <h3 class="info-section__heading">{t('info.mission')}</h3>
       </div>
       <div class="info-section__content">
         <ul class="custom-list">
@@ -102,7 +106,7 @@ const aboutNameParagraphs = aboutPageConfig?.aboutNameText
 
     <section class="info-section info-section--no-decor">
       <div class="info-section__title-row">
-        <h3 class="info-section__heading">// ABOUT THE NAME "KIMEYU" //</h3>
+        <h3 class="info-section__heading">{t('info.aboutName')}</h3>
       </div>
       <div class="info-section__content">
         {aboutNameParagraphs.map(p => (

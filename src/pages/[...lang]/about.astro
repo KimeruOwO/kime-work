@@ -746,6 +746,8 @@ const valueCards = [
     white-space: nowrap;
     line-height: 1;
     transform: translateY(-2px);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .collab-cta :global(.collab-cta__icon) {
@@ -934,11 +936,13 @@ const valueCards = [
     text-align: center;
     font-size: clamp(var(--text-sm), 3vw, var(--text-base));
     padding: clamp(var(--spacing-3), 1vw, var(--spacing-2))
-      clamp(var(--spacing-12), 8vw, var(--spacing-20));
+      clamp(var(--spacing-8), 6vw, var(--spacing-20));
     border-radius: var(--radius-2xl);
     border: var(--border-width-sm) solid var(--color-secondary-darker);
     white-space: nowrap;
     max-width: 90vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
     box-shadow: var(--spacing-2) var(--spacing-2) 0 var(--color-secondary-light);
   }
 

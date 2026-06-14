@@ -100,6 +100,8 @@ const t = useTranslations(lang);
           role="navigation"
           aria-label="Pagination"
           id="motion-pagination"
+          data-prev-label={t('pagination.prev')}
+          data-next-label={t('pagination.next')}
         ></nav>
       </div>
     </section>
@@ -258,6 +260,9 @@ const t = useTranslations(lang);
       const container = this.querySelector<HTMLElement>("#motion-pagination");
       if (!container) return;
 
+      const prevLabel = container.dataset.prevLabel || "PREVIOUS";
+      const nextLabel = container.dataset.nextLabel || "NEXT";
+
       const MAX_VISIBLE = 5;
       let ws = Math.max(
         1,
@@ -274,14 +279,14 @@ const t = useTranslations(lang);
       const nextPage =
         this._currentPage < totalPages ? this._currentPage + 1 : 1;
 
-      let html = `<button class="page-nav-btn prev-btn" data-page="${prevPage}" aria-label="Previous page">PREVIOUS</button>`;
+      let html = `<button class="page-nav-btn prev-btn" data-page="${prevPage}" aria-label="Previous page">${prevLabel}</button>`;
       html += `<ul class="page-numbers">`;
       for (let p = ws; p <= we; p++) {
         const active = p === this._currentPage;
         html += `<li><button class="page-link${active ? " is-active" : ""}" data-page="${p}" ${active ? 'aria-current="page"' : ""} aria-label="Page ${p}">${p}</button></li>`;
       }
       html += `</ul>`;
-      html += `<button class="page-nav-btn next-btn" data-page="${nextPage}" aria-label="Next page">NEXT</button>`;
+      html += `<button class="page-nav-btn next-btn" data-page="${nextPage}" aria-label="Next page">${nextLabel}</button>`;
 
       container.innerHTML = html;
     }
@@ -760,6 +765,7 @@ const t = useTranslations(lang);
     font-family: inherit;
     line-height: 1;
     text-decoration: none;
+    white-space: nowrap;
     background-color: var(--color-primary);
     border: none;
     cursor: pointer;

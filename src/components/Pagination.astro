@@ -1,5 +1,6 @@
 ---
 import type { Page } from "astro";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 
 export interface Props {
     page: Page<any>;
@@ -9,6 +10,9 @@ export interface Props {
 }
 
 const { page, baseUrl = "/work", suffix = "", targetId = "works-gallery" } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const MAX_VISIBLE = 5;
 let windowStart = Math.max(1, page.currentPage - Math.floor(MAX_VISIBLE / 2));
@@ -48,7 +52,7 @@ const nextUrl = getPageUrl(nextPageNum);
         aria-label="Go to previous page"
         data-astro-prefetch="hover"
     >
-        PREVIOUS
+        {t('pagination.prev')}
     </a>
 
     <ul class="page-numbers">
@@ -78,7 +82,7 @@ const nextUrl = getPageUrl(nextPageNum);
         aria-label="Go to next page"
         data-astro-prefetch="hover"
     >
-        NEXT
+        {t('pagination.next')}
     </a>
 </nav>
 
@@ -105,6 +109,7 @@ const nextUrl = getPageUrl(nextPageNum);
         font-size: clamp(var(--text-base), 2vw, var(--text-lg));
         line-height: 1;
         text-decoration: none;
+        white-space: nowrap;
 
         background-color: transparent;
         border: none;
