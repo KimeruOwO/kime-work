@@ -109,6 +109,7 @@ const isWorks = currentPath.startsWith("/work");
   .cyber-header__nav {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: stretch;
     order: 3;
     width: 100%;
@@ -138,6 +139,8 @@ const isWorks = currentPath.startsWith("/work");
     transform: translateZ(0);
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+    flex-shrink: 1;
+    min-width: 0;
   }
 
   .cyber-header__nav::before {
@@ -193,6 +196,7 @@ const isWorks = currentPath.startsWith("/work");
     display: flex;
     align-items: center;
     margin-left: auto;
+    flex-shrink: 0;
   }
 
   .cyber-header__right::before {
@@ -221,6 +225,25 @@ const isWorks = currentPath.startsWith("/work");
     width: auto;
     color: var(--color-primary);
     padding: 0 var(--spacing-6);
+  }
+
+  /* ==========================================================
+     RESPONSIVE MOBILE NHỎ (< 480px) – ẩn pseudo để nhường chỗ cho lang picker
+  ========================================================== */
+  @media (max-width: 479px) {
+    .cyber-header__nav::before,
+    .cyber-header__nav::after {
+      display: none;
+    }
+
+    .cyber-header__nav {
+      justify-content: center;
+    }
+
+    .cyber-header__nav-btn {
+      flex-shrink: 1;
+      min-width: 0;
+    }
   }
 
   /* ==========================================================
