@@ -240,6 +240,8 @@ const isWorks = currentPath.startsWith("/work");
 
     .cyber-header__nav {
       justify-content: center;
+      gap: var(--spacing-1);
+      padding: var(--spacing-1) 0;
     }
 
     .cyber-header__nav-btn {
@@ -247,6 +249,40 @@ const isWorks = currentPath.startsWith("/work");
       min-width: min-content;
       overflow: hidden;
       text-overflow: ellipsis;
+      padding: var(--spacing-2) clamp(var(--spacing-2), 3vw, var(--spacing-3));
+      font-size: 11px;
+      letter-spacing: 0.1em;
+    }
+
+    .cyber-header__lang {
+      width: 100%;
+      justify-content: center;
+      padding: var(--spacing-1) 0;
+    }
+  }
+
+  /* ==========================================================
+     RESPONSIVE ĐIỆN THOẠI RẤT NHỎ (< 360px)
+  ========================================================== */
+  @media (max-width: 359px) {
+    .cyber-header__nav-btn {
+      padding: var(--spacing-1) var(--spacing-2);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      min-height: 36px;
+    }
+
+    .cyber-header__logo-link :global(svg) {
+      height: var(--spacing-5);
+    }
+
+    .cyber-header__logo-link {
+      padding: 0 var(--spacing-3);
+      height: var(--spacing-10);
+    }
+
+    .cyber-header__right {
+      min-height: var(--spacing-10);
     }
   }
 
