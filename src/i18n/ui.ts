@@ -11,8 +11,8 @@ export const showDefaultLang = false;
 export const ui = {
   en: {
     'splash.artDirection': 'ART DIRECTION',
-    'splash.motionGraphics': 'MOTION',
-    'splash.illustration': 'ILLUST',
+    'splash.motionGraphics': 'MOTION DESIGN',
+    'splash.illustration': 'ILLUSTRATION',
     'splash.about': 'ABOUT',
     'splash.works': 'WORKS',
     'splash.continue': 'ENTER',
@@ -91,8 +91,8 @@ export const ui = {
   },
   ja: {
     'splash.artDirection': 'ART DIRECTION',
-    'splash.motionGraphics': 'MOTION',
-    'splash.illustration': 'ILLUST',
+    'splash.motionGraphics': 'MOTION DESIGN',
+    'splash.illustration': 'ILLUSTRATION',
     'splash.about': 'アバウト',
     'splash.works': 'ワークス',
     'splash.continue': 'サイトへ進む',
@@ -172,8 +172,8 @@ export const ui = {
   },
   vi: {
     'splash.artDirection': 'ART DIRECTION',
-    'splash.motionGraphics': 'MOTION',
-    'splash.illustration': 'ILLUST',
+    'splash.motionGraphics': 'MOTION DESIGN',
+    'splash.illustration': 'ILLUSTRATION',
     'splash.about': 'GIỚI THIỆU',
     'splash.works': 'DỰ ÁN',
     'splash.continue': 'KHÁM PHÁ',
