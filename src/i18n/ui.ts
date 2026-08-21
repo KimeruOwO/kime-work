@@ -16,17 +16,17 @@ export const ui = {
     'splash.about': 'ABOUT',
     'splash.works': 'WORKS',
     'splash.continue': 'ENTER',
-    
+
     'home.slogan.builtOn': 'BUILT ON',
     'home.slogan.rhythm': 'RHYTHM',
     'home.slogan.drivenBy': 'DRIVEN BY',
     'home.slogan.precision': 'PRECISION',
-    
+
     'home.pickupWorks': 'SELECTED WORKS',
     'home.pickupWorks.sub': 'Highlights',
     'home.featuredWorks': 'FEATURED WORKS',
     'home.otherWorks': 'OTHER WORKS',
-    
+
     'home.contact': 'CONTACT',
     'home.contact.sub': 'Get in touch',
     'home.contact.instruction': 'Please provide the following details for your inquiry:',
@@ -35,7 +35,7 @@ export const ui = {
     'home.contact.step3': 'Estimated budget',
     'home.contact.step4': 'Preferred contact method (Discord, Email, etc., include your ID/handle)',
     'home.contact.step5': 'Additional notes',
-    
+
     'about.aboutMe': 'ABOUT ME',
     'about.profile': 'PROFILE',
     'about.profile.sub': 'Biography',
@@ -43,12 +43,12 @@ export const ui = {
     'about.tools': 'SOFTWARE & TOOLS',
     'about.value': 'VALUES',
     'about.experience': 'EXPERIENCE',
-    'about.collab.professional': 'PROFESSIONAL',
-    'about.collab.charity': 'COMMUNITY',
-    'about.collab.independent': 'INDEPENDENT',
-    'about.badge.direction': 'DIRECTION',
+    'about.collab.professional': 'COMMERCIAL PROJECTS',
+    'about.collab.charity': 'COMMUNITY & CHARITY',
+    'about.collab.independent': 'ACADEMIC HONORS @ GREENWICH',
+    'about.badge.direction': 'ART DIRECTION',
     'about.badge.motion': 'MOTION DESIGN',
-    
+
     'works.title': 'WORKS',
     'works.filter': 'Filter',
     'works.all': 'ALL',
@@ -61,7 +61,7 @@ export const ui = {
     'works.featured': 'FEATURED',
     'works.musicVideo': 'MUSIC VIDEOS',
     'works.debut': 'TRAILERS & DEBUTS',
-    
+
     'motion.back': 'Back to Works',
     'motion.client': 'Client:',
     'motion.role': 'Role:',
@@ -69,7 +69,7 @@ export const ui = {
     'motion.description': 'DESCRIPTION',
     'motion.imagePreview': 'PREVIEW',
     'motion.projectDetails': 'PROJECT DETAILS',
-    
+
     'nav.home': 'HOME',
     'nav.works': 'WORKS',
     'nav.about': 'ABOUT',
@@ -96,17 +96,17 @@ export const ui = {
     'splash.about': 'アバウト',
     'splash.works': 'ワークス',
     'splash.continue': 'サイトへ進む',
-    
+
     'home.slogan.builtOn': '基盤にあるのは',
     'home.slogan.rhythm': 'リズム',
     'home.slogan.drivenBy': '突き動かすのは',
     'home.slogan.precision': '精緻さ',
-    
+
     'home.pickupWorks': 'PICK UP',
     'home.pickupWorks.sub': 'ピックアップ作品',
     'home.featuredWorks': 'FEATURED WORKS',
     'home.otherWorks': 'OTHER WORKS',
-    
+
     'home.contact': 'CONTACT',
     'home.contact.sub': 'お問い合わせ',
     'home.contact.instruction': 'お問い合わせの際は、以下の情報をご記載ください。',
@@ -115,7 +115,7 @@ export const ui = {
     'home.contact.step3': '想定ご予算',
     'home.contact.step4': 'ご希望の連絡手段（Discord、メール等のIDやリンク）',
     'home.contact.step5': 'その他・備考',
-    
+
     'about.aboutMe': 'ABOUT ME',
     'about.profile': 'PROFILE',
     'about.profile.sub': 'プロフィール',
@@ -123,12 +123,12 @@ export const ui = {
     'about.tools': '使用ツール',
     'about.value': '価値観',
     'about.experience': 'コラボ実績',
-    'about.collab.professional': 'プロフェッショナル',
-    'about.collab.charity': 'コミュニティ',
-    'about.collab.independent': '自主制作',
-    'about.badge.direction': 'ディレクション',
+    'about.collab.professional': '商業プロジェクト',
+    'about.collab.charity': 'コミュニティ＆チャリティ',
+    'about.collab.independent': '学術表彰 @ GREENWICH',
+    'about.badge.direction': 'アートディレクション',
     'about.badge.motion': 'モーションデザイン',
-    
+
     'works.title': 'WORKS',
     'works.filter': 'カテゴリーで絞り込む',
     'works.all': 'すべて',
@@ -142,7 +142,7 @@ export const ui = {
     'works.featured': '注目',
     'works.musicVideo': 'ミュージックビデオ',
     'works.debut': 'デビュー / トレイラー',
-    
+
     'motion.back': '作品一覧へ戻る',
     'motion.client': 'クライアント:',
     'motion.role': '役割:',
@@ -150,7 +150,7 @@ export const ui = {
     'motion.description': '説明',
     'motion.imagePreview': 'プレビュー',
     'motion.projectDetails': 'プロジェクト詳細',
-    
+
     'nav.home': 'HOME',
     'nav.works': 'WORKS',
     'nav.about': 'ABOUT',
@@ -177,17 +177,17 @@ export const ui = {
     'splash.about': 'GIỚI THIỆU',
     'splash.works': 'DỰ ÁN',
     'splash.continue': 'KHÁM PHÁ',
-    
+
     'home.slogan.builtOn': 'KIẾN TẠO TỪ',
     'home.slogan.rhythm': 'NHỊP ĐIỆU',
     'home.slogan.drivenBy': 'DẪN DẮT BỞI',
     'home.slogan.precision': 'SỰ TINH CHUẨN',
-    
+
     'home.pickupWorks': 'SELECTED WORKS',
     'home.pickupWorks.sub': 'DỰ ÁN TIÊU BIỂU',
     'home.featuredWorks': 'DỰ ÁN NỔI BẬT',
     'home.otherWorks': 'DỰ ÁN KHÁC',
-    
+
     'home.contact': 'CONTACT',
     'home.contact.sub': 'LIÊN HỆ',
     'home.contact.instruction': 'Vui lòng cung cấp các thông tin sau để tiện trao đổi:',
@@ -196,7 +196,7 @@ export const ui = {
     'home.contact.step3': 'Ngân sách dự kiến',
     'home.contact.step4': 'Kênh liên lạc (Discord, Email... kèm ID/Link)',
     'home.contact.step5': 'Ghi chú thêm (nếu có)',
-    
+
     'about.aboutMe': 'GIỚI THIỆU',
     'about.profile': 'PROFILE',
     'about.profile.sub': 'HỒ SƠ CÁ NHÂN',
@@ -204,12 +204,12 @@ export const ui = {
     'about.tools': 'CÔNG CỤ SỬ DỤNG',
     'about.value': 'GIÁ TRỊ',
     'about.experience': 'KINH NGHIỆM',
-    'about.collab.professional': 'THƯƠNG MẠI',
-    'about.collab.charity': 'CỘNG ĐỒNG',
-    'about.collab.independent': 'ĐỘC LẬP',
-    'about.badge.direction': 'CHỈ ĐẠO',
+    'about.collab.professional': 'DỰ ÁN THƯƠNG MẠI',
+    'about.collab.charity': 'CỘNG ĐỒNG & TỪ THIỆN',
+    'about.collab.independent': 'THÀNH TÍCH HỌC TẬP @ GREENWICH',
+    'about.badge.direction': 'ART DIRECTION',
     'about.badge.motion': 'MOTION',
-    
+
     'works.title': 'WORKS',
     'works.filter': 'Lọc theo danh mục',
     'works.all': 'TẤT CẢ',
@@ -222,7 +222,7 @@ export const ui = {
     'works.featured': 'NỔI BẬT',
     'works.musicVideo': 'VIDEO ÂM NHẠC',
     'works.debut': 'DEBUT / TRAILER',
-    
+
     'motion.back': 'Trở lại danh sách',
     'motion.client': 'Khách hàng:',
     'motion.role': 'Vai trò:',
@@ -230,7 +230,7 @@ export const ui = {
     'motion.description': 'MÔ TẢ',
     'motion.imagePreview': 'XEM TRƯỚC',
     'motion.projectDetails': 'CHI TIẾT DỰ ÁN',
-    
+
     'nav.home': 'HOME',
     'nav.works': 'WORKS',
     'nav.about': 'ABOUT',
