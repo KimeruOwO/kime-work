@@ -1,12 +1,12 @@
 ---
 // src/components/FilterMenu.astro
 import FilterIcon from "./icons/FilterIcon.astro";
-export interface FilterOption {
+interface FilterOption {
     label: string;
     value: string;
 }
 
-export interface Props {
+interface Props {
     title?: string;
     groupName: string;
     options: FilterOption[];

@@ -11,6 +11,9 @@ export default defineConfig({
         inlineStylesheets: 'never'
     },
     vite: {
+        server: {
+            allowedHosts: true
+        },
         build: {
             cssMinify: 'lightningcss',
             sourcemap: false,

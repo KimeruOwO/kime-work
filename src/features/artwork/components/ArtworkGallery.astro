@@ -93,7 +93,7 @@ const t = useTranslations(lang);
               groupName="artwork-filter"
               options={[
                 { label: t('works.all'), value: "all" },
-                { label: t('works.artwork'), value: "artwork" },
+                { label: t('works.graphicsDesign'), value: "graphics-design" },
                 { label: t('works.illustration'), value: "illustration" },
               ]}
             />
@@ -175,7 +175,7 @@ const t = useTranslations(lang);
     private _currentCat = "all";
     private _currentVis = "all";
     private _currentPage = 1;
-    private readonly _pageSize = 20;
+    private readonly _pageSize = 9999;
 
     constructor() {
       super();

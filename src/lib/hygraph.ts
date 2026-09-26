@@ -71,62 +71,90 @@ async function fetchAPI<T>(query: string, variables = {}): Promise<T> {
 }
 
 export async function fetchArtworks(): Promise<Artwork[]> {
-  const data = await fetchAPI<{ artworks: Artwork[] }>(`
-    query AllArtworks {
-      artworks(first: 100, skip: 0, stage: PUBLISHED, orderBy: createdAt_DESC) {
-        id
-        title
-        slug
-        linkPixiv
-        image {
-          url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 540, height: 540, fit: clip } } })
-          fullUrl: url
-          heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
+  const allData: Artwork[] = [];
+  let skip = 0;
+  const first = 100;
+  let hasMore = true;
+
+  while (hasMore) {
+    const data = await fetchAPI<{ artworks: Artwork[] }>(`
+      query AllArtworks($first: Int!, $skip: Int!) {
+        artworks(first: $first, skip: $skip, stage: PUBLISHED, orderBy: createdAt_DESC) {
+          id
+          title
+          slug
+          linkPixiv
+          image {
+            url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 540, height: 540, fit: clip } } })
+            fullUrl: url
+            heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
+          }
+          category { 
+              name 
+              slug 
+          }
+          isFeatured
         }
-        category { 
-            name 
-            slug 
-        }
-        isFeatured
       }
+    `, { first, skip });
+
+    allData.push(...data.artworks);
+    if (data.artworks.length < first) {
+      hasMore = false;
+    } else {
+      skip += first;
     }
-  `);
-  return data.artworks;
+  }
+  return allData;
 }
 
 export async function fetchVideos(): Promise<Video[]> {
-  const data = await fetchAPI<{ videos: Video[] }>(`
-    query AllVideos {
-      videos(first: 100, skip: 0, stage: PUBLISHED, orderBy: createdAt_DESC) {
-        id
-        title
-        slug
-        nameArtist
-        linkEmbed
-        linkFacebook
-        imageEmbed { 
-          url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1200, fit: clip } } })
-          fullUrl: url
-          heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
+  const allData: Video[] = [];
+  let skip = 0;
+  const first = 100;
+  let hasMore = true;
+
+  while (hasMore) {
+    const data = await fetchAPI<{ videos: Video[] }>(`
+      query AllVideos($first: Int!, $skip: Int!) {
+        videos(first: $first, skip: $skip, stage: PUBLISHED, orderBy: createdAt_DESC) {
+          id
+          title
+          slug
+          nameArtist
+          linkEmbed
+          linkFacebook
+          imageEmbed { 
+            url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1200, fit: clip } } })
+            fullUrl: url
+            heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
+          }
+          descCredit
+          descAbout
+          thumbnail {
+            url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 640, height: 360, fit: crop } } })
+            fullUrl: url
+            heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
+          }
+          imagePreview {
+            url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 960, height: 540, fit: clip } } })
+            fullUrl: url
+          }
+          category { name visibility }
+          isFeatured
         }
-        descCredit
-        descAbout
-        thumbnail {
-          url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 640, height: 360, fit: crop } } })
-          fullUrl: url
-          heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
-        }
-        imagePreview {
-          url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 960, height: 540, fit: clip } } })
-          fullUrl: url
-        }
-        category { name visibility }
-        isFeatured
       }
+    `, { first, skip });
+
+    allData.push(...data.videos);
+    if (data.videos.length < first) {
+      hasMore = false;
+    } else {
+      skip += first;
     }
-  `);
+  }
   
-  return data.videos.map((vid): Video => {
+  return allData.map((vid): Video => {
     let linkOriginal = vid.linkEmbed;
     
     if (vid.linkEmbed && vid.linkEmbed.includes("/embed/")) {
@@ -166,18 +194,32 @@ export interface Experience {
 }
 
 export async function fetchExperiences(): Promise<Experience[]> {
-  const data = await fetchAPI<{ experiences: Experience[] }>(`
-    query AllExperiences {
-      experiences(first: 100, stage: PUBLISHED, orderBy: sortOrder_DESC) {
-        id
-        category
-        year
-        description
-        sortOrder
+  const allData: Experience[] = [];
+  let skip = 0;
+  const first = 100;
+  let hasMore = true;
+
+  while (hasMore) {
+    const data = await fetchAPI<{ experiences: Experience[] }>(`
+      query AllExperiences($first: Int!, $skip: Int!) {
+        experiences(first: $first, skip: $skip, stage: PUBLISHED, orderBy: sortOrder_DESC) {
+          id
+          category
+          year
+          description
+          sortOrder
+        }
       }
+    `, { first, skip });
+
+    allData.push(...data.experiences);
+    if (data.experiences.length < first) {
+      hasMore = false;
+    } else {
+      skip += first;
     }
-  `);
-  return data.experiences;
+  }
+  return allData;
 }
 
 export interface SiteProfile {
