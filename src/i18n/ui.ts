@@ -131,7 +131,7 @@ export const ui = {
     'about.badge.motion': 'モーションデザイン',
 
     'works.title': 'WORKS',
-    'works.filter': 'フィルター',
+    'works.filter': 'カテゴリーで絞り込む',
     'works.all': 'すべて',
     'works.motion': 'モーション',
     'works.artwork': 'アートワーク',
@@ -212,7 +212,7 @@ export const ui = {
     'about.badge.motion': 'MOTION',
 
     'works.title': 'WORKS',
-    'works.filter': 'BỘ LỌC',
+    'works.filter': 'Lọc theo danh mục',
     'works.all': 'TẤT CẢ',
     'works.motion': 'MOTION',
     'works.artwork': 'ARTWORK',
