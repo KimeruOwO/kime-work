@@ -11,5 +11,25 @@ export function getStaticPaths() {
 const { lang } = Astro.params;
 const resolvedLang = lang || defaultLang;
 const redirectPath = resolvedLang === defaultLang && !showDefaultLang ? '/home' : `/${resolvedLang}/home`;
-return Astro.redirect(redirectPath);
 ---
+<!DOCTYPE html>
+<html lang={resolvedLang}>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content={`0;url=${redirectPath}`}>
+    <link rel="canonical" href={redirectPath}>
+    <title>Redirecting...</title>
+    <script define:vars={{ redirectPath }}>
+      window.location.replace(redirectPath);
+    </script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5; /* Light theme background */
+        display: none;
+      }
+    </style>
+  </head>
+  <body></body>
+</html>
