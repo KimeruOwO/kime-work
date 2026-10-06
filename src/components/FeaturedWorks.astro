@@ -1,0 +1,278 @@
+---
+import FsTagMotion from "./icons/FsTagMotion.astro";
+import FsPlayLinkPink from "./icons/FsPlayLinkPink.astro";
+import FsPlayLinkWhite from "./icons/FsPlayLinkWhite.astro";
+import { getRelativeLocaleUrl } from '../i18n/utils';
+
+const { featuredVideos, currentLang } = Astro.props;
+---
+
+<!-- FEATURED SECTION (nim.design style: fixed viewport + translateY) -->
+<section class="featured-works-section" aria-label="Featured Works" id="featured-works-section">
+  <!-- This viewport is position:sticky and clips the slides -->
+  <div class="fs-viewport">
+    <!-- translateY'd by JS -->
+    <div class="fs-inner" id="fs-inner">
+      {
+        featuredVideos.slice(0, 3).map((video: any, index: number) => (
+          <article class="featured-sticky-card">
+
+            <div class="fs-card-inner">
+              <!-- Watermark -->
+              <div class="fs-bg-watermark" aria-hidden="true">FEATURED</div>
+
+              <!-- Center/Right: Video -->
+              <div class="fs-video-area">
+                <a href={getRelativeLocaleUrl(currentLang, `work/motions/${video.slug}`)} class="fs-thumb-link" aria-label={`Watch ${video.title}`}>
+                  <div class="fs-thumb-frame">
+                    <img src={video.thumbnail.url} alt={video.title} loading="lazy" decoding="async" width="640" height="360" class="fs-thumb-img" />
+                  </div>
+                </a>
+              </div>
+
+              <!-- Bottom Left: Tags & Number & Titles & Play -->
+              <div class="fs-bottom-left">
+                <div class="fs-tags" style="margin-bottom: 20px;">
+                    <FsTagMotion type={index === 1 ? "pink" : "white"} />
+                  <div class="label">
+                    {video.category?.visibility === "Private" ? "Private" : "Public"}
+                  </div>
+                </div>
+                <div class="fs-number"><span class="mask-text">0{index + 1}</span></div>
+                <div class="fs-title-play-row">
+                  <div class="fs-titles">
+                    <h4 class="fs-artist"><span class="mask-text">{video.nameArtist}</span></h4>
+                    <h3 class="fs-title"><span class="mask-text decode-target" data-decode-text={video.title}>{video.title}</span></h3>
+                  </div>
+                  <div class="fs-play-link-group">
+                    {index === 1 ? <FsPlayLinkPink /> : <FsPlayLinkWhite />}
+                    <a href={getRelativeLocaleUrl(currentLang, `work/motions/${video.slug}`)} class="fs-play-overlay fs-play-overlay--play" aria-label={`Watch ${video.title}`}></a>
+                    <a href={getRelativeLocaleUrl(currentLang, "work/")} class="fs-play-overlay fs-play-overlay--more" aria-label="View More Works"></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<!-- MOBILE-ONLY: Cyber-Pop Diagonal Playlist -->
+<section class="fs-pop-mobile" aria-label="Featured Works">
+  <div class="fs-pop-list">
+    {featuredVideos.slice(0, 3).map((video: any, index: number) => (
+      <a href={getRelativeLocaleUrl(currentLang, `work/motions/${video.slug}`)} class={`fs-pop-card ${index === 1 ? 'fs-pop-card-alt' : ''}`} aria-label={`Watch ${video.title}`}>
+
+        <!-- Huge Watermark Number -->
+        <div class="fs-pop-watermark" aria-hidden="true">0{index + 1}</div>
+
+        <div class="fs-pop-thumb-box">
+          <div class="fs-pop-thumb-bg"></div>
+          <img src={video.thumbnail.url} alt={video.title} loading="lazy" decoding="async" width="640" height="360" class="fs-pop-thumb" />
+          <div class="fs-pop-thumb-cut"></div>
+        </div>
+
+        <div class="fs-pop-info">
+          <div class="fs-pop-meta">
+            <span class="fs-pop-tag">{video.category?.name?.toUpperCase() || "MOTION"}</span>
+          </div>
+          <h3 class="fs-pop-title">{video.title}</h3>
+          <p class="fs-pop-artist">{video.nameArtist}</p>
+        </div>
+
+
+      </a>
+    ))}
+  </div>
+</section>
+
+<script>
+  // --- FEATURED SNAP SCROLL ---
+  const initFeaturedSnap = () => {
+    const section = document.getElementById('featured-works-section');
+    const inner = document.getElementById('fs-inner');
+    if (!section || !inner) return;
+
+    // --- MOBILE BYPASS ---
+    if (window.innerWidth <= 1024) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-active');
+          }
+        });
+      }, { threshold: 0.2 });
+      Array.from(inner.children).forEach(child => observer.observe(child));
+      return;
+    }
+
+    // --- DESKTOP ANIMATION ENGINE ---
+    const SLIDE_COUNT = inner.children.length;
+    const ANIM_DURATION = 700;
+    const DELTA_THRESHOLD = 60;
+    let currentSlide = 0;
+    let isAnimating = false;
+    let wheelDelta = 0;
+    let activeSince = 0;
+
+    const goTo = (index: number) => {
+      const prev = currentSlide;
+      currentSlide = Math.max(0, Math.min(SLIDE_COUNT - 1, index));
+      if (prev === currentSlide) return;
+      inner.style.transform = `translateY(${-currentSlide * 100}%)`;
+
+      const prevChild = inner.children[prev];
+      const nextChild = inner.children[currentSlide];
+      if (prevChild) setTimeout(() => prevChild.classList.remove('is-active'), ANIM_DURATION);
+      if (nextChild) setTimeout(() => nextChild.classList.add('is-active'), 400);
+
+      isAnimating = true;
+      setTimeout(() => { isAnimating = false; }, ANIM_DURATION);
+    };
+
+    // --- FIRST SLIDE TRIGGER ---
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && currentSlide === 0) {
+          if (inner.children[0]) {
+            inner.children[0].classList.add('is-active');
+          }
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    observer.observe(section);
+
+    const isFeaturedActive = () => {
+      const r = section.getBoundingClientRect();
+      const active = r.top <= 1 && r.bottom >= window.innerHeight - 1;
+      if (active && activeSince === 0) {
+        activeSince = Date.now();
+      } else if (!active) {
+        activeSince = 0;
+      }
+      return active;
+    };
+
+    // --- WHEEL HANDLER ---
+    const onWheel = (e: WheelEvent) => {
+      if (!isFeaturedActive()) return;
+
+      if (Date.now() - activeSince < 800) {
+        e.preventDefault();
+        return;
+      }
+
+      if (isAnimating) {
+        e.preventDefault();
+        return;
+      }
+
+      const r = section.getBoundingClientRect();
+
+      if (currentSlide === SLIDE_COUNT - 1 && e.deltaY > 0) {
+        if (r.bottom > window.innerHeight + 5) {
+          window.scrollTo({
+            top: window.scrollY + r.bottom - window.innerHeight,
+            behavior: 'auto'
+          });
+        }
+        return;
+      }
+
+      if (currentSlide === 0 && e.deltaY < 0) {
+        if (r.top < -5) {
+          window.scrollTo({
+            top: window.scrollY + r.top,
+            behavior: 'auto'
+          });
+        }
+        return;
+      }
+
+      e.preventDefault();
+      let dY = e.deltaY;
+      if (e.deltaMode === 1) dY *= 33.33;
+      else if (e.deltaMode === 2) dY *= 100;
+      wheelDelta += dY;
+      if (Math.abs(wheelDelta) < DELTA_THRESHOLD) return;
+      const dir = wheelDelta > 0 ? 1 : -1;
+      wheelDelta = 0;
+      goTo(currentSlide + dir);
+    };
+
+    // --- TOUCH HANDLER ---
+    let touchY = 0;
+    const onTouchStart = (e: TouchEvent) => { touchY = e.touches[0].clientY; };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!isFeaturedActive()) return;
+
+      if (Date.now() - activeSince < 800) {
+        return;
+      }
+
+      const dy = touchY - e.changedTouches[0].clientY;
+      if (Math.abs(dy) < 30 || isAnimating) return;
+      const dir = dy > 0 ? 1 : -1;
+      
+      if (currentSlide === SLIDE_COUNT - 1 && dir > 0) {
+        const r = section.getBoundingClientRect();
+        if (r.bottom > window.innerHeight + 5) {
+          window.scrollTo({
+            top: window.scrollY + r.bottom - window.innerHeight,
+            behavior: 'auto'
+          });
+        }
+        return;
+      }
+      
+      if (currentSlide === 0 && dir < 0) {
+        const r = section.getBoundingClientRect();
+        if (r.top < -5) {
+          window.scrollTo({
+            top: window.scrollY + r.top,
+            behavior: 'auto'
+          });
+        }
+        return;
+      }
+      
+      goTo(currentSlide + dir);
+    };
+
+    // --- RESET OBSERVER ---
+    const resetObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting && entry.boundingClientRect.top > 0 && currentSlide !== 0) {
+          if (inner.children[currentSlide]) {
+            inner.children[currentSlide].classList.remove('is-active');
+          }
+          currentSlide = 0;
+          inner.style.transform = 'translateY(0)';
+          if (inner.children[0]) {
+            inner.children[0].classList.add('is-active');
+          }
+        }
+      }
+    }, { threshold: 0 });
+    resetObserver.observe(section);
+
+    // --- EVENT REGISTRATION ---
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    const cleanup = () => {
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchend', onTouchEnd);
+      resetObserver.disconnect();
+      document.removeEventListener('astro:before-swap', cleanup);
+    };
+    document.addEventListener('astro:before-swap', cleanup);
+  };
+
+  document.addEventListener('astro:page-load', initFeaturedSnap);
+</script>

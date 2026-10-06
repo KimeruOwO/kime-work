@@ -2,50 +2,47 @@
    GLOBAL VARIABLES (FLATTENED & PURGED)
    ========================================= */
 :root {
-  /* Primitive Colors */
+  /* --- PRIMITIVE COLORS --- */
   --base-gray-50: #f4f5f8;
   --base-gray-100: #f2f2f9;
   --base-white: #ffffff;
   --base-black-800: #01010d;
 
-  /* Semantic UI Colors  */
+  /* --- SEMANTIC UI COLORS --- */
   --bg-primary: var(--base-gray-50);
   --bg-secondary: var(--base-white);
   --color-tertiary: var(--base-gray-100);
 
   --text-primary: #046277;
-  /* base-cyan-700 */
+  
   --text-inverse: var(--base-white);
 
   --color-primary: #fa729d;
-  /* base-pink-500 */
+  
   --color-primary-light: #ff8ab1;
-  /* base-pink-400 */
 
   --color-black-active: var(--base-black-800);
 
   --color-secondary: #5ce1e6;
-  /* cyan-500 */
+  
   --color-secondary-bright: #29d0f6;
-  /* cyan-400 */
+  
   --checker-mask-uri: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEUlEQVR4nGNgYGD4z4AE/gMADwMB/5OV1yAAAAAASUVORK5CYII=");
   --checker-cell: 4px;
 
   --color-secondary-dark: #046277;
-  /* cyan-700 */
+  
   --color-secondary-darker: #005b6e;
-  /* cyan-800 */
+  
   --color-secondary-light: #7ae6fa;
-  /* cyan-300 */
+  
   --color-secondary-soft: #d4f4ff;
-  /* cyan-100 */
+  
   --color-secondary-medium: #8ce6ff;
-  /* cyan-200 */
 
   --color-accent-badge: #ff6b9e;
-  /* pink-600 */
 
-  /* Typography */
+  /* --- TYPOGRAPHY --- */
   --font-sans:
     "Murecho", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Arial, sans-serif;
@@ -65,7 +62,7 @@
   --text-8xl: 6rem;
   --text-super: 14rem;
 
-  /* Spacing */
+  /* --- SPACING --- */
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
   --spacing-3: 0.75rem;
@@ -84,7 +81,7 @@
   --spacing-48: 12rem;
   --spacing-60: 15rem;
 
-  /* Layout Structure */
+  /* --- LAYOUT STRUCTURE --- */
   --content-max-width: 90rem;
   --header-height-mobile: 4.5rem;
   --header-height-pc: 5rem;
@@ -106,7 +103,7 @@
   --border-width-md: 6px;
   --border-width-lg: 8px;
 
-  /* Retro Window Design Tokens (shared: InfoWindow, Lightbox) */
+  /* --- RETRO WINDOW DESIGN TOKENS (SHARED: INFOWINDOW, LIGHTBOX) --- */
   --win-border: var(--color-secondary-darker);
   --win-bg-header: var(--color-secondary-light);
   --win-bg-body: var(--bg-secondary);
@@ -141,7 +138,6 @@ dd {
   margin: 0;
 }
 
-/* 1. Standard CSS cho Firefox (Fallback) */
 @supports (-moz-appearance: none) {
   html {
     scrollbar-width: auto;
@@ -168,7 +164,7 @@ body {
   flex-direction: column;
   min-height: 100vh;
   line-height: 1.5;
-  /* Restore ClearType Subpixel rendering for Windows Variable Font interpolation */
+  
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
   text-rendering: optimizeLegibility;
@@ -250,7 +246,6 @@ a {
   padding: 0 clamp(var(--spacing-4), 5vw, var(--spacing-8));
 }
 
-/* Shared shimmer animation (used by MotionCard loader + [slug] preview) */
 @keyframes shimmer {
   0% {
     background-position: 200% 0;

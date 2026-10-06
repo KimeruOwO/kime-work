@@ -1,0 +1,67 @@
+---
+const { t } = Astro.props;
+---
+
+<!-- Kimeyu Core Slogan -->
+<section class="contact-quote-block" aria-label="Kimeyu Slogan">
+  <div class="quote-wrapper">
+    <h2 class="quote-text">
+      <span class="quote-line-wrap">
+        <span class="quote-line"
+          >{t("home.slogan.builtOn")}
+          <span class="text-cyan">{t("home.slogan.rhythm")}</span></span
+        >
+        <span class="qr-band qr-band--pink" aria-hidden="true"></span>
+      </span>
+      <span class="quote-line-wrap">
+        <span class="quote-line"
+          >{t("home.slogan.drivenBy")}
+          <span class="text-pink">{t("home.slogan.precision")}</span></span
+        >
+        <span class="qr-band qr-band--cyan" aria-hidden="true"></span>
+      </span>
+    </h2>
+  </div>
+</section>
+
+<!-- PICK UP WORKS BANNER -->
+<div class="decor-ribbon pickup-works-ribbon">
+  <div class="ribbon-pickup-label">
+    <span class="pickup-en">PICK-UP WORKS</span>
+    <span class="pickup-jp">{t("home.pickupWorks.sub")}</span>
+  </div>
+  <nav class="ribbon-nav-dots" aria-label="Page Navigation">
+    <button class="nav-dot nav-dot--active" aria-label="Section 1"></button>
+    <button class="nav-dot" aria-label="Section 2"></button>
+    <button class="nav-dot" aria-label="Section 3"></button>
+    <button class="nav-dot" aria-label="Section 4"></button>
+    <button class="nav-dot" aria-label="Section 5"></button>
+  </nav>
+  <div class="film-strip-bg" aria-hidden="true">
+    <div class="banner-strip banner-strip--inverted"></div>
+  </div>
+</div>
+
+<script>
+  // --- QUOTE REVEAL ON SCROLL ---
+  const initQuoteReveal = () => {
+    const section = document.querySelector<HTMLElement>(".contact-quote-block");
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            section.classList.add("is-revealed");
+            observer.disconnect();
+          }
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    observer.observe(section);
+  };
+
+  document.addEventListener("astro:page-load", initQuoteReveal);
+</script>

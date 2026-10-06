@@ -2,7 +2,12 @@
 import KimeLogo from "./icons/KimeLogo.astro";
 import KimeyuIcon from "./icons/KimeyuIcon.astro";
 import LanguagePicker from "./LanguagePicker.astro";
-import { getRouteFromUrl, getLangFromUrl, getRelativeLocaleUrl, useTranslations } from '../i18n/utils';
+import {
+  getRouteFromUrl,
+  getLangFromUrl,
+  getRelativeLocaleUrl,
+  useTranslations,
+} from "../i18n/utils";
 
 const currentLang = getLangFromUrl(Astro.url);
 const t = useTranslations(currentLang);
@@ -15,12 +20,11 @@ const isHome = currentPath === "/home" || currentPath === "/";
 const isWorks = currentPath.startsWith("/work");
 ---
 
-
 {
   !isHome && (
     <header class="cyber-header">
       <a
-        href={getRelativeLocaleUrl(currentLang, 'home')}
+        href={getRelativeLocaleUrl(currentLang, "")}
         class="cyber-header__logo-link"
         aria-label="Home"
         data-astro-prefetch="hover"
@@ -34,31 +38,31 @@ const isWorks = currentPath.startsWith("/work");
 
       <nav class="cyber-header__nav">
         <a
-          href={getRelativeLocaleUrl(currentLang, 'home')}
+          href={getRelativeLocaleUrl(currentLang, "")}
           class="cyber-header__nav-btn"
           aria-current={isHome ? "page" : undefined}
           data-astro-prefetch="hover"
         >
-          {t('nav.home')}
+          {t("nav.home")}
         </a>
 
         <a
-          href={getRelativeLocaleUrl(currentLang, 'work/')}
+          href={getRelativeLocaleUrl(currentLang, "work/")}
           class="cyber-header__nav-btn"
           aria-current={isWorks ? "page" : undefined}
           data-astro-prefetch="hover"
           data-works-link
         >
-          {t('nav.works')}
+          {t("nav.works")}
         </a>
 
         <a
-          href={getRelativeLocaleUrl(currentLang, 'about')}
+          href={getRelativeLocaleUrl(currentLang, "about")}
           class="cyber-header__nav-btn"
           aria-current={isAbout ? "page" : undefined}
           data-astro-prefetch="hover"
         >
-          {t('nav.about')}
+          {t("nav.about")}
         </a>
 
         <div class="cyber-header__lang">
@@ -68,12 +72,6 @@ const isWorks = currentPath.startsWith("/work");
     </header>
   )
 }
-
-<script>
-  document.addEventListener("astro:page-load", () => {
-    // No WORKS link override needed - SPA handles mode via URL param
-  });
-</script>
 
 <style>
   .cyber-header {
@@ -153,7 +151,8 @@ const isWorks = currentPath.startsWith("/work");
 
   .cyber-header__nav-btn {
     align-self: center;
-    padding: clamp(var(--spacing-3), 3vw, var(--spacing-2)) clamp(var(--spacing-3), 3vw, var(--spacing-4));
+    padding: clamp(var(--spacing-3), 3vw, var(--spacing-2))
+      clamp(var(--spacing-3), 3vw, var(--spacing-4));
     min-height: 44px;
     display: inline-flex;
     align-items: center;
@@ -230,7 +229,7 @@ const isWorks = currentPath.startsWith("/work");
   }
 
   /* ==========================================================
-     RESPONSIVE MOBILE NHỎ (< 480px) – ẩn pseudo để nhường chỗ cho lang picker
+     RESPONSIVE MOBILE (< 480px)
   ========================================================== */
   @media (max-width: 479px) {
     .cyber-header__nav::before,
@@ -246,7 +245,7 @@ const isWorks = currentPath.startsWith("/work");
 
     .cyber-header__nav-btn {
       flex-shrink: 1;
-      min-width: min-content;
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       padding: var(--spacing-2) clamp(var(--spacing-2), 3vw, var(--spacing-3));
@@ -262,7 +261,7 @@ const isWorks = currentPath.startsWith("/work");
   }
 
   /* ==========================================================
-     RESPONSIVE ĐIỆN THOẠI RẤT NHỎ (< 360px)
+     RESPONSIVE MOBILE MINI (< 360px)
   ========================================================== */
   @media (max-width: 359px) {
     .cyber-header__nav-btn {
@@ -287,7 +286,7 @@ const isWorks = currentPath.startsWith("/work");
   }
 
   /* ==========================================================
-     RESPONSIVE KHI VƯỢT QUA MOBILE NHỎ (>= 480px)
+     RESPONSIVE MOBILE (>= 480px)
   ========================================================== */
   @media (min-width: 480px) {
     .cyber-header__nav::before,

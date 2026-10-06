@@ -1,6 +1,3 @@
-/* src/styles/works-hero.css
-   Shared layout for Works hero banner (Motions + Artwork pages).
-   Consumed via scoped @import or direct class reference. */
 
 .works-hero-group {
   position: relative;

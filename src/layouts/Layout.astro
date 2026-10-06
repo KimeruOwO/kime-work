@@ -125,17 +125,13 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
 </style>
 
 <script>
-  const ROWS = 5; // Khối to vãi nồi theo ý mày
-  // Đẩy ga lên Max Speed - Cự ly kiếm lướt (Flash Wipe)
-  const EVENT_DUR = 450; // Quẹt vèo cái màn hình luôn
-  const ROW_DELAYS = [120, 0, 240, 60, 180]; // Scale bóp cực chặt để gợn sóng bám đuôi sát nút
-
-  // Tỷ lệ vàng mổ được từ TWXD:
+  const ROWS = 5;
+  const EVENT_DUR = 450;
+  const ROW_DELAYS = [120, 0, 240, 60, 180];
   const EASING = "cubic-bezier(0.77, 0, 0.175, 1)";
-  const STAGGER_DUR = 40; // 2 màng lướt đè nhau chênh lệch siêu nhỏ (40ms)
+  const STAGGER_DUR = 40;
 
-  // Build a panel grid. Panels start off-screen left, no transition yet.
-  // Always call activateEnter() AFTER (appendChild + void offsetHeight).
+  // --- GRID BUILDER ---
   const buildGrid = (zIndex: string): HTMLElement => {
     const grid = document.createElement("div");
     grid.style.cssText = [
@@ -156,7 +152,7 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
         "position:relative",
         "flex:1",
         "width:105%",
-        "margin-top:-1px", // Eliminate sub-pixel flex rounding gaps
+        "margin-top:-1px",
       ].join(";");
 
       const band2 = document.createElement("div");
@@ -174,7 +170,7 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
     return grid;
   };
 
-  // --- CORE ANIMATION ENGINE ---
+  // --- ANIMATION ENGINE ---
   const playWaveIn = (grid: HTMLElement): number => {
     const maxDelay = Math.max(...ROW_DELAYS);
     Array.from(grid.children).forEach((child) => {
@@ -208,8 +204,7 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
     return maxEndTime;
   };
 
-  // --- SPLASH ---
-  // plays once per session (hard load / reload only)
+  // --- SPLASH ENGINE ---
   let hasNavigated = false;
   const SPLASH_KEY = "kime-splash-played";
 
@@ -256,7 +251,6 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
 
         const fullyCoveredTime = playWaveIn(grid);
 
-        // Hide splash layer precisely when the SLOWEST panel has completely covered the screen!
         setTimeout(() => {
           splash.classList.add("gone");
           anim.destroy();
@@ -264,7 +258,6 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
 
           const exitTime = playWaveOut(grid);
 
-          // Clean up
           setTimeout(() => {
             grid.remove();
             document.documentElement.style.overflow = "";
@@ -278,12 +271,11 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
     }
   };
 
-  // --- PAGE TRANSITION ---
+  // --- TRANSITION ENGINE ---
   let navGrid: HTMLElement | null = null;
   let isModeSwitchNav = false;
   let pendingNavGrid: HTMLElement | null = null;
 
-  // Intercept View Transitions Navigation
   document.addEventListener("astro:before-preparation", (e: any) => {
     hasNavigated = true;
 
@@ -307,10 +299,8 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
     document.documentElement.appendChild(navGrid);
     void navGrid.offsetHeight;
 
-    // START WIPE IN PHASE
     const fullyCoveredTime = playWaveIn(navGrid);
 
-    // Let the network fetch proceed, but DELAY the actual DOM Swap until the wave reaches its peak
     const originalLoader = e.loader;
     e.loader = async () => {
       const waitPromise = new Promise((resolve) =>
@@ -320,7 +310,6 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
     };
   });
 
-  // Execute WIPE OUT PHASE post-swap securely
   document.addEventListener("astro:after-swap", () => {
     if (pendingNavGrid) {
       const exitTime = playWaveOut(pendingNavGrid);
@@ -339,12 +328,10 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
     }
   });
 
-  // Pre-hide New Splash immediately on DOM swap
   document.addEventListener("astro:before-swap", (e: any) => {
     e.newDocument.getElementById("splash-screen")?.classList.add("gone");
   });
 
-  // Navigation Complete Hook
   document.addEventListener("astro:page-load", () => {
     if (!hasNavigated) {
       initSplash();

@@ -617,7 +617,15 @@ const t = useTranslations(lang);
         if (fullSrc !== img.src) {
           const highResLoader = new Image();
           highResLoader.onload = () => {
-            if (dialogImg.src === img.src) dialogImg.src = fullSrc;
+            if (dialogImg.src === img.src) {
+              if (document.startViewTransition) {
+                document.startViewTransition(() => {
+                  dialogImg.src = fullSrc;
+                });
+              } else {
+                dialogImg.src = fullSrc;
+              }
+            }
           };
           highResLoader.src = fullSrc;
         }
@@ -714,7 +722,6 @@ const t = useTranslations(lang);
       border-top: 8px solid transparent;
       border-bottom: 8px solid transparent;
       border-right: clamp(10px, 1vw, 14px) solid var(--color-primary);
-      will-change: transform;
       transition:
         transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
         opacity 0.2s ease;

@@ -1,35 +1,122 @@
 ---
+import FsTagMotion from "../../components/icons/FsTagMotion.astro";
+import FsPlayLinkPink from "../../components/icons/FsPlayLinkPink.astro";
+import FsPlayLinkWhite from "../../components/icons/FsPlayLinkWhite.astro";
+import Layout from "../../layouts/Layout.astro";
+import KimeSplash from "../../components/KimeSplash.astro";
+import CyberRibbon from "../../components/CyberRibbon.astro";
+import KimeyuIcon from "../../components/icons/KimeyuIcon.astro";
 import { languages, defaultLang, showDefaultLang } from '../../i18n/ui';
+import { useTranslations, getRelativeLocaleUrl } from '../../i18n/utils';
+import { fetchVideos, fetchArtworks, fetchSiteProfile } from "../../lib/hygraph";
+import '../../styles/home.css';
+
+import HeroSection from '../../components/HeroSection.astro';
+import FeaturedWorks from '../../components/FeaturedWorks.astro';
+import OtherWorks from '../../components/OtherWorks.astro';
+import ContactSection from '../../components/ContactSection.astro';
 
 export function getStaticPaths() {
-  const paths = Object.keys(languages).map((lang) => {
-    return { params: { lang: lang === defaultLang && !showDefaultLang ? undefined : lang } };
-  });
-  return paths;
+  return Object.keys(languages).map((lang) => ({
+    params: { lang: lang === defaultLang && !showDefaultLang ? undefined : lang }
+  }));
 }
 
 const { lang } = Astro.params;
-const resolvedLang = lang || defaultLang;
-const redirectPath = resolvedLang === defaultLang && !showDefaultLang ? '/home' : `/${resolvedLang}/home`;
----
-<!DOCTYPE html>
-<html lang={resolvedLang}>
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content={`0;url=${redirectPath}`}>
-    <link rel="canonical" href={redirectPath}>
-    <title>Redirecting...</title>
-    <script define:vars={{ redirectPath }}>
-      window.location.replace(redirectPath);
-    </script>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        background-color: #f5f5f5; /* Light theme background */
-        display: none;
+const currentLang = (lang || defaultLang) as keyof typeof languages;
+const t = useTranslations(currentLang);
+
+// FETCH HERO SLIDER DATA
+const [allVideos, allArtworks, profileData] = await Promise.all([
+  fetchVideos(),
+  fetchArtworks(),
+  fetchSiteProfile().catch(() => null),
+]);
+
+// Social Links Fallbacks
+const discordLink = profileData?.linkDiscord || "https://discord.com/users/683574461147906078";
+const discordHandle = profileData?.handleDiscord || "kimeyu_39";
+
+const xLink = profileData?.linkX || "https://twitter.com/Kimeru2001";
+const xHandle = profileData?.handleX || "@Kimeru2001";
+
+const fbLink = profileData?.linkFacebook || "https://facebook.com/kimerukirisu/";
+const fbHandle = profileData?.handleFacebook || "facebook.com/kimerukirisu/";
+
+const emailLink = profileData?.linkEmail || "mailto:kimeyukawa@gmail.com";
+const emailHandle = profileData?.handleEmail || "kimeyukawa@gmail.com";
+
+const vMusic = allVideos.find((v) => v.category?.name?.includes("MusicVideos"));
+const vDebut = allVideos.find((v) => v.category?.name?.includes("Debut"));
+const aIllust = allArtworks.find((a) => a.category?.name === "Illustration");
+
+const heroSlides = [
+  vMusic
+    ? {
+        url:
+          vMusic.imageEmbed?.[0]?.heroUrl ||
+          vMusic.thumbnail?.heroUrl ||
+          vMusic.thumbnail?.fullUrl ||
+          vMusic.thumbnail?.url,
+        link: vMusic.linkOriginal || `/work/motions/${vMusic.slug}`,
+        target: "_blank",
       }
-    </style>
-  </head>
-  <body></body>
-</html>
+    : null,
+  vDebut
+    ? {
+        url:
+          vDebut.imageEmbed?.[0]?.heroUrl ||
+          vDebut.thumbnail?.heroUrl ||
+          vDebut.thumbnail?.fullUrl ||
+          vDebut.thumbnail?.url,
+        link: vDebut.linkOriginal || `/work/motions/${vDebut.slug}`,
+        target: "_blank",
+      }
+    : null,
+  aIllust
+    ? {
+        url:
+          aIllust.image?.heroUrl ||
+          aIllust.image?.fullUrl ||
+          aIllust.image?.url,
+        link: aIllust.linkPixiv || `/work/?mode=artwork`,
+        target: "_blank",
+      }
+    : null,
+].filter((s): s is { url: string; link: string; target: string } =>
+  Boolean(s && s.url),
+);
+
+// Extract FEATURED videos
+const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
+---
+
+<Layout title="kimeyu.work">
+  <div class="contact-page-wrapper">
+    <KimeSplash />
+
+    <!-- TOP DECOR RIBBON -->
+    <div class="decor-ribbon" aria-hidden="true">
+      <div class="film-strip-bg" aria-hidden="true">
+        <!-- Running left to right -->
+        <div class="banner-strip"></div>
+      </div>
+    </div>
+
+    <HeroSection t={t} />
+    <FeaturedWorks featuredVideos={featuredVideos} currentLang={currentLang} />
+    <OtherWorks currentLang={currentLang} />
+    <ContactSection
+      t={t}
+      currentLang={currentLang}
+      discordLink={discordLink}
+      discordHandle={discordHandle}
+      xLink={xLink}
+      xHandle={xHandle}
+      fbLink={fbLink}
+      fbHandle={fbHandle}
+      emailLink={emailLink}
+      emailHandle={emailHandle}
+    />
+  </div>
+</Layout>

@@ -108,7 +108,10 @@ const t = useTranslations(lang);
 </section>
 
 <script>
-  // Script to scroll down from Splash to the main content (Hero Slider)
+  // --- SPLASH SCROLL TO CONTENT ---
+  let rAFId: number | null = null;
+  let activeObserver: IntersectionObserver | null = null;
+
   document.addEventListener("astro:page-load", () => {
     const continueBtn = document.getElementById("splashContinueBtn");
 
@@ -117,10 +120,10 @@ const t = useTranslations(lang);
         const targetSection = document.querySelector(".featured-works-section");
         if (!targetSection) return;
 
-        const targetPosition =
-          targetSection.getBoundingClientRect().top + window.scrollY;
+        if (rAFId) cancelAnimationFrame(rAFId);
+
         const startPosition = window.scrollY;
-        const distance = targetPosition - startPosition;
+        const distance = targetSection.getBoundingClientRect().top;
         const duration = 1200;
         let start: number | null = null;
 
@@ -134,11 +137,13 @@ const t = useTranslations(lang);
           window.scrollTo(0, startPosition + distance * easeOutQuart(progress));
 
           if (timeElapsed < duration) {
-            requestAnimationFrame(animation);
+            rAFId = requestAnimationFrame(animation);
+          } else {
+            rAFId = null;
           }
         };
 
-        requestAnimationFrame(animation);
+        rAFId = requestAnimationFrame(animation);
       });
     }
 
@@ -148,7 +153,7 @@ const t = useTranslations(lang);
     if (splashVideo) {
       splashVideo.load();
 
-      const observer = new IntersectionObserver(
+      activeObserver = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
             splashVideo.play().catch(() => {});
@@ -159,8 +164,14 @@ const t = useTranslations(lang);
         { threshold: 0.1 },
       );
 
-      observer.observe(splashVideo);
+      activeObserver.observe(splashVideo);
     }
+  });
+
+  // --- GC CLEANUP ---
+  document.addEventListener("astro:before-swap", () => {
+    if (rAFId) cancelAnimationFrame(rAFId);
+    if (activeObserver) activeObserver.disconnect();
   });
 </script>
 
@@ -203,7 +214,6 @@ const t = useTranslations(lang);
     pointer-events: none;
     opacity: 1;
     transform: translateZ(0);
-    will-change: transform;
     backface-visibility: hidden;
   }
 
