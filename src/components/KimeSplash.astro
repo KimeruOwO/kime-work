@@ -108,7 +108,6 @@ const t = useTranslations(lang);
 </section>
 
 <script>
-  // --- SPLASH SCROLL TO CONTENT ---
   let rAFId: number | null = null;
   let activeObserver: IntersectionObserver | null = null;
 
@@ -116,30 +115,48 @@ const t = useTranslations(lang);
     const continueBtn = document.getElementById("splashContinueBtn");
 
     if (continueBtn) {
-      continueBtn.addEventListener("click", () => {
-        const targetSection = document.querySelector(".featured-works-section");
+      continueBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        let targetSection = document.querySelector(".featured-works-section");
+        
+        if (targetSection && window.getComputedStyle(targetSection).display === "none") {
+          targetSection = document.querySelector(".contact-quote-block");
+        }
+
         if (!targetSection) return;
 
         if (rAFId) cancelAnimationFrame(rAFId);
 
         const startPosition = window.scrollY;
-        const distance = targetSection.getBoundingClientRect().top;
+        let targetY = targetSection.getBoundingClientRect().top + window.scrollY;
+        const distance = targetY - startPosition;
         const duration = 1200;
         let start: number | null = null;
 
         const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
 
+        const abortHandler = () => {
+          if (rAFId) cancelAnimationFrame(rAFId);
+          rAFId = null;
+          window.removeEventListener('wheel', abortHandler);
+          window.removeEventListener('touchstart', abortHandler);
+        };
+        window.addEventListener('wheel', abortHandler, { passive: true });
+        window.addEventListener('touchstart', abortHandler, { passive: true });
+
         const animation = (currentTime: number) => {
           if (start === null) start = currentTime;
           const timeElapsed = currentTime - start;
           const progress = Math.min(timeElapsed / duration, 1);
-
+          
           window.scrollTo(0, startPosition + distance * easeOutQuart(progress));
 
           if (timeElapsed < duration) {
             rAFId = requestAnimationFrame(animation);
           } else {
             rAFId = null;
+            window.removeEventListener('wheel', abortHandler);
+            window.removeEventListener('touchstart', abortHandler);
           }
         };
 
@@ -150,6 +167,7 @@ const t = useTranslations(lang);
     const splashVideo = document.querySelector(
       ".kime-splash__video",
     ) as HTMLVideoElement;
+    
     if (splashVideo) {
       splashVideo.load();
 
@@ -168,7 +186,6 @@ const t = useTranslations(lang);
     }
   });
 
-  // --- GC CLEANUP ---
   document.addEventListener("astro:before-swap", () => {
     if (rAFId) cancelAnimationFrame(rAFId);
     if (activeObserver) activeObserver.disconnect();
