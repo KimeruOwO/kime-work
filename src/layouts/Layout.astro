@@ -13,7 +13,7 @@ interface Props {
 
 const SITE_URL = "https://kimeyu.vercel.app";
 const DEFAULT_DESC =
-  "Beyond shapes, a hidden frequency. Every frame, a destination. Every rhythm, a heartbeat. Flawless harmony between graphics and sound. Catch it if you can. â€” Hi! I'm KIMEYU!";
+  "Beyond shapes, a hidden frequency. Every frame, a destination. Every rhythm, a heartbeat. Flawless harmony between graphics and sound. Catch it if you can. — Hi! I'm KIMEYU!";
 
 const {
   title,
@@ -22,6 +22,7 @@ const {
 } = Astro.props;
 
 const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
+const isHome = Astro.url.pathname === "/" || /^\/(?:en|ja|vi)\/?$/.test(Astro.url.pathname);
 ---
 
 <!doctype html>
@@ -62,14 +63,45 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
     />
     <meta name="twitter:image" property="twitter:image" content={ogImage} />
 
-    <ClientRouter />
+    <ClientRouter fallback="swap" />
+
+    <script is:inline>
+      if (sessionStorage.getItem("kime-splash-played")) {
+        document.documentElement.classList.add("splash-done");
+      }
+    </script>
 
     <slot name="head" />
   </head>
   <body>
-    <div id="splash-screen" aria-hidden="true">
-      <div id="splash-lottie"></div>
+    {isHome && (
+      <div id="splash-screen" aria-hidden="true">
+        <div id="splash-lottie"></div>
+      </div>
+    )}
+
+    <div
+      id="kime-nav-overlay"
+      transition:persist="nav-overlay"
+      aria-hidden="true"
+    >
+      <div class="kime-row" style="--d: 0.24s">
+        <div></div><div></div><div></div>
+      </div>
+      <div class="kime-row" style="--d: 0s">
+        <div></div><div></div><div></div>
+      </div>
+      <div class="kime-row" style="--d: 0.48s">
+        <div></div><div></div><div></div>
+      </div>
+      <div class="kime-row" style="--d: 0.12s">
+        <div></div><div></div><div></div>
+      </div>
+      <div class="kime-row" style="--d: 0.36s">
+        <div></div><div></div><div></div>
+      </div>
     </div>
+
     <SvgDefs />
     <Header />
     <main>
@@ -80,20 +112,20 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
   </body>
 </html>
 
-<style>
-
+<style is:global>
   #splash-screen {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: 99999;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
+    background: #f2f2f9;
   }
 
-  #splash-screen.gone {
-    display: none;
+  #splash-screen.gone,
+  html.splash-done #splash-screen {
+    display: none !important;
   }
 
   #splash-lottie {
@@ -106,135 +138,181 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
     text-align: center;
   }
 
-  @keyframes twxd-wave-in {
-    0% {
-      transform: translateX(-100%);
+  #kime-nav-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .kime-row {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 21%;
+  }
+
+  .kime-row:nth-child(1) { top: 0; }
+  .kime-row:nth-child(2) { top: 20%; }
+  .kime-row:nth-child(3) { top: 40%; }
+  .kime-row:nth-child(4) { top: 60%; }
+  .kime-row:nth-child(5) { top: 80%; }
+
+  .kime-row div {
+    position: absolute;
+    inset: 0;
+    transform: translateX(101%);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .kime-row div:nth-child(1) {
+    background-color: #66e8ff;
+    z-index: 1;
+  }
+  .kime-row div:nth-child(2) {
+    background-color: #fa729d;
+    z-index: 2;
+  }
+  .kime-row div:nth-child(3) {
+    background-color: #f2f2f9;
+    z-index: 3;
+  }
+
+  #kime-nav-overlay.is-active,
+  #kime-nav-overlay.is-covered,
+  #kime-nav-overlay.is-revealing {
+    pointer-events: auto;
+  }
+
+  #kime-nav-overlay.is-covered .kime-row div {
+    transform: translateX(0%);
+    animation: none;
+  }
+
+  #kime-nav-overlay.is-revealing .kime-row div {
+    animation: kime-reveal 0.8s cubic-bezier(0.94, 0.01, 0.12, 0.98) both;
+  }
+  #kime-nav-overlay.is-revealing .kime-row div:nth-child(3) {
+    animation-delay: calc(0s + var(--d));
+  }
+  #kime-nav-overlay.is-revealing .kime-row div:nth-child(2) {
+    animation-delay: calc(0.15s + var(--d));
+  }
+  #kime-nav-overlay.is-revealing .kime-row div:nth-child(1) {
+    animation-delay: calc(0.3s + var(--d));
+  }
+
+  @keyframes kime-reveal {
+    from {
+      transform: translateX(0%);
     }
-    100% {
-      transform: translateX(0);
+    to {
+      transform: translateX(101%);
     }
   }
-  @keyframes twxd-wave-out {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(100vw);
-    }
-  }
+
+
 </style>
 
 <script>
-  const ROWS = 5;
-  const EVENT_DUR = 450;
-  const ROW_DELAYS = [120, 0, 240, 60, 180];
-  const EASING = "cubic-bezier(0.77, 0, 0.175, 1)";
-  const STAGGER_DUR = 40;
+  const SPLASH_KEY: string = "kime-splash-played";
+  let isSplashRunning: boolean = false;
+  let activeLottie: any = null;
+  let isModeSwitchNav: boolean = false;
+  let revealTimer: ReturnType<typeof setTimeout> | null = null;
+  let activeEndListener: ((e: AnimationEvent) => void) | null = null;
 
-  // --- GRID BUILDER ---
-  const buildGrid = (zIndex: string): HTMLElement => {
-    const grid = document.createElement("div");
-    grid.style.cssText = [
-      "position:fixed",
-      "inset:0",
-      "display:flex",
-      "flex-direction:column",
-      "pointer-events:none",
-      `z-index:${zIndex}`,
-    ].join(";");
-    for (let i = 0; i < ROWS; i++) {
-      const panel = document.createElement("div");
-
-      const delay = ROW_DELAYS[i % 5];
-      panel.dataset.delay = delay.toString();
-
-      panel.style.cssText = [
-        "position:relative",
-        "flex:1",
-        "width:105%",
-        "margin-top:-1px",
-      ].join(";");
-
-      const band2 = document.createElement("div");
-      band2.className = "nav-band-2";
-      band2.style.cssText = `position:absolute; inset:0; background:${i % 2 === 0 ? "#7ae6fa" : "#fa729d"}; transform:translateX(-100%); will-change:transform; backface-visibility:hidden; -webkit-backface-visibility:hidden;`;
-
-      const band3 = document.createElement("div");
-      band3.className = "nav-band-3";
-      band3.style.cssText = `position:absolute; inset:0; background:${i % 2 === 0 ? "#fa729d" : "#7ae6fa"}; transform:translateX(-100%); will-change:transform; backface-visibility:hidden; -webkit-backface-visibility:hidden;`;
-
-      panel.appendChild(band2);
-      panel.appendChild(band3);
-      grid.appendChild(panel);
+  const killSplash = (): void => {
+    isSplashRunning = false;
+    if (activeLottie) {
+      try {
+        activeLottie.destroy();
+      } catch {}
+      activeLottie = null;
     }
-    return grid;
+    const splash = document.getElementById("splash-screen");
+    splash?.classList.add("gone");
+    splash?.remove();
+    document.documentElement.classList.add("splash-done");
   };
 
-  // --- ANIMATION ENGINE ---
-  const playWaveIn = (grid: HTMLElement): number => {
-    const maxDelay = Math.max(...ROW_DELAYS);
-    Array.from(grid.children).forEach((child) => {
-      const el = child as HTMLElement;
-      const delay = Number(el.dataset.delay);
-      const b2 = el.querySelector(".nav-band-2") as HTMLElement;
-      const b3 = el.querySelector(".nav-band-3") as HTMLElement;
+  const playReveal = (): void => {
+    const overlay = document.getElementById("kime-nav-overlay");
+    if (!overlay) return;
 
-      b2.style.animation = `${EVENT_DUR}ms ${EASING} ${delay}ms 1 normal both running twxd-wave-in`;
-      b3.style.animation = `${EVENT_DUR}ms ${EASING} ${delay + STAGGER_DUR}ms 1 normal both running twxd-wave-in`;
-    });
-    return maxDelay + STAGGER_DUR + EVENT_DUR;
-  };
+    if (revealTimer) {
+      clearTimeout(revealTimer);
+      revealTimer = null;
+    }
+    if (activeEndListener) {
+      overlay.removeEventListener("animationend", activeEndListener);
+      activeEndListener = null;
+    }
 
-  const playWaveOut = (grid: HTMLElement): number => {
-    let maxEndTime = 0;
-    Array.from(grid.children).forEach((child) => {
-      const el = child as HTMLElement;
-      const delay = Number(el.dataset.delay);
-      const b2 = el.querySelector(".nav-band-2") as HTMLElement;
-      const b3 = el.querySelector(".nav-band-3") as HTMLElement;
+    overlay.classList.remove("is-covered");
+    void overlay.offsetHeight;
+    overlay.classList.add("is-revealing");
 
-      b2.style.animation = `${EVENT_DUR}ms ${EASING} ${delay + STAGGER_DUR}ms 1 normal both running twxd-wave-out`;
-      b3.style.animation = `${EVENT_DUR}ms ${EASING} ${delay}ms 1 normal both running twxd-wave-out`;
-
-      const totalTime = delay + STAGGER_DUR + EVENT_DUR;
-      if (totalTime > maxEndTime) {
-        maxEndTime = totalTime;
+    let done = false;
+    const cleanup = () => {
+      if (done) return;
+      done = true;
+      if (revealTimer) {
+        clearTimeout(revealTimer);
+        revealTimer = null;
       }
-    });
-    return maxEndTime;
-  };
+      if (activeEndListener) {
+        overlay.removeEventListener("animationend", activeEndListener);
+        activeEndListener = null;
+      }
+      overlay.classList.remove("is-active", "is-revealing", "is-covered");
+      if (!isSplashRunning) {
+        document.documentElement.style.overflow = "";
+      }
+    };
 
-  // --- SPLASH ENGINE ---
-  let hasNavigated = false;
-  const SPLASH_KEY = "kime-splash-played";
+    activeEndListener = (e: AnimationEvent) => {
+      const row3Child1 = overlay.querySelector(".kime-row:nth-child(3) div:nth-child(1)");
+      if (e.target === row3Child1) {
+        cleanup();
+      }
+    };
+    overlay.addEventListener("animationend", activeEndListener);
+    revealTimer = setTimeout(cleanup, 1700);
+  };
 
   const initSplash = async (): Promise<void> => {
-    if (sessionStorage.getItem(SPLASH_KEY)) {
-      document.getElementById("splash-screen")?.classList.add("gone");
+    const isHome = location.pathname === "/" || /^\/(?:en|ja|vi)\/?$/.test(location.pathname);
+    if (!isHome || sessionStorage.getItem(SPLASH_KEY) || isSplashRunning) {
+      killSplash();
       return;
     }
 
-    const splash = document.getElementById(
-      "splash-screen",
-    ) as HTMLElement | null;
-    if (!splash) return;
+    const splash = document.getElementById("splash-screen");
+    const lottieContainer = document.getElementById("splash-lottie");
+    if (!splash || !lottieContainer) {
+      killSplash();
+      return;
+    }
 
+    isSplashRunning = true;
     splash.classList.remove("gone");
-    splash.style.cssText = "";
+    document.documentElement.style.overflow = "hidden";
 
-    const lottieContainer = document.getElementById(
-      "splash-lottie",
-    ) as HTMLElement | null;
-    if (!lottieContainer) return;
-    lottieContainer.style.display = "";
+    const overlay = document.getElementById("kime-nav-overlay");
+    overlay?.classList.add("is-covered");
 
     try {
-      const lottieModule = await import("lottie-web");
+      const lottieModule = await import("lottie-web/build/player/lottie_svg");
       const lottie = lottieModule.default || lottieModule;
-      document.documentElement.style.overflow = "hidden";
       lottie.destroy();
 
-      const anim = lottie.loadAnimation({
+      if (!isSplashRunning) return;
+
+      activeLottie = lottie.loadAnimation({
         container: lottieContainer,
         renderer: "svg",
         loop: false,
@@ -242,108 +320,89 @@ const canonicalURL = `${SITE_URL}${Astro.url.pathname}`;
         path: "/lottie/webloading.json",
       });
 
-      anim.addEventListener("complete", () => {
+      activeLottie.addEventListener("complete", () => {
+        if (!isSplashRunning) return;
         sessionStorage.setItem(SPLASH_KEY, "1");
-
-        const grid = buildGrid("999999");
-        document.body.appendChild(grid);
-        void grid.offsetHeight;
-
-        const fullyCoveredTime = playWaveIn(grid);
-
-        setTimeout(() => {
-          splash.classList.add("gone");
-          anim.destroy();
-          lottieContainer.style.display = "none";
-
-          const exitTime = playWaveOut(grid);
-
-          setTimeout(() => {
-            grid.remove();
-            document.documentElement.style.overflow = "";
-          }, exitTime + 50);
-        }, fullyCoveredTime + 20);
+        killSplash();
+        playReveal();
       });
     } catch (err) {
-      splash.classList.add("gone");
+      killSplash();
+      overlay?.classList.remove("is-covered");
       document.documentElement.style.overflow = "";
       console.error("[Splash]", err);
     }
   };
 
-  // --- TRANSITION ENGINE ---
-  let navGrid: HTMLElement | null = null;
-  let isModeSwitchNav = false;
-  let pendingNavGrid: HTMLElement | null = null;
-
   document.addEventListener("astro:before-preparation", (e: any) => {
-    hasNavigated = true;
+    if (isSplashRunning) killSplash();
 
     const fromPath = e.from?.pathname ?? "";
     const toPath = e.to?.pathname ?? "";
-    
-    const stripLang = (p: string) => p.replace(/^\/(?:en|ja|vi)(?=\/|$)/, "");
-    const fromRoute = stripLang(fromPath);
-    const toRoute = stripLang(toPath);
-    
-    const isLangSwitch = fromPath !== toPath && fromRoute === toRoute;
-    isModeSwitchNav = isLangSwitch || (fromRoute.startsWith("/work/") && toRoute.startsWith("/work/"));
-    
-    if (isModeSwitchNav) return;
 
-    navGrid?.remove();
-
-    navGrid = buildGrid("999999");
-    pendingNavGrid = navGrid;
-    document.documentElement.style.overflow = "hidden";
-    document.documentElement.appendChild(navGrid);
-    void navGrid.offsetHeight;
-
-    const fullyCoveredTime = playWaveIn(navGrid);
-
-    const originalLoader = e.loader;
-    e.loader = async () => {
-      const waitPromise = new Promise((resolve) =>
-        setTimeout(resolve, fullyCoveredTime + 20),
-      );
-      await Promise.all([originalLoader(), waitPromise]);
+    const normalizeRoute = (p: string) => {
+      const stripped = p.replace(/^\/(?:en|ja|vi)(?=\/|$)/, "") || "/";
+      return stripped.length > 1 && stripped.endsWith("/") ? stripped.slice(0, -1) : stripped;
     };
-  });
 
-  document.addEventListener("astro:after-swap", () => {
-    if (pendingNavGrid) {
-      const exitTime = playWaveOut(pendingNavGrid);
-      const activeGrid = pendingNavGrid;
-      pendingNavGrid = null;
+    const fromRoute = normalizeRoute(fromPath);
+    const toRoute = normalizeRoute(toPath);
 
-      setTimeout(() => {
-        activeGrid.remove();
-        if (activeGrid === navGrid) navGrid = null;
-        if (
-          document.getElementById("splash-screen")?.classList.contains("gone")
-        ) {
-          document.documentElement.style.overflow = "";
-        }
-      }, exitTime + 50);
-    }
-  });
-
-  document.addEventListener("astro:before-swap", (e: any) => {
-    e.newDocument.getElementById("splash-screen")?.classList.add("gone");
-  });
-
-  document.addEventListener("astro:page-load", () => {
-    if (!hasNavigated) {
-      initSplash();
+    if (fromRoute === toRoute && e.from?.search === e.to?.search) {
+      isModeSwitchNav = true;
       return;
     }
 
-    hasNavigated = false;
-    document.getElementById("splash-screen")?.classList.add("gone");
+    isModeSwitchNav =
+      (fromRoute.startsWith("/work") && toRoute.startsWith("/work"));
 
+    if (isModeSwitchNav) return;
+
+    const overlay = document.getElementById("kime-nav-overlay");
+    overlay?.classList.add("is-active");
+  });
+
+  document.addEventListener("astro:before-swap", (e: any) => {
+    e.newDocument.getElementById("splash-screen")?.remove();
+    e.newDocument.documentElement.classList.add("splash-done");
+
+    if (isModeSwitchNav) {
+      const overlay = document.getElementById("kime-nav-overlay");
+      overlay?.classList.remove("is-active");
+      return;
+    }
+
+    if (revealTimer) {
+      clearTimeout(revealTimer);
+      revealTimer = null;
+    }
+
+    const overlay = document.getElementById("kime-nav-overlay");
+    if (overlay) {
+      if (activeEndListener) {
+        overlay.removeEventListener("animationend", activeEndListener);
+        activeEndListener = null;
+      }
+      overlay.classList.remove("is-revealing");
+      void overlay.offsetHeight;
+      overlay.classList.add("is-covered");
+    }
+  });
+
+  document.addEventListener("astro:after-swap", () => {
+    if (isModeSwitchNav) return;
+    playReveal();
+  });
+
+  document.addEventListener("astro:page-load", () => {
     if (isModeSwitchNav) {
       isModeSwitchNav = false;
       document.documentElement.style.overflow = "";
+      document.getElementById("splash-screen")?.remove();
+      const overlay = document.getElementById("kime-nav-overlay");
+      overlay?.classList.remove("is-active");
+      return;
     }
+    initSplash();
   });
 </script>

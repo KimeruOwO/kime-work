@@ -26,3 +26,6 @@ pnpm-debug.log*
 
 # learning materials (not production code)
 JS/
+
+GEMINI.md
+PROJECT_AUDIT_DUMP.md

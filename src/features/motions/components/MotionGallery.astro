@@ -248,8 +248,13 @@ const t = useTranslations(lang);
       const start = (this._currentPage - 1) * this._pageSize;
       const pageSet = new Set(filtered.slice(start, start + this._pageSize));
 
+      let visibleIdx = 0;
       allCards.forEach((card) => {
-        card.hidden = !pageSet.has(card);
+        const isVisible = pageSet.has(card);
+        card.hidden = !isVisible;
+        if (isVisible) {
+          card.style.setProperty("--i", String(visibleIdx++));
+        }
       });
 
       this._renderPagination(totalPages);

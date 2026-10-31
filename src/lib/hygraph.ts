@@ -1,5 +1,3 @@
-// src/lib/hygraph.ts
-
 interface Asset {
   url: string;
   fullUrl?: string;
@@ -47,7 +45,65 @@ export interface Experience {
   sortOrder?: number;
 }
 
+export interface SiteProfile {
+  id: string;
+  avatar?: Asset;
+  splashVideo?: Asset;
+  linkDiscord?: string;
+  handleDiscord?: string;
+  linkX?: string;
+  handleX?: string;
+  linkFacebook?: string;
+  handleFacebook?: string;
+  linkEmail?: string;
+  handleEmail?: string;
+  linkYoutube?: string;
+  linkPixiv?: string;
+}
+
+export interface AboutPageConfig {
+  id: string;
+  bioText?: string;
+  bioQuote?: string;
+  missionText?: string;
+  aboutNameText?: string;
+}
+
 const HYGRAPH_ENDPOINT = import.meta.env.HYGRAPH_ENDPOINT;
+
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const memoryCache = new Map<string, CacheEntry<unknown>>();
+const activeFetches = new Map<string, Promise<unknown>>();
+const CACHE_TTL_MS = 1000 * 60 * 5;
+
+async function getCachedOrFetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+  const cached = memoryCache.get(key) as CacheEntry<T> | undefined;
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data;
+  }
+
+  const active = activeFetches.get(key) as Promise<T> | undefined;
+  if (active) {
+    return active;
+  }
+
+  const fetchPromise = (async () => {
+    try {
+      const data = await fetcher();
+      memoryCache.set(key, { data, timestamp: Date.now() });
+      return data;
+    } finally {
+      activeFetches.delete(key);
+    }
+  })();
+
+  activeFetches.set(key, fetchPromise);
+  return fetchPromise;
+}
 
 async function fetchAPI<T>(query: string, variables = {}): Promise<T> {
   if (!HYGRAPH_ENDPOINT) {
@@ -71,220 +127,197 @@ async function fetchAPI<T>(query: string, variables = {}): Promise<T> {
 }
 
 export async function fetchArtworks(): Promise<Artwork[]> {
-  const allData: Artwork[] = [];
-  let skip = 0;
-  const first = 100;
-  let hasMore = true;
+  return getCachedOrFetch("artworks", async () => {
+    const allData: Artwork[] = [];
+    let skip = 0;
+    const first = 100;
+    let hasMore = true;
 
-  while (hasMore) {
-    const data = await fetchAPI<{ artworks: Artwork[] }>(`
-      query AllArtworks($first: Int!, $skip: Int!) {
-        artworks(first: $first, skip: $skip, stage: PUBLISHED, orderBy: createdAt_DESC) {
-          id
-          title
-          slug
-          linkPixiv
-          image {
-            url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 540, height: 540, fit: clip } } })
-            fullUrl: url
-            heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
+    while (hasMore) {
+      const data = await fetchAPI<{ artworks: Artwork[] }>(`
+        query AllArtworks($first: Int!, $skip: Int!) {
+          artworks(first: $first, skip: $skip, stage: PUBLISHED, orderBy: createdAt_DESC) {
+            id
+            title
+            slug
+            linkPixiv
+            image {
+              url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 540, height: 540, fit: clip } } })
+              fullUrl: url
+              heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
+            }
+            category { 
+                name 
+                slug 
+            }
+            isFeatured
           }
-          category { 
-              name 
-              slug 
-          }
-          isFeatured
         }
-      }
-    `, { first, skip });
+      `, { first, skip });
 
-    allData.push(...data.artworks);
-    if (data.artworks.length < first) {
-      hasMore = false;
-    } else {
-      skip += first;
-    }
-  }
-  return allData;
-}
-
-export async function fetchVideos(): Promise<Video[]> {
-  const allData: Video[] = [];
-  let skip = 0;
-  const first = 100;
-  let hasMore = true;
-
-  while (hasMore) {
-    const data = await fetchAPI<{ videos: Video[] }>(`
-      query AllVideos($first: Int!, $skip: Int!) {
-        videos(first: $first, skip: $skip, stage: PUBLISHED, orderBy: createdAt_DESC) {
-          id
-          title
-          slug
-          nameArtist
-          linkEmbed
-          linkFacebook
-          imageEmbed { 
-            url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1200, fit: clip } } })
-            fullUrl: url
-            heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
-          }
-          descCredit
-          descAbout
-          thumbnail {
-            url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 640, height: 360, fit: crop } } })
-            fullUrl: url
-            heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
-          }
-          imagePreview {
-            url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 960, height: 540, fit: clip } } })
-            fullUrl: url
-          }
-          category { name visibility }
-          isFeatured
-        }
-      }
-    `, { first, skip });
-
-    allData.push(...data.videos);
-    if (data.videos.length < first) {
-      hasMore = false;
-    } else {
-      skip += first;
-    }
-  }
-  
-  return allData.map((vid): Video => {
-    let linkOriginal = vid.linkEmbed;
-    
-    if (vid.linkEmbed && vid.linkEmbed.includes("/embed/")) {
-      const videoId = vid.linkEmbed.split("/embed/")[1]?.split("?")[0];
-      if (videoId) {
-        // ĐÃ FIX LỖI SYNTAX Ở ĐÂY
-        linkOriginal = `https://www.youtube.com/watch?v=${videoId}`;
+      allData.push(...data.artworks);
+      if (data.artworks.length < first) {
+        hasMore = false;
+      } else {
+        skip += first;
       }
     }
-    
-    let linkFacebook = vid.linkFacebook;
-    if (linkFacebook) {
-      const reelMatch = linkFacebook.match(/\/reel\/(\d+)/);
-      const watchMatch = linkFacebook.match(/watch\/\?v=(\d+)/);
-
-      if (reelMatch?.[1]) {
-        linkFacebook = `https://www.facebook.com/reel/${reelMatch[1]}`;
-      } else if (watchMatch?.[1]) {
-        linkFacebook = `https://www.facebook.com/watch/?v=${watchMatch[1]}`;
-      }
-    }
-    
-    return {
-      ...vid,
-      linkOriginal,
-      linkFacebook
-    };
+    return allData;
   });
 }
 
-export interface Experience {
-  id: string;
-  category: string;
-  year?: string;
-  description: string;
-  sortOrder?: number;
+export async function fetchVideos(): Promise<Video[]> {
+  return getCachedOrFetch("videos", async () => {
+    const allData: Video[] = [];
+    let skip = 0;
+    const first = 100;
+    let hasMore = true;
+
+    while (hasMore) {
+      const data = await fetchAPI<{ videos: Video[] }>(`
+        query AllVideos($first: Int!, $skip: Int!) {
+          videos(first: $first, skip: $skip, stage: PUBLISHED, orderBy: createdAt_DESC) {
+            id
+            title
+            slug
+            nameArtist
+            linkEmbed
+            linkFacebook
+            imageEmbed { 
+              url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1200, fit: clip } } })
+              fullUrl: url
+              heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
+            }
+            descCredit
+            descAbout
+            thumbnail {
+              url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 640, height: 360, fit: crop } } })
+              fullUrl: url
+              heroUrl: url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 1920, fit: clip } } })
+            }
+            imagePreview {
+              url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 960, height: 540, fit: clip } } })
+              fullUrl: url
+            }
+            category { name visibility }
+            isFeatured
+          }
+        }
+      `, { first, skip });
+
+      allData.push(...data.videos);
+      if (data.videos.length < first) {
+        hasMore = false;
+      } else {
+        skip += first;
+      }
+    }
+    
+    return allData.map((vid): Video => {
+      let linkOriginal = vid.linkEmbed;
+      
+      if (vid.linkEmbed && vid.linkEmbed.includes("/embed/")) {
+        const videoId = vid.linkEmbed.split("/embed/")[1]?.split("?")[0];
+        if (videoId) {
+          linkOriginal = `https://www.youtube.com/watch?v=${videoId}`;
+        }
+      }
+      
+      let linkFacebook = vid.linkFacebook;
+      if (linkFacebook) {
+        const reelMatch = linkFacebook.match(/\/reel\/(\d+)/);
+        const watchMatch = linkFacebook.match(/watch\/\?v=(\d+)/);
+
+        if (reelMatch?.[1]) {
+          linkFacebook = `https://www.facebook.com/reel/${reelMatch[1]}`;
+        } else if (watchMatch?.[1]) {
+          linkFacebook = `https://www.facebook.com/watch/?v=${watchMatch[1]}`;
+        }
+      }
+      
+      return {
+        ...vid,
+        linkOriginal,
+        linkFacebook
+      };
+    });
+  });
 }
 
 export async function fetchExperiences(): Promise<Experience[]> {
-  const allData: Experience[] = [];
-  let skip = 0;
-  const first = 100;
-  let hasMore = true;
+  return getCachedOrFetch("experiences", async () => {
+    const allData: Experience[] = [];
+    let skip = 0;
+    const first = 100;
+    let hasMore = true;
 
-  while (hasMore) {
-    const data = await fetchAPI<{ experiences: Experience[] }>(`
-      query AllExperiences($first: Int!, $skip: Int!) {
-        experiences(first: $first, skip: $skip, stage: PUBLISHED, orderBy: sortOrder_DESC) {
-          id
-          category
-          year
-          description
-          sortOrder
+    while (hasMore) {
+      const data = await fetchAPI<{ experiences: Experience[] }>(`
+        query AllExperiences($first: Int!, $skip: Int!) {
+          experiences(first: $first, skip: $skip, stage: PUBLISHED, orderBy: sortOrder_DESC) {
+            id
+            category
+            year
+            description
+            sortOrder
+          }
         }
+      `, { first, skip });
+
+      allData.push(...data.experiences);
+      if (data.experiences.length < first) {
+        hasMore = false;
+      } else {
+        skip += first;
       }
-    `, { first, skip });
-
-    allData.push(...data.experiences);
-    if (data.experiences.length < first) {
-      hasMore = false;
-    } else {
-      skip += first;
     }
-  }
-  return allData;
-}
-
-export interface SiteProfile {
-  id: string;
-  avatar?: Asset;
-  splashVideo?: Asset;
-  linkDiscord?: string;
-  handleDiscord?: string;
-  linkX?: string;
-  handleX?: string;
-  linkFacebook?: string;
-  handleFacebook?: string;
-  linkEmail?: string;
-  handleEmail?: string;
-  linkYoutube?: string;
-  linkPixiv?: string;
+    return allData;
+  });
 }
 
 export async function fetchSiteProfile(): Promise<SiteProfile | null> {
-  const data = await fetchAPI<{ siteProfiles: SiteProfile[] }>(`
-    query GetSiteProfile {
-      siteProfiles(first: 1, stage: PUBLISHED) {
-        id
-        avatar {
-          url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 600, height: 600, fit: crop } } })
-          fullUrl: url
+  return getCachedOrFetch("siteProfile", async () => {
+    const data = await fetchAPI<{ siteProfiles: SiteProfile[] }>(`
+      query GetSiteProfile {
+        siteProfiles(first: 1, stage: PUBLISHED) {
+          id
+          avatar {
+            url(transformation: { document: { output: { format: webp } }, image: { resize: { width: 600, height: 600, fit: crop } } })
+            fullUrl: url
+          }
+          splashVideo {
+            url
+          }
+          linkDiscord
+          handleDiscord
+          linkX
+          handleX
+          linkFacebook
+          handleFacebook
+          linkEmail
+          handleEmail
+          linkYoutube
+          linkPixiv
         }
-        splashVideo {
-          url
-        }
-        linkDiscord
-        handleDiscord
-        linkX
-        handleX
-        linkFacebook
-        handleFacebook
-        linkEmail
-        handleEmail
-        linkYoutube
-        linkPixiv
       }
-    }
-  `);
-  return data.siteProfiles[0] || null;
-}
-
-export interface AboutPageConfig {
-  id: string;
-  bioText?: string;
-  bioQuote?: string;
-  missionText?: string;
-  aboutNameText?: string;
+    `);
+    return data.siteProfiles[0] || null;
+  });
 }
 
 export async function fetchAboutPageConfig(): Promise<AboutPageConfig | null> {
-  const data = await fetchAPI<{ aboutPageConfigs: AboutPageConfig[] }>(`
-    query GetAboutPageConfig {
-      aboutPageConfigs(first: 1, stage: PUBLISHED) {
-        id
-        bioText
-        bioQuote
-        missionText
-        aboutNameText
+  return getCachedOrFetch("aboutPageConfig", async () => {
+    const data = await fetchAPI<{ aboutPageConfigs: AboutPageConfig[] }>(`
+      query GetAboutPageConfig {
+        aboutPageConfigs(first: 1, stage: PUBLISHED) {
+          id
+          bioText
+          bioQuote
+          missionText
+          aboutNameText
+        }
       }
-    }
-  `);
-  return data.aboutPageConfigs[0] || null;
+    `);
+    return data.aboutPageConfigs[0] || null;
+  });
 }

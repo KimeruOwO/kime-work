@@ -355,16 +355,13 @@ const thumbUrl = ytId
   .motion-title-bar {
     position: relative;
     width: 100%;
-    padding: clamp(var(--spacing-4), 3vw, var(--spacing-6))
-      clamp(var(--spacing-4), 8vw, var(--spacing-16));
+    padding: clamp(var(--spacing-4), 3vw, var(--spacing-6)) 0;
     margin-bottom: var(--spacing-12);
     margin-top: var(--spacing-12);
-
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-
     background: var(--color-primary);
   }
 
@@ -374,7 +371,6 @@ const thumbUrl = ytId
     position: absolute;
     top: 0;
     bottom: 0;
-
     width: auto;
     aspect-ratio: 1 / 1;
     background-color: var(--base-white);
@@ -389,16 +385,15 @@ const thumbUrl = ytId
     -webkit-mask-size: calc(100% * 2 / 3) calc(100% * 2 / 3);
     -webkit-mask-repeat: repeat;
     -webkit-mask-position: top left;
-
     transition: opacity 0.3s ease;
   }
 
   .motion-title-bar::before {
-    left: clamp(10px, 6vw, 15%);
+    left: clamp(12px, 4vw, 8%);
   }
 
   .motion-title-bar::after {
-    right: clamp(10px, 6vw, 15%);
+    right: clamp(12px, 4vw, 8%);
   }
 
   @media (max-width: 768px) {
@@ -412,7 +407,9 @@ const thumbUrl = ytId
     position: relative;
     z-index: 4;
     margin: 0;
-    font-size: clamp(1.25rem, 4vw, var(--text-3xl));
+    max-width: min(900px, calc(100% - 2 * (clamp(12px, 4vw, 8%) + 120px + 20px)));
+    padding-inline: clamp(12px, 2vw, 24px);
+    font-size: clamp(1.2rem, 3.2vw, var(--text-3xl));
     font-weight: 900;
     color: var(--base-white);
     letter-spacing: 2px;
@@ -426,6 +423,12 @@ const thumbUrl = ytId
     word-break: break-word;
     overflow-wrap: break-word;
     line-height: 1.3;
+  }
+
+  @media (max-width: 768px) {
+    .motion-title {
+      max-width: 100%;
+    }
   }
 
   /* ==================================

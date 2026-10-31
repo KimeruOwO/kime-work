@@ -24,11 +24,7 @@ const { lang } = Astro.params;
 const currentLang = lang || defaultLang;
 const t = useTranslations(currentLang as keyof typeof languages);
 
-// ==========================================================
-// DATA & CONFIG
-// ==========================================================
-
-const [profileData, aboutPageConfig] = await Promise.all([
+const [profileData, aboutPageConfig, experiencesDataRaw] = await Promise.all([
   fetchSiteProfile().catch((err: any) => {
     console.error("Failed to fetch site profile:", err.message);
     return null;
@@ -36,38 +32,23 @@ const [profileData, aboutPageConfig] = await Promise.all([
   fetchAboutPageConfig().catch((err: any) => {
     console.error("Failed to fetch about page config:", err.message);
     return null;
-  })
+  }),
+  fetchExperiences().catch((err: any) => {
+    console.error("Failed to fetch experiences:", err.message);
+    return [];
+  }),
 ]);
 
-// Check if the remote avatar is actually reachable before using it
-let isRemoteAvatar = false;
-let avatarSource: string | ImageMetadata = kimeyuPFP;
+const isRemoteAvatar = Boolean(profileData?.avatar?.url);
+const avatarSource: string | ImageMetadata = profileData?.avatar?.url || kimeyuPFP;
 
-if (profileData?.avatar?.url) {
-  try {
-    const probe = await fetch(profileData.avatar.url, { method: "HEAD", signal: AbortSignal.timeout(5000) });
-    if (probe.ok) {
-      isRemoteAvatar = true;
-      avatarSource = profileData.avatar.url;
-    } else {
-      console.warn("Remote avatar returned non-OK status, using local fallback.");
-    }
-  } catch {
-    console.warn("Remote avatar unreachable, using local fallback.");
-  }
-}
-
-// Bio Fallbacks
 const defaultBio = "Born in VietNam in 2005. Worked as a freelancer who has creative journey began with anime to form a way of seeing the world through emotion, color, and movement.";
 const defaultQuote = "Curiosity in motion, stories in rhythm.";
 
 const bioText = aboutPageConfig?.bioText || defaultBio;
 const bioQuote = aboutPageConfig?.bioQuote || defaultQuote;
 
-let experiencesData = await fetchExperiences().catch((err: any) => {
-  console.error("Failed to fetch experiences:", err.message);
-  return [];
-});
+let experiencesData = experiencesDataRaw;
 
 
 if (experiencesData.length === 0) {
@@ -184,7 +165,7 @@ const valueCards = [
     </nav>
 
     <div class="page-content">
-      <!-- ================= SECTION: HERO ================= -->
+      
       <PageDecorBanner
         id="banner-about-me"
         text={t('about.aboutMe')}
@@ -198,16 +179,15 @@ const valueCards = [
       >
         <div class="avatar-container" data-reveal style="--delay: 100ms;">
           {isRemoteAvatar ? (
-            <Picture
+            <img
               src={avatarSource as string}
-              inferSize={true}
-              formats={["avif", "webp"]}
-              fallbackFormat="jpg"
+              width={AVATAR_DESKTOP_PX}
+              height={AVATAR_DESKTOP_PX}
               alt="Kimeyu Profile Picture"
               fetchpriority="high"
+              loading="eager"
+              decoding="async"
               class="avatar-img"
-              widths={AVATAR_WIDTHS}
-              sizes={avatarSizes}
             />
           ) : (
             <Picture
@@ -231,7 +211,7 @@ const valueCards = [
         </div>
       </header>
 
-      <!-- ================= SECTION: TOOLS ================= -->
+      
       <section id="creative-tools" class="tools-section">
         <div class="tools-section__inner">
           <div class="tools-section__head">
@@ -267,7 +247,7 @@ const valueCards = [
         </div>
       </section>
 
-      <!-- ================= SECTION: BIO ================= -->
+      
       <section class="bio-section grid-area-bio" data-reveal style="--delay: 200ms;">
         <p class="bio-text" style="white-space: pre-line;">
           {bioText}
@@ -285,7 +265,7 @@ const valueCards = [
         <InfoWindow />
       </section>
 
-      <!-- ================= SECTION: VALUE ================= -->
+      
       <div id="value" class="bottom-banners">
         <div class="value-header-row">
           <PageDecorBanner
@@ -368,9 +348,7 @@ const valueCards = [
 </Layout>
 
 <style>
-  /* ==========================================================
-                        GLOBAL & UTILITIES
-    ========================================================== */
+  
 
   .banner-spacing {
     margin-top: var(--spacing-8);
@@ -386,9 +364,7 @@ const valueCards = [
     flex-direction: column;
   }
 
-  /* ==========================================================
-                CLASS VARIANTS (CLEAN ARCHITECTURE)
-    ========================================================= */
+  
   .sidebar-nav {
     display: none;
   }
@@ -424,9 +400,7 @@ const valueCards = [
     --card-dot-bg: var(--color-accent-badge);
   }
 
-  /* ==========================================================
-                        SECTION: VALUE
-    ========================================================= */
+  
   .bottom-banners {
     --filler-h: 50px;
     display: grid;
@@ -566,7 +540,7 @@ const valueCards = [
     flex-shrink: 0;
   }
 
-  /* VALUE CARDS */
+  
   .value-cards-layout {
     grid-column: 1 / -1;
     grid-row: 2;
@@ -667,9 +641,7 @@ const valueCards = [
     line-height: 1.5;
   }
 
-  /* ==========================================================
-                        VALUE: CONCLUSION BLOCK
-    ========================================================= */
+  
   .value-conclusion {
     grid-column: 1 / -1;
     grid-row: 3;
@@ -837,9 +809,7 @@ const valueCards = [
     color: inherit;
   }
 
-  /* ==========================================================
-                        SECTION: HERO & OTHERS
-    ========================================================= */
+  
   .profile-hero-header {
     --avatar-size: clamp(var(--avatar-min), 25vw, var(--avatar-max));
     --avatar-overlap: var(--spacing-7);
@@ -971,11 +941,11 @@ const valueCards = [
       bottom: 0;
       z-index: -1;
       pointer-events: none;
-      /* Trừ đi khoảng 15rem (đủ rộng cho 4 icon + một gap nhỏ) để mảng nền không bị đè lên icon */
+      
       width: calc(50% - clamp(13rem, 16vw, 15rem));
       background-color: var(--color-secondary-light);
 
-      /* Multi-layer XOR mask pipeline */
+      
       mask-image:
         url("data:image/svg+xml,%3Csvg viewBox='0 0 3 3' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='1' y='0' width='1' height='1' fill='white'/%3E%3Crect x='0' y='1' width='1' height='1' fill='white'/%3E%3Crect x='2' y='1' width='1' height='1' fill='white'/%3E%3Crect x='1' y='2' width='1' height='1' fill='white'/%3E%3C/svg%3E"),
         linear-gradient(#fff, #fff);
@@ -992,7 +962,7 @@ const valueCards = [
       mask-repeat: no-repeat, no-repeat;
       -webkit-mask-repeat: no-repeat, no-repeat;
 
-      /* Subtract SVG holes from solid base */
+      
       mask-composite: exclude;
       -webkit-mask-composite: xor;
     }
@@ -1091,9 +1061,7 @@ const valueCards = [
   }
 
 
-  /* ==========================================================
-        RESPONSIVE TABLET & SMALL PC (>= 1024px)
-    ========================================================= */
+  
   @media (min-width: 1024px) {
     .page-layout {
       display: grid;
@@ -1101,7 +1069,7 @@ const valueCards = [
       gap: clamp(var(--spacing-8), 4vw, var(--spacing-24));
       align-items: start;
 
-      /* --- ALIGNMENT SYNC VARIABLES --- */
+      
       --c-max-wrapper: var(--content-max-width, 75rem);
       --pad-wrapper: var(--spacing-4, 1rem);
 
@@ -1165,9 +1133,7 @@ const valueCards = [
     }
   }
 
-  /* ==========================================================
-        RESPONSIVE LARGE PC (>= 1200px)
-    ========================================================= */
+  
   @media (min-width: 1200px) {
     .page-content {
       display: grid;
@@ -1265,9 +1231,7 @@ const valueCards = [
     }
   }
 
-  /* ==========================================================
-                        ANIMATIONS & EFFECTS
-     ========================================================== */
+  
   [data-reveal] {
     opacity: 0;
     transform: translateY(30px);
@@ -1320,7 +1284,6 @@ const valueCards = [
       '.sidebar-nav a[href^="#"]',
     );
 
-    // --- 2. ACTIVE STATE ON SCROLL ---
     const orderedIds = ["about-me", "creative-tools", "value", "experiences"];
     let forcedActiveId: string | null = null;
     let clickTimeout: number | ReturnType<typeof setTimeout> | null = null;
@@ -1353,7 +1316,6 @@ const valueCards = [
         const targetId = link.getAttribute("href");
         if (!targetId || targetId === "#") return;
 
-        // Force active state immediately on click
         const id = targetId.substring(1);
         forcedActiveId = id;
         applyActiveState(id);
@@ -1363,7 +1325,7 @@ const valueCards = [
         }
         clickTimeout = setTimeout(() => {
           forcedActiveId = null;
-        }, 1300); // 1.2s scroll + 100ms buffer
+        }, 1300);
 
         const targetSection = document.querySelector(targetId);
         if (!targetSection) return;
@@ -1398,58 +1360,41 @@ const valueCards = [
       });
     });
 
-    // --- 2. ACTIVE STATE ON SCROLL ---
+    const isDesktop = window.matchMedia("(min-width: 1024px)");
+    if (isDesktop.matches) {
+      applyActiveState(orderedIds[0]);
 
-    function updateActiveNav() {
-      if (forcedActiveId) return;
+      const intersectingIds = new Set<string>();
+      const sectionObserver = new IntersectionObserver(
+        (entries) => {
+          if (forcedActiveId) return;
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              intersectingIds.add(entry.target.id);
+            } else {
+              intersectingIds.delete(entry.target.id);
+            }
+          });
 
-      let activeId = null;
-      let minDistance = Infinity;
-
-      orderedIds.forEach((id) => {
-        const section = document.getElementById(id);
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          const topThreshold = id === "about-me" ? 250 : 150;
-          if (rect.top <= topThreshold && rect.bottom >= 150) {
-            activeId = id;
-          }
-        }
-      });
-
-      // Fallback: Closest to offset
-      if (!activeId) {
-        orderedIds.forEach((id) => {
-          const section = document.getElementById(id);
-          if (section) {
-            const rect = section.getBoundingClientRect();
-            const distance = Math.abs(rect.top - 150);
-            if (distance < minDistance) {
-              minDistance = distance;
-              activeId = id;
+          for (let i = orderedIds.length - 1; i >= 0; i--) {
+            if (intersectingIds.has(orderedIds[i])) {
+              applyActiveState(orderedIds[i]);
+              break;
             }
           }
-        });
-      }
+        },
+        {
+          rootMargin: "-120px 0px -40% 0px",
+          threshold: 0,
+        }
+      );
 
-      applyActiveState(activeId);
+      orderedIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) sectionObserver.observe(el);
+      });
     }
 
-    let isTicking = false;
-    window.addEventListener("scroll", () => {
-      if (!isTicking) {
-        window.requestAnimationFrame(() => {
-          updateActiveNav();
-          isTicking = false;
-        });
-        isTicking = true;
-      }
-    });
-
-    // Init
-    updateActiveNav();
-
-    // --- 3. REVEAL ANIMATIONS ---
     const revealElements = document.querySelectorAll("[data-reveal]");
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -1459,7 +1404,7 @@ const valueCards = [
         }
       });
     }, { rootMargin: "0px 0px -50px 0px" });
-    
-    revealElements.forEach(el => observer.observe(el));
+
+    revealElements.forEach((el) => observer.observe(el));
   });
 </script>

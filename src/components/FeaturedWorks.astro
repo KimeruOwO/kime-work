@@ -95,6 +95,25 @@ const { featuredVideos, currentLang } = Astro.props;
     const inner = document.getElementById('fs-inner');
     if (!section || !inner) return;
 
+    const updateMarquees = () => {
+      if (window.innerWidth <= 1024) return;
+      const titles = section.querySelectorAll<HTMLElement>('.fs-title');
+      titles.forEach((title) => {
+        const text = title.querySelector<HTMLElement>('.mask-text');
+        if (!text) return;
+        title.classList.remove('is-marquee');
+        const overflow = text.scrollWidth - title.clientWidth;
+        if (overflow > 10) {
+          const dur = Math.max(12, Math.round(text.scrollWidth / 45));
+          title.style.setProperty('--marquee-duration', `${dur}s`);
+          title.classList.add('is-marquee');
+        } else {
+          title.classList.remove('is-marquee');
+        }
+      });
+    };
+    updateMarquees();
+
     // --- MOBILE BYPASS ---
     if (window.innerWidth <= 1024) {
       const observer = new IntersectionObserver((entries) => {
@@ -263,11 +282,13 @@ const { featuredVideos, currentLang } = Astro.props;
     window.addEventListener('wheel', onWheel, { passive: false });
     window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('resize', updateMarquees, { passive: true });
 
     const cleanup = () => {
       window.removeEventListener('wheel', onWheel);
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('resize', updateMarquees);
       resetObserver.disconnect();
       document.removeEventListener('astro:before-swap', cleanup);
     };

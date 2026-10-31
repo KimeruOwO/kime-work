@@ -7,6 +7,10 @@ export default defineConfig({
     devToolbar: {
         enabled: false,
     },
+    prefetch: {
+        prefetchAll: true,
+        defaultStrategy: 'viewport'
+    },
     build: {
         inlineStylesheets: 'never'
     },
@@ -20,7 +24,7 @@ export default defineConfig({
         }
     },
     image: {
-        domains: ['media.graphassets.com', 'eu-central-1-shared-euc1-02.graphassets.com'],
+        domains: ['media.graphassets.com', 'eu-central-1-shared-euc1-02.graphassets.com', 'us-west-2.graphassets.com'],
         remotePatterns: [{ protocol: "https" }]
     }
 });

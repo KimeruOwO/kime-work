@@ -12,7 +12,8 @@ const { vid, index, catMatch, visMatch } = Astro.props;
 
 <a
   href={`/work/motions/${vid.slug}`}
-  class="motion-card"
+  class="motion-card card-item"
+  style={`--i: ${index};`}
   data-category={catMatch}
   data-visibility={visMatch}
   data-link={vid.linkEmbed}
