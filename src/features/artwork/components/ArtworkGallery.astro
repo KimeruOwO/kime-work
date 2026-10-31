@@ -110,7 +110,8 @@ const t = useTranslations(lang);
 
                   return (
                     <div
-                      class="artwork-card"
+                      class="artwork-card card-item"
+                      style={`--i: ${index};`}
                       role="button"
                       tabindex="0"
                       data-category={catMatch}
@@ -136,7 +137,7 @@ const t = useTranslations(lang);
 
             <hr class="artwork-loader-decor" />
 
-            <!-- Client-side pagination container -->
+            
             <nav id="artwork-pagination" aria-label="Artwork pagination" data-prev-label={t('pagination.prev')} data-next-label={t('pagination.next')}></nav>
           </div>
         </div>
@@ -264,9 +265,9 @@ const t = useTranslations(lang);
       });
     }
 
-    // =============================================
-    //  CLIENT-SIDE PAGINATION ENGINE
-    // =============================================
+    
+    
+    
 
     private _getFilteredCards(): HTMLElement[] {
       return Array.from(this._cards).filter((card) => {
@@ -292,8 +293,13 @@ const t = useTranslations(lang);
       const start = (this._currentPage - 1) * this._pageSize;
       const pageSet = new Set(filtered.slice(start, start + this._pageSize));
 
+      let visibleIdx = 0;
       allCards.forEach((card) => {
-        card.hidden = !pageSet.has(card);
+        const isVisible = pageSet.has(card);
+        card.hidden = !isVisible;
+        if (isVisible) {
+          card.style.setProperty("--i", String(visibleIdx++));
+        }
       });
 
       this._renderPagination(totalPages);
@@ -343,9 +349,9 @@ const t = useTranslations(lang);
       this.performFLIP(() => this._applyVisibility());
     }
 
-    // =============================================
-    //  LIFECYCLE
-    // =============================================
+    
+    
+    
 
     connectedCallback() {
       this._dialog = this.querySelector<HTMLDialogElement>(".lightbox-modal");
@@ -394,7 +400,7 @@ const t = useTranslations(lang);
       this.addEventListener("filter-changed", this);
       this.addEventListener("click", this);
 
-      // Keyboard shortcuts: phím 2-5 chuyển cột grid tương ứng
+      
       window.addEventListener("keydown", this._handleKeydown);
 
       const pendingSidebar = localStorage.getItem(
@@ -466,9 +472,9 @@ const t = useTranslations(lang);
       }
     }
 
-    // Keyboard shortcut handler: phím 2/3/4/5 -> chuyển cột grid
+    
     private _handleKeydown(e: KeyboardEvent) {
-      // Bỏ qua nếu user đang gõ text hoặc popup đang mở
+      
       if (this._dialog?.open) return;
       const active = document.activeElement;
       if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || (active as HTMLElement).isContentEditable)) return;
@@ -548,9 +554,9 @@ const t = useTranslations(lang);
       this.performFLIP(() => this._applyVisibility());
     }
 
-    // =============================================
-    //  LIGHTBOX
-    // =============================================
+    
+    
+    
 
     private closeDialog() {
       if (this._dialog !== null) {
@@ -597,17 +603,17 @@ const t = useTranslations(lang);
       const dialogImg =
         this._dialog.querySelector<HTMLImageElement>(".lightbox-img");
       if (dialogImg !== null) {
-        const padding = 32; // Padding of body
-        const headerOffset = 60; // Header height
+        const padding = 32; 
+        const headerOffset = 60; 
         const maxW = window.innerWidth * 0.95 - padding;
         const maxH = window.innerHeight * 0.95 - headerOffset - padding;
         
-        // Use the original size of the thumbnail to get the ratio
+        
         const natW = img.naturalWidth || 800;
         const natH = img.naturalHeight || 800;
         const scale = Math.min(maxW / natW, maxH / natH);
         
-        // Gán cứng kích thước đích trước khi show popup
+        
         dialogImg.style.width = `${Math.floor(natW * scale)}px`;
         dialogImg.style.height = `${Math.floor(natH * scale)}px`;
 
@@ -639,7 +645,7 @@ const t = useTranslations(lang);
 </script>
 
 <style>
-  /* Base styles */
+  
   .works-content {
     padding-top: var(--spacing-8);
   }
@@ -652,7 +658,7 @@ const t = useTranslations(lang);
     display: none !important;
   }
 
-  /* Layout Split */
+  
   .gallery-layout-split {
     display: flex;
     flex-direction: column;
@@ -758,7 +764,7 @@ const t = useTranslations(lang);
     }
   }
 
-  /* Masonry Base */
+  
   .artwork-masonry {
     column-count: 1;
     column-gap: var(--spacing-4);
@@ -774,7 +780,7 @@ const t = useTranslations(lang);
     }
   }
 
-  /* Masonry Grid Control via data-attribute */
+  
   .artwork-masonry[data-grid-cols="2"] {
     column-count: 2;
   }
@@ -806,7 +812,7 @@ const t = useTranslations(lang);
       column-gap: var(--spacing-6);
     }
     .artwork-card {
-      margin-bottom: var(--spacing-6);
+      margin-bottom: calc(var(--spacing-6) - 16px);
     }
   }
   @media (min-width: 1024px) {
@@ -815,21 +821,18 @@ const t = useTranslations(lang);
       column-gap: clamp(var(--spacing-6), 2vw, var(--spacing-8));
     }
     .artwork-card {
-      margin-bottom: clamp(var(--spacing-6), 2vw, var(--spacing-8));
+      margin-bottom: calc(clamp(var(--spacing-6), 2vw, var(--spacing-8)) - 16px);
     }
     .artwork-wrapper {
       max-width: 90%;
     }
   }
 
-  /* Artwork Card (v-card style) */
   .artwork-card {
+    --lockon-color: var(--color-primary);
     break-inside: avoid;
-    margin-bottom: clamp(12px, 2vw, 20px);
-    border: var(--border-width-sm) solid var(--color-secondary-darker);
-    border-radius: var(--spacing-3);
-    background-color: var(--bg-secondary);
-    overflow: hidden;
+    padding: 8px;
+    margin-bottom: clamp(4px, 1.5vw, 12px);
     display: flex;
     flex-direction: column;
     cursor: pointer;
@@ -838,13 +841,49 @@ const t = useTranslations(lang);
     transition: transform 0.3s ease;
   }
 
+  .artwork-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(1.06);
+    transition:
+      transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.2s ease;
+    background-image:
+      linear-gradient(var(--lockon-color), var(--lockon-color)),
+      linear-gradient(var(--lockon-color), var(--lockon-color)),
+      linear-gradient(var(--lockon-color), var(--lockon-color)),
+      linear-gradient(var(--lockon-color), var(--lockon-color)),
+      linear-gradient(var(--lockon-color), var(--lockon-color)),
+      linear-gradient(var(--lockon-color), var(--lockon-color)),
+      linear-gradient(var(--lockon-color), var(--lockon-color)),
+      linear-gradient(var(--lockon-color), var(--lockon-color));
+    background-size:
+      12px 3px, 3px 12px,
+      12px 3px, 3px 12px,
+      12px 3px, 3px 12px,
+      12px 3px, 3px 12px;
+    background-position:
+      top left, top left,
+      top right, top right,
+      bottom left, bottom left,
+      bottom right, bottom right;
+    background-repeat: no-repeat;
+  }
+
   .artwork-card__header {
     height: 1.5rem;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     padding: 0 var(--spacing-2);
-    border-bottom: var(--border-width-sm) solid var(--color-secondary-darker);
+    border: var(--border-width-sm) solid var(--color-secondary-darker);
+    border-top-left-radius: var(--spacing-3);
+    border-top-right-radius: var(--spacing-3);
+    transition: border-color 0.3s ease;
   }
   .artwork-card__header::before {
     content: "";
@@ -855,18 +894,26 @@ const t = useTranslations(lang);
     border-radius: 50%;
   }
 
-  /* Symmetrical header colors: pink, cyan, pink */
+  .artwork-card:nth-child(3n+1) {
+    --lockon-color: var(--color-primary);
+  }
   .artwork-card:nth-child(3n+1) .artwork-card__header {
     background-color: var(--color-primary);
   }
   .artwork-card:nth-child(3n+1) .artwork-card__header::before {
     background-color: var(--color-secondary-light);
   }
+  .artwork-card:nth-child(3n+2) {
+    --lockon-color: var(--color-secondary-light);
+  }
   .artwork-card:nth-child(3n+2) .artwork-card__header {
     background-color: var(--color-secondary-light);
   }
   .artwork-card:nth-child(3n+2) .artwork-card__header::before {
     background-color: var(--color-accent-badge);
+  }
+  .artwork-card:nth-child(3n+3) {
+    --lockon-color: var(--color-primary);
   }
   .artwork-card:nth-child(3n+3) .artwork-card__header {
     background-color: var(--color-primary);
@@ -879,14 +926,31 @@ const t = useTranslations(lang);
     flex: 1;
     overflow: hidden;
     position: relative;
+    border: var(--border-width-sm) solid var(--color-secondary-darker);
+    border-top: none;
+    border-bottom-left-radius: var(--spacing-3);
+    border-bottom-right-radius: var(--spacing-3);
+    background-color: var(--bg-secondary);
+    transition: border-color 0.3s ease;
   }
 
   .artwork-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
+    animation-fill-mode: none;
+  }
+
+  .artwork-card:hover .artwork-card__header,
+  .artwork-card:hover .artwork-card__body {
+    border-color: var(--lockon-color);
+  }
+
+  .artwork-card:hover::after {
+    opacity: 1;
+    transform: scale(1);
   }
 
   .artwork-card:active {
-    transform: translateY(-1px);
+    transform: translateY(0);
   }
 
   .artwork-card__body img {
@@ -896,19 +960,7 @@ const t = useTranslations(lang);
     object-fit: cover;
   }
 
-  .artwork-card {
-    animation: artwork-card-in 0.4s ease-out both;
-  }
-  @keyframes artwork-card-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  /* Lightbox */
+  
   .lightbox-modal {
     padding: 0;
     margin: auto;
@@ -1061,7 +1113,7 @@ const t = useTranslations(lang);
     overflow: hidden;
   }
 
-  /* Decor */
+  
   .artwork-loader-decor {
     position: relative;
     display: flex;
@@ -1105,10 +1157,7 @@ const t = useTranslations(lang);
     right: 0;
   }
 
-  /* ==============================================
-     CLIENT-SIDE PAGINATION (kime-pagination design)
-     Mirrors MotionGallery pagination exactly
-     ============================================== */
+  
   :global(#artwork-pagination) {
     --cell: 30px;
     --checker-w: round(nearest, calc(var(--cell) * 1.5), 1px);
@@ -1213,7 +1262,7 @@ const t = useTranslations(lang);
     cursor: default;
   }
 
-  /* Responsive mobile pagination */
+  
   @media (max-width: 767px) {
     :global(#artwork-pagination) {
       display: flex;
