@@ -1125,7 +1125,7 @@ hero-slider {
   opacity: 0;
 }
 .featured-sticky-card.is-active .fs-play-link-group {
-  animation: buttonPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+  animation: buttonPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
 }
 
 .fs-play-link-group:hover {
@@ -1354,18 +1354,6 @@ hero-slider {
     imageSettle 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
 }
 
-.featured-sticky-card:nth-child(2) .fs-play-link-group,
-.featured-sticky-card:nth-child(3) .fs-play-link-group {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.featured-sticky-card:nth-child(2).is-active .fs-play-link-group,
-.featured-sticky-card:nth-child(3).is-active .fs-play-link-group {
-  animation: buttonPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
-  transform: scale(1);
-  opacity: 1;
-  transition-delay: 0.2s;
-}
 
 .featured-sticky-card:nth-child(2) {
   background: #f2f2f9;

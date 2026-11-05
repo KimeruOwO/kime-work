@@ -1,3 +1,12 @@
+---
+interface Props {
+  idSuffix?: string | number;
+}
+const { idSuffix = "" } = Astro.props;
+const pId = `pattern0_2890_342${idSuffix !== "" ? `_${idSuffix}` : ""}`;
+const iId = `image0_2890_342${idSuffix !== "" ? `_${idSuffix}` : ""}`;
+---
+
 <svg
   width="707"
   height="277"
@@ -45,20 +54,20 @@
     clip-rule="evenodd"
     d="M428.014 157.849L443.214 142.649L428.014 127.449L421.2 127.449L436.4 142.649L421.2 157.849L428.014 157.849Z"
     fill="#F2F2F9"></path>
-  <rect y="93" width="342" height="99" fill="url(#pattern0_2890_342)"></rect>
+  <rect y="93" width="342" height="99" fill={`url(#${pId})`}></rect>
   <defs>
     <pattern
-      id="pattern0_2890_342"
+      id={pId}
       patternContentUnits="objectBoundingBox"
       width="1"
       height="1"
     >
       <use
-        xlink:href="#image0_2890_342"
+        xlink:href={`#${iId}`}
         transform="matrix(0.000589275 0 0 0.00203568 0 -0.000776772)"></use>
     </pattern>
     <image
-      id="image0_2890_342"
+      id={iId}
       width="1697"
       height="492"
       preserveAspectRatio="none"

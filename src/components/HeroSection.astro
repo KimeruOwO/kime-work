@@ -2,20 +2,20 @@
 const { t } = Astro.props;
 ---
 
-<!-- Kimeyu Core Slogan -->
 <section class="contact-quote-block" aria-label="Kimeyu Slogan">
   <div class="quote-wrapper">
     <h2 class="quote-text">
       <span class="quote-line-wrap">
         <span class="quote-line"
-          >{t("home.slogan.builtOn")}
+          >{t("home.slogan.builtOn")}{" "}
           <span class="text-cyan">{t("home.slogan.rhythm")}</span></span
         >
         <span class="qr-band qr-band--pink" aria-hidden="true"></span>
       </span>
+      {" "}
       <span class="quote-line-wrap">
         <span class="quote-line"
-          >{t("home.slogan.drivenBy")}
+          >{t("home.slogan.drivenBy")}{" "}
           <span class="text-pink">{t("home.slogan.precision")}</span></span
         >
         <span class="qr-band qr-band--cyan" aria-hidden="true"></span>
@@ -24,7 +24,6 @@ const { t } = Astro.props;
   </div>
 </section>
 
-<!-- PICK UP WORKS BANNER -->
 <div class="decor-ribbon pickup-works-ribbon">
   <div class="ribbon-pickup-label">
     <span class="pickup-en">PICK-UP WORKS</span>
@@ -43,7 +42,6 @@ const { t } = Astro.props;
 </div>
 
 <script>
-  // --- QUOTE REVEAL ON SCROLL ---
   const initQuoteReveal = () => {
     const section = document.querySelector<HTMLElement>(".contact-quote-block");
     if (!section) return;

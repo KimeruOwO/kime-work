@@ -7,21 +7,14 @@ import { getRelativeLocaleUrl } from '../i18n/utils';
 const { featuredVideos, currentLang } = Astro.props;
 ---
 
-<!-- FEATURED SECTION (nim.design style: fixed viewport + translateY) -->
 <section class="featured-works-section" aria-label="Featured Works" id="featured-works-section">
-  <!-- This viewport is position:sticky and clips the slides -->
   <div class="fs-viewport">
-    <!-- translateY'd by JS -->
     <div class="fs-inner" id="fs-inner">
       {
         featuredVideos.slice(0, 3).map((video: any, index: number) => (
           <article class="featured-sticky-card">
-
             <div class="fs-card-inner">
-              <!-- Watermark -->
               <div class="fs-bg-watermark" aria-hidden="true">FEATURED</div>
-
-              <!-- Center/Right: Video -->
               <div class="fs-video-area">
                 <a href={getRelativeLocaleUrl(currentLang, `work/motions/${video.slug}`)} class="fs-thumb-link" aria-label={`Watch ${video.title}`}>
                   <div class="fs-thumb-frame">
@@ -29,8 +22,6 @@ const { featuredVideos, currentLang } = Astro.props;
                   </div>
                 </a>
               </div>
-
-              <!-- Bottom Left: Tags & Number & Titles & Play -->
               <div class="fs-bottom-left">
                 <div class="fs-tags" style="margin-bottom: 20px;">
                     <FsTagMotion type={index === 1 ? "pink" : "white"} />
@@ -45,7 +36,7 @@ const { featuredVideos, currentLang } = Astro.props;
                     <h3 class="fs-title"><span class="mask-text decode-target" data-decode-text={video.title}>{video.title}</span></h3>
                   </div>
                   <div class="fs-play-link-group">
-                    {index === 1 ? <FsPlayLinkPink /> : <FsPlayLinkWhite />}
+                    {index === 1 ? <FsPlayLinkPink idSuffix={index} /> : <FsPlayLinkWhite idSuffix={index} />}
                     <a href={getRelativeLocaleUrl(currentLang, `work/motions/${video.slug}`)} class="fs-play-overlay fs-play-overlay--play" aria-label={`Watch ${video.title}`}></a>
                     <a href={getRelativeLocaleUrl(currentLang, "work/")} class="fs-play-overlay fs-play-overlay--more" aria-label="View More Works"></a>
                   </div>
@@ -59,21 +50,16 @@ const { featuredVideos, currentLang } = Astro.props;
   </div>
 </section>
 
-<!-- MOBILE-ONLY: Cyber-Pop Diagonal Playlist -->
 <section class="fs-pop-mobile" aria-label="Featured Works">
   <div class="fs-pop-list">
     {featuredVideos.slice(0, 3).map((video: any, index: number) => (
       <a href={getRelativeLocaleUrl(currentLang, `work/motions/${video.slug}`)} class={`fs-pop-card ${index === 1 ? 'fs-pop-card-alt' : ''}`} aria-label={`Watch ${video.title}`}>
-
-        <!-- Huge Watermark Number -->
         <div class="fs-pop-watermark" aria-hidden="true">0{index + 1}</div>
-
         <div class="fs-pop-thumb-box">
           <div class="fs-pop-thumb-bg"></div>
           <img src={video.thumbnail.url} alt={video.title} loading="lazy" decoding="async" width="640" height="360" class="fs-pop-thumb" />
           <div class="fs-pop-thumb-cut"></div>
         </div>
-
         <div class="fs-pop-info">
           <div class="fs-pop-meta">
             <span class="fs-pop-tag">{video.category?.name?.toUpperCase() || "MOTION"}</span>
@@ -81,22 +67,30 @@ const { featuredVideos, currentLang } = Astro.props;
           <h3 class="fs-pop-title">{video.title}</h3>
           <p class="fs-pop-artist">{video.nameArtist}</p>
         </div>
-
-
       </a>
     ))}
   </div>
 </section>
 
 <script>
-  // --- FEATURED SNAP SCROLL ---
   const initFeaturedSnap = () => {
     const section = document.getElementById('featured-works-section');
     const inner = document.getElementById('fs-inner');
     if (!section || !inner) return;
 
+    if (window.innerWidth <= 1024) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-active');
+          }
+        });
+      }, { threshold: 0.2 });
+      Array.from(inner.children).forEach(child => observer.observe(child));
+      return;
+    }
+
     const updateMarquees = () => {
-      if (window.innerWidth <= 1024) return;
       const titles = section.querySelectorAll<HTMLElement>('.fs-title');
       titles.forEach((title) => {
         const text = title.querySelector<HTMLElement>('.mask-text');
@@ -114,20 +108,6 @@ const { featuredVideos, currentLang } = Astro.props;
     };
     updateMarquees();
 
-    // --- MOBILE BYPASS ---
-    if (window.innerWidth <= 1024) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-active');
-          }
-        });
-      }, { threshold: 0.2 });
-      Array.from(inner.children).forEach(child => observer.observe(child));
-      return;
-    }
-
-    // --- DESKTOP ANIMATION ENGINE ---
     const SLIDE_COUNT = inner.children.length;
     const ANIM_DURATION = 700;
     const DELTA_THRESHOLD = 60;
@@ -151,7 +131,6 @@ const { featuredVideos, currentLang } = Astro.props;
       setTimeout(() => { isAnimating = false; }, ANIM_DURATION);
     };
 
-    // --- FIRST SLIDE TRIGGER ---
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting && currentSlide === 0) {
@@ -175,7 +154,6 @@ const { featuredVideos, currentLang } = Astro.props;
       return active;
     };
 
-    // --- WHEEL HANDLER ---
     const onWheel = (e: WheelEvent) => {
       if (!isFeaturedActive()) return;
 
@@ -222,7 +200,6 @@ const { featuredVideos, currentLang } = Astro.props;
       goTo(currentSlide + dir);
     };
 
-    // --- TOUCH HANDLER ---
     let touchY = 0;
     const onTouchStart = (e: TouchEvent) => { touchY = e.touches[0].clientY; };
     const onTouchEnd = (e: TouchEvent) => {
@@ -261,7 +238,6 @@ const { featuredVideos, currentLang } = Astro.props;
       goTo(currentSlide + dir);
     };
 
-    // --- RESET OBSERVER ---
     const resetObserver = new IntersectionObserver((entries) => {
       for (const entry of entries) {
         if (!entry.isIntersecting && entry.boundingClientRect.top > 0 && currentSlide !== 0) {
@@ -278,7 +254,6 @@ const { featuredVideos, currentLang } = Astro.props;
     }, { threshold: 0 });
     resetObserver.observe(section);
 
-    // --- EVENT REGISTRATION ---
     window.addEventListener('wheel', onWheel, { passive: false });
     window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchend', onTouchEnd, { passive: true });
