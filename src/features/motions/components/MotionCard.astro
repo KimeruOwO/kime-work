@@ -311,17 +311,36 @@ const { vid, index, catMatch, visMatch } = Astro.props;
   const activeAnims = new Map<HTMLElement, any>();
   let observer: IntersectionObserver | null = null;
 
+  const getLottieData = (): Promise<any> => {
+    const w = window as any;
+    if (!w.__kimeyuLottiePromise) {
+      w.__kimeyuLottiePromise = fetch('/lottie/webloading.json').then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      });
+    }
+    return w.__kimeyuLottiePromise;
+  };
+
   const destroyAnim = (el: HTMLElement): void => {
     const anim = activeAnims.get(el);
-    if (!anim) return;
-    anim.destroy();
-    activeAnims.delete(el);
-    el.style.display = 'none';
+    if (anim) {
+      try {
+        anim.destroy();
+      } catch {}
+      activeAnims.delete(el);
+    }
+    el.replaceChildren();
+    el.remove();
     observer?.unobserve(el);
   };
 
   const cleanup = (): void => {
-    activeAnims.forEach((anim) => anim.destroy());
+    activeAnims.forEach((anim) => {
+      try {
+        anim.destroy();
+      } catch {}
+    });
     activeAnims.clear();
     observer?.disconnect();
     observer = null;
@@ -333,14 +352,22 @@ const { vid, index, catMatch, visMatch } = Astro.props;
       const containers = document.querySelectorAll<HTMLElement>('.motion-loader');
       if (!containers.length) return;
 
-      const lottieModule = await import('lottie-web/build/player/lottie_light');
+      const [lottieModule, animationData] = await Promise.all([
+        import('lottie-web/build/player/lottie_svg'),
+        getLottieData(),
+      ]);
       const lottie = lottieModule.default || lottieModule;
-      console.log('[Lottie] module loaded, containers:', containers.length);
 
       observer = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
             const el = entry.target as HTMLElement;
+
+            const img = el.parentElement?.querySelector('img');
+            if (img && img.complete && img.naturalWidth > 0) {
+              destroyAnim(el);
+              continue;
+            }
 
             if (entry.isIntersecting) {
               if (activeAnims.has(el)) {
@@ -353,7 +380,8 @@ const { vid, index, catMatch, visMatch } = Astro.props;
                 renderer: 'svg',
                 loop: true,
                 autoplay: true,
-                path: '/lottie/webloading.json',
+                animationData,
+                assetsPath: '/lottie/images/',
               });
               activeAnims.set(el, anim);
 
@@ -369,17 +397,11 @@ const { vid, index, catMatch, visMatch } = Astro.props;
                 tryDestroy();
               });
 
-              const img = el.parentElement?.querySelector('img');
               if (img) {
-                if (img.complete && img.naturalWidth > 0) {
+                img.addEventListener('load', () => {
                   imgLoaded = true;
                   tryDestroy();
-                } else {
-                  img.addEventListener('load', () => {
-                    imgLoaded = true;
-                    tryDestroy();
-                  }, { once: true });
-                }
+                }, { once: true });
               }
             } else if (activeAnims.has(el)) {
               activeAnims.get(el)!.pause();
@@ -389,7 +411,14 @@ const { vid, index, catMatch, visMatch } = Astro.props;
         { rootMargin: '200px' }
       );
 
-      containers.forEach((el) => observer!.observe(el));
+      containers.forEach((el) => {
+        const img = el.parentElement?.querySelector('img');
+        if (img && img.complete && img.naturalWidth > 0) {
+          destroyAnim(el);
+        } else {
+          observer!.observe(el);
+        }
+      });
     } catch (err) {
       console.error('[MotionCard] initLoaders error:', err);
     }

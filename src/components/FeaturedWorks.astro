@@ -36,7 +36,7 @@ const { featuredVideos, currentLang } = Astro.props;
                     <h3 class="fs-title"><span class="mask-text decode-target" data-decode-text={video.title}>{video.title}</span></h3>
                   </div>
                   <div class="fs-play-link-group">
-                    {index === 1 ? <FsPlayLinkPink idSuffix={index} /> : <FsPlayLinkWhite idSuffix={index} />}
+                    {index === 1 ? <FsPlayLinkPink /> : <FsPlayLinkWhite />}
                     <a href={getRelativeLocaleUrl(currentLang, `work/motions/${video.slug}`)} class="fs-play-overlay fs-play-overlay--play" aria-label={`Watch ${video.title}`}></a>
                     <a href={getRelativeLocaleUrl(currentLang, "work/")} class="fs-play-overlay fs-play-overlay--more" aria-label="View More Works"></a>
                   </div>
@@ -110,11 +110,7 @@ const { featuredVideos, currentLang } = Astro.props;
 
     const SLIDE_COUNT = inner.children.length;
     const ANIM_DURATION = 700;
-    const DELTA_THRESHOLD = 60;
     let currentSlide = 0;
-    let isAnimating = false;
-    let wheelDelta = 0;
-    let activeSince = 0;
 
     const goTo = (index: number) => {
       const prev = currentSlide;
@@ -126,116 +122,36 @@ const { featuredVideos, currentLang } = Astro.props;
       const nextChild = inner.children[currentSlide];
       if (prevChild) setTimeout(() => prevChild.classList.remove('is-active'), ANIM_DURATION);
       if (nextChild) setTimeout(() => nextChild.classList.add('is-active'), 400);
-
-      isAnimating = true;
-      setTimeout(() => { isAnimating = false; }, ANIM_DURATION);
     };
 
-    const observer = new IntersectionObserver((entries) => {
+    const initialObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting && currentSlide === 0) {
           if (inner.children[0]) {
             inner.children[0].classList.add('is-active');
           }
-          observer.disconnect();
+          initialObserver.disconnect();
         }
       });
     }, { threshold: 0.3 });
-    observer.observe(section);
+    initialObserver.observe(section);
 
-    const isFeaturedActive = () => {
-      const r = section.getBoundingClientRect();
-      const active = r.top <= 1 && r.bottom >= window.innerHeight - 1;
-      if (active && activeSince === 0) {
-        activeSince = Date.now();
-      } else if (!active) {
-        activeSince = 0;
-      }
-      return active;
-    };
-
-    const onWheel = (e: WheelEvent) => {
-      if (!isFeaturedActive()) return;
-
-      if (Date.now() - activeSince < 800) {
-        e.preventDefault();
-        return;
-      }
-
-      if (isAnimating) {
-        e.preventDefault();
-        return;
-      }
-
-      const r = section.getBoundingClientRect();
-
-      if (currentSlide === SLIDE_COUNT - 1 && e.deltaY > 0) {
-        if (r.bottom > window.innerHeight + 5) {
-          window.scrollTo({
-            top: window.scrollY + r.bottom - window.innerHeight,
-            behavior: 'auto'
-          });
-        }
-        return;
-      }
-
-      if (currentSlide === 0 && e.deltaY < 0) {
-        if (r.top < -5) {
-          window.scrollTo({
-            top: window.scrollY + r.top,
-            behavior: 'auto'
-          });
-        }
-        return;
-      }
-
-      e.preventDefault();
-      let dY = e.deltaY;
-      if (e.deltaMode === 1) dY *= 33.33;
-      else if (e.deltaMode === 2) dY *= 100;
-      wheelDelta += dY;
-      if (Math.abs(wheelDelta) < DELTA_THRESHOLD) return;
-      const dir = wheelDelta > 0 ? 1 : -1;
-      wheelDelta = 0;
-      goTo(currentSlide + dir);
-    };
-
-    let touchY = 0;
-    const onTouchStart = (e: TouchEvent) => { touchY = e.touches[0].clientY; };
-    const onTouchEnd = (e: TouchEvent) => {
-      if (!isFeaturedActive()) return;
-
-      if (Date.now() - activeSince < 800) {
-        return;
-      }
-
-      const dy = touchY - e.changedTouches[0].clientY;
-      if (Math.abs(dy) < 30 || isAnimating) return;
-      const dir = dy > 0 ? 1 : -1;
-      
-      if (currentSlide === SLIDE_COUNT - 1 && dir > 0) {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
         const r = section.getBoundingClientRect();
-        if (r.bottom > window.innerHeight + 5) {
-          window.scrollTo({
-            top: window.scrollY + r.bottom - window.innerHeight,
-            behavior: 'auto'
-          });
+        const maxScroll = r.height - window.innerHeight;
+        if (maxScroll > 0) {
+          const progress = Math.max(0, Math.min(1, -r.top / maxScroll));
+          const targetSlide = Math.min(SLIDE_COUNT - 1, Math.floor(progress * SLIDE_COUNT));
+          if (targetSlide !== currentSlide) {
+            goTo(targetSlide);
+          }
         }
-        return;
-      }
-      
-      if (currentSlide === 0 && dir < 0) {
-        const r = section.getBoundingClientRect();
-        if (r.top < -5) {
-          window.scrollTo({
-            top: window.scrollY + r.top,
-            behavior: 'auto'
-          });
-        }
-        return;
-      }
-      
-      goTo(currentSlide + dir);
+        ticking = false;
+      });
     };
 
     const resetObserver = new IntersectionObserver((entries) => {
@@ -254,16 +170,14 @@ const { featuredVideos, currentLang } = Astro.props;
     }, { threshold: 0 });
     resetObserver.observe(section);
 
-    window.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
-    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', updateMarquees, { passive: true });
+    onScroll();
 
     const cleanup = () => {
-      window.removeEventListener('wheel', onWheel);
-      window.removeEventListener('touchstart', onTouchStart);
-      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', updateMarquees);
+      initialObserver.disconnect();
       resetObserver.disconnect();
       document.removeEventListener('astro:before-swap', cleanup);
     };

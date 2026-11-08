@@ -225,6 +225,17 @@ const isHome = Astro.url.pathname === "/" || /^\/(?:en|ja|vi)\/?$/.test(Astro.ur
   let revealTimer: ReturnType<typeof setTimeout> | null = null;
   let activeEndListener: ((e: AnimationEvent) => void) | null = null;
 
+  const getLottieData = (): Promise<any> => {
+    const w = window as any;
+    if (!w.__kimeyuLottiePromise) {
+      w.__kimeyuLottiePromise = fetch("/lottie/webloading.json").then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      });
+    }
+    return w.__kimeyuLottiePromise;
+  };
+
   const killSplash = (): void => {
     isSplashRunning = false;
     if (activeLottie) {
@@ -234,6 +245,8 @@ const isHome = Astro.url.pathname === "/" || /^\/(?:en|ja|vi)\/?$/.test(Astro.ur
       activeLottie = null;
     }
     const splash = document.getElementById("splash-screen");
+    const lottieContainer = document.getElementById("splash-lottie");
+    lottieContainer?.replaceChildren();
     splash?.classList.add("gone");
     splash?.remove();
     document.documentElement.classList.add("splash-done");
@@ -306,7 +319,10 @@ const isHome = Astro.url.pathname === "/" || /^\/(?:en|ja|vi)\/?$/.test(Astro.ur
     overlay?.classList.add("is-covered");
 
     try {
-      const lottieModule = await import("lottie-web/build/player/lottie_svg");
+      const [lottieModule, animationData] = await Promise.all([
+        import("lottie-web/build/player/lottie_svg"),
+        getLottieData(),
+      ]);
       const lottie = lottieModule.default || lottieModule;
       lottie.destroy();
 
@@ -317,7 +333,8 @@ const isHome = Astro.url.pathname === "/" || /^\/(?:en|ja|vi)\/?$/.test(Astro.ur
         renderer: "svg",
         loop: false,
         autoplay: true,
-        path: "/lottie/webloading.json",
+        animationData,
+        assetsPath: "/lottie/images/",
       });
 
       activeLottie.addEventListener("complete", () => {
