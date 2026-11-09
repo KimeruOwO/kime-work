@@ -1,14 +1,9 @@
 ---
-import FsTagMotion from "../../components/icons/FsTagMotion.astro";
-import FsPlayLinkPink from "../../components/icons/FsPlayLinkPink.astro";
-import FsPlayLinkWhite from "../../components/icons/FsPlayLinkWhite.astro";
 import Layout from "../../layouts/Layout.astro";
 import KimeSplash from "../../components/KimeSplash.astro";
-import CyberRibbon from "../../components/CyberRibbon.astro";
-import KimeyuIcon from "../../components/icons/KimeyuIcon.astro";
 import { languages, defaultLang, showDefaultLang } from '../../i18n/ui';
-import { useTranslations, getRelativeLocaleUrl } from '../../i18n/utils';
-import { fetchVideos, fetchArtworks, fetchSiteProfile } from "../../lib/hygraph";
+import { useTranslations } from '../../i18n/utils';
+import { fetchVideos, fetchSiteProfile } from "../../lib/hygraph";
 import '../../styles/home.css';
 
 import HeroSection from '../../components/HeroSection.astro';
@@ -26,14 +21,11 @@ const { lang } = Astro.params;
 const currentLang = (lang || defaultLang) as keyof typeof languages;
 const t = useTranslations(currentLang);
 
-// FETCH HERO SLIDER DATA
-const [allVideos, allArtworks, profileData] = await Promise.all([
+const [allVideos, profileData] = await Promise.all([
   fetchVideos(),
-  fetchArtworks(),
   fetchSiteProfile().catch(() => null),
 ]);
 
-// Social Links Fallbacks
 const discordLink = profileData?.linkDiscord || "https://discord.com/users/683574461147906078";
 const discordHandle = profileData?.handleDiscord || "kimeyu_39";
 
@@ -46,48 +38,6 @@ const fbHandle = profileData?.handleFacebook || "facebook.com/kimerukirisu/";
 const emailLink = profileData?.linkEmail || "mailto:kimeyukawa@gmail.com";
 const emailHandle = profileData?.handleEmail || "kimeyukawa@gmail.com";
 
-const vMusic = allVideos.find((v) => v.category?.name?.includes("MusicVideos"));
-const vDebut = allVideos.find((v) => v.category?.name?.includes("Debut"));
-const aIllust = allArtworks.find((a) => a.category?.name === "Illustration");
-
-const heroSlides = [
-  vMusic
-    ? {
-        url:
-          vMusic.imageEmbed?.[0]?.heroUrl ||
-          vMusic.thumbnail?.heroUrl ||
-          vMusic.thumbnail?.fullUrl ||
-          vMusic.thumbnail?.url,
-        link: vMusic.linkOriginal || `/work/motions/${vMusic.slug}`,
-        target: "_blank",
-      }
-    : null,
-  vDebut
-    ? {
-        url:
-          vDebut.imageEmbed?.[0]?.heroUrl ||
-          vDebut.thumbnail?.heroUrl ||
-          vDebut.thumbnail?.fullUrl ||
-          vDebut.thumbnail?.url,
-        link: vDebut.linkOriginal || `/work/motions/${vDebut.slug}`,
-        target: "_blank",
-      }
-    : null,
-  aIllust
-    ? {
-        url:
-          aIllust.image?.heroUrl ||
-          aIllust.image?.fullUrl ||
-          aIllust.image?.url,
-        link: aIllust.linkPixiv || `/work/?mode=artwork`,
-        target: "_blank",
-      }
-    : null,
-].filter((s): s is { url: string; link: string; target: string } =>
-  Boolean(s && s.url),
-);
-
-// Extract FEATURED videos
 const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
 ---
 
@@ -95,10 +45,8 @@ const featuredVideos = allVideos.filter((v) => v.isFeatured).slice(0, 6);
   <div class="contact-page-wrapper">
     <KimeSplash />
 
-    <!-- TOP DECOR RIBBON -->
     <div class="decor-ribbon" aria-hidden="true">
       <div class="film-strip-bg" aria-hidden="true">
-        <!-- Running left to right -->
         <div class="banner-strip"></div>
       </div>
     </div>
